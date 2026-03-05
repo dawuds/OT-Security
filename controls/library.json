@@ -6,17 +6,35 @@
     "type": "preventive",
     "slMin": 2,
     "description": "Deploy a two-firewall Industrial DMZ between OT Level 3 and IT Level 4, breaking the direct IT-to-OT network path. All IT-OT data exchange flows through IDMZ-hosted services.",
-    "sections": ["NS-R2"],
-    "iec62443SRs": ["SR-5.1", "SR-5.2"],
-    "keyActivities": ["Deploy OT-side firewall (deny all, permit OT-to-IDMZ services)", "Deploy IT-side firewall (deny all, permit IT-to-IDMZ services)", "Migrate IT-OT data exchange to IDMZ services (historian mirror, patch server)", "Document all permitted traffic flows"],
+    "sections": [
+      "NS-R2"
+    ],
+    "iec62443SRs": [
+      "SR-5.1",
+      "SR-5.2"
+    ],
+    "keyActivities": [
+      "Deploy OT-side firewall (deny all, permit OT-to-IDMZ services)",
+      "Deploy IT-side firewall (deny all, permit IT-to-IDMZ services)",
+      "Migrate IT-OT data exchange to IDMZ services (historian mirror, patch server)",
+      "Document all permitted traffic flows"
+    ],
     "maturity": {
       "basic": "VLAN separation between OT and IT; single firewall",
       "mature": "Full two-firewall IDMZ with deny-by-default rules; all IT-OT traffic through IDMZ services",
       "advanced": "Data diode for historian replication; OT-aware DPI; quarterly traffic flow review; zero direct IT-to-OT Layer 3 routes"
     },
-    "nacsa": ["s18"],
-    "nistCsf": ["PR.IR-01", "PR.IR-02"],
-    "mitreAttackIcs": ["T0817", "T0820"]
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.IR-01",
+      "PR.IR-02"
+    ],
+    "mitreAttackIcs": [
+      "T0817",
+      "T0820"
+    ]
   },
   {
     "slug": "ot-remote-access-gateway",
@@ -25,17 +43,37 @@
     "type": "preventive",
     "slMin": 2,
     "description": "Deploy a dedicated remote access gateway in the IDMZ as the sole path for all vendor and engineer remote access to OT systems. Enforce MFA, session recording, and per-session vendor approval.",
-    "sections": ["RA-R1", "RA-R2", "RA-R3"],
-    "iec62443SRs": ["SR-1.13", "SR-2.6"],
-    "keyActivities": ["Deploy OT remote access gateway (Secomea, Claroty SRA, Fortinet)", "Enforce MFA for all remote access", "Configure session recording", "Implement per-session approval workflow for vendors"],
+    "sections": [
+      "RA-R1",
+      "RA-R2",
+      "RA-R3"
+    ],
+    "iec62443SRs": [
+      "SR-1.13",
+      "SR-2.6"
+    ],
+    "keyActivities": [
+      "Deploy OT remote access gateway (Secomea, Claroty SRA, Fortinet)",
+      "Enforce MFA for all remote access",
+      "Configure session recording",
+      "Implement per-session approval workflow for vendors"
+    ],
     "maturity": {
       "basic": "VPN with password authentication",
       "mature": "Dedicated OT gateway with MFA; session logging; operator monitoring capability",
       "advanced": "Per-session vendor approval; session recording with 90-day retention; time-limited credentials; JIT access"
     },
-    "nacsa": ["s18"],
-    "nistCsf": ["PR.AA-01", "PR.AA-05"],
-    "mitreAttackIcs": ["T0822", "T0859"]
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-01",
+      "PR.AA-05"
+    ],
+    "mitreAttackIcs": [
+      "T0822",
+      "T0859"
+    ]
   },
   {
     "slug": "ot-passive-monitoring",
@@ -44,16 +82,33 @@
     "type": "detective",
     "slMin": 2,
     "description": "Deploy passive OT network monitoring sensors to capture and analyse all OT network traffic without sending any packets to control systems. Provides asset discovery, anomaly detection, and security alerting.",
-    "sections": ["IR-R1", "ML-R1"],
-    "iec62443SRs": ["SR-6.2", "SR-2.8"],
-    "keyActivities": ["Deploy SPAN/TAP on OT network segments", "Install OT monitoring sensor (Dragos, Claroty, Nozomi, Defender for IoT)", "Establish asset and communication baseline", "Configure OT-specific detection rules"],
+    "sections": [
+      "IR-R1",
+      "ML-R1"
+    ],
+    "iec62443SRs": [
+      "SR-6.2",
+      "SR-2.8"
+    ],
+    "keyActivities": [
+      "Deploy SPAN/TAP on OT network segments",
+      "Install OT monitoring sensor (Dragos, Claroty, Nozomi, Defender for IoT)",
+      "Establish asset and communication baseline",
+      "Configure OT-specific detection rules"
+    ],
     "maturity": {
       "basic": "Monitoring deployed but limited coverage; manual alert review",
       "mature": "Full OT network coverage; automated alerting for key events; integration with SIEM",
       "advanced": "24/7 SOC with OT expertise; AI/ML behavioural detection; real-time safety system anomaly detection"
     },
-    "nacsa": ["s18", "s26"],
-    "nistCsf": ["DE.AE-02", "DE.CM-01"],
+    "nacsa": [
+      "s18",
+      "s26"
+    ],
+    "nistCsf": [
+      "DE.AE-02",
+      "DE.CM-01"
+    ],
     "mitreAttackIcs": []
   },
   {
@@ -63,16 +118,32 @@
     "type": "preventive",
     "slMin": 1,
     "description": "Maintain a comprehensive, current inventory of all OT assets including hardware, software/firmware versions, network addresses, zone assignment, and criticality classification.",
-    "sections": ["AI-R1", "AI-R2"],
-    "iec62443SRs": ["SR-7.8"],
-    "keyActivities": ["Passive network discovery for initial asset identification", "Manual walkdown for non-networked assets", "Populate and maintain asset database", "Quarterly reconciliation"],
+    "sections": [
+      "AI-R1",
+      "AI-R2"
+    ],
+    "iec62443SRs": [
+      "SR-7.8"
+    ],
+    "keyActivities": [
+      "Passive network discovery for initial asset identification",
+      "Manual walkdown for non-networked assets",
+      "Populate and maintain asset database",
+      "Quarterly reconciliation"
+    ],
     "maturity": {
-      "basic": "Manual spreadsheet asset list — best effort completeness",
+      "basic": "Manual spreadsheet asset list \u2014 best effort completeness",
       "mature": "Passive-discovery-driven automated inventory; quarterly review; asset change triggers update",
       "advanced": "Automated inventory with continuous reconciliation; alert on new/unregistered devices; hardware identity verification"
     },
-    "nacsa": ["s18", "s21"],
-    "nistCsf": ["ID.AM-01", "ID.AM-02"],
+    "nacsa": [
+      "s18",
+      "s21"
+    ],
+    "nistCsf": [
+      "ID.AM-01",
+      "ID.AM-02"
+    ],
     "mitreAttackIcs": []
   },
   {
@@ -82,17 +153,32 @@
     "type": "preventive",
     "slMin": 1,
     "description": "Change all default vendor credentials on OT devices before network connection at commissioning. Audit all existing OT assets for default credentials. The single highest-impact, lowest-cost OT security action.",
-    "sections": ["IAM-R4"],
-    "iec62443SRs": ["SR-1.5"],
-    "keyActivities": ["Create commissioning checklist requiring default credential change", "Change defaults on all devices before OT network connection", "Audit existing OT assets for default credentials annually", "Store credentials only in PAM vault"],
+    "sections": [
+      "IAM-R4"
+    ],
+    "iec62443SRs": [
+      "SR-1.5"
+    ],
+    "keyActivities": [
+      "Create commissioning checklist requiring default credential change",
+      "Change defaults on all devices before OT network connection",
+      "Audit existing OT assets for default credentials annually",
+      "Store credentials only in PAM vault"
+    ],
     "maturity": {
       "basic": "Default credentials changed on major assets; ad hoc approach",
       "mature": "Commissioning checklist enforced; all new assets; annual audit of existing assets",
       "advanced": "Automated detection of default credentials via OT monitoring platform; zero known default credentials in environment"
     },
-    "nacsa": ["s18"],
-    "nistCsf": ["PR.AA-02"],
-    "mitreAttackIcs": ["T0812"]
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-02"
+    ],
+    "mitreAttackIcs": [
+      "T0812"
+    ]
   },
   {
     "slug": "sis-network-isolation",
@@ -101,17 +187,34 @@
     "type": "preventive",
     "slMin": 4,
     "description": "Physically isolate Safety Instrumented System controllers from all other networks. No network cables between SIS and DCS/HMI. Data diode for outbound SIS status data only. Hardware key switch required for engineering mode.",
-    "sections": ["SS-R1"],
-    "iec62443SRs": ["SR-5.1"],
-    "keyActivities": ["Physical cable trace to verify SIS isolation", "Remove any DCS-SIS cross-connections", "Install data diode for outbound SIS status", "Enable hardware key switches on SIS controllers", "Establish two-person rule for SIS work"],
+    "sections": [
+      "SS-R1"
+    ],
+    "iec62443SRs": [
+      "SR-5.1"
+    ],
+    "keyActivities": [
+      "Physical cable trace to verify SIS isolation",
+      "Remove any DCS-SIS cross-connections",
+      "Install data diode for outbound SIS status",
+      "Enable hardware key switches on SIS controllers",
+      "Establish two-person rule for SIS work"
+    ],
     "maturity": {
-      "basic": "SIS on separate VLAN — still network-accessible",
+      "basic": "SIS on separate VLAN \u2014 still network-accessible",
       "mature": "Physical network separation; data diode; key switch enabled",
       "advanced": "Fully air-gapped SIS with data diode; dedicated isolated EWS; two-person rule enforced; annual physical inspection"
     },
-    "nacsa": ["s18"],
-    "nistCsf": ["PR.IR-01"],
-    "mitreAttackIcs": ["T0838", "T0829"]
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.IR-01"
+    ],
+    "mitreAttackIcs": [
+      "T0838",
+      "T0829"
+    ]
   },
   {
     "slug": "ot-patch-management",
@@ -120,16 +223,33 @@
     "type": "preventive",
     "slMin": 2,
     "description": "Structured OT patch management: vendor advisory subscriptions, applicability assessment, vendor qualification check, test environment validation, change management approval, maintenance window deployment, and compensating controls for unpatchable assets.",
-    "sections": ["PV-R1", "PV-R2", "PV-R3"],
-    "iec62443SRs": ["SR-3.2", "SR-3.4"],
-    "keyActivities": ["Subscribe to vendor security advisories", "Assess each advisory against asset inventory", "Vendor-qualification check before patching", "Deploy via change management process"],
+    "sections": [
+      "PV-R1",
+      "PV-R2",
+      "PV-R3"
+    ],
+    "iec62443SRs": [
+      "SR-3.2",
+      "SR-3.4"
+    ],
+    "keyActivities": [
+      "Subscribe to vendor security advisories",
+      "Assess each advisory against asset inventory",
+      "Vendor-qualification check before patching",
+      "Deploy via change management process"
+    ],
     "maturity": {
       "basic": "Patches applied irregularly; no formal process",
       "mature": "Advisory subscriptions; vendor qualification check; quarterly patch deployment schedule",
       "advanced": "Test environment for patch validation; compensating controls for unpatchable assets with formal risk acceptance; biannual vulnerability assessment"
     },
-    "nacsa": ["s18", "s21"],
-    "nistCsf": ["PR.PS-02"],
+    "nacsa": [
+      "s18",
+      "s21"
+    ],
+    "nistCsf": [
+      "PR.PS-02"
+    ],
     "mitreAttackIcs": []
   },
   {
@@ -138,18 +258,37 @@
     "domain": "incident-response",
     "type": "corrective",
     "slMin": 2,
-    "description": "Automated backup of all OT configuration — PLC programs, DCS config, HMI, SCADA DB, historian, network devices. Offline copy. Quarterly restore test. OT-specific cyber recovery procedure.",
-    "sections": ["BR-R1", "BR-R2"],
-    "iec62443SRs": ["SR-7.3", "SR-7.4"],
-    "keyActivities": ["Define backup scope covering all OT components", "Automate scheduled backups", "Store offline copy", "Quarterly restore test", "Develop OT cyber recovery procedure"],
+    "description": "Automated backup of all OT configuration \u2014 PLC programs, DCS config, HMI, SCADA DB, historian, network devices. Offline copy. Quarterly restore test. OT-specific cyber recovery procedure.",
+    "sections": [
+      "BR-R1",
+      "BR-R2"
+    ],
+    "iec62443SRs": [
+      "SR-7.3",
+      "SR-7.4"
+    ],
+    "keyActivities": [
+      "Define backup scope covering all OT components",
+      "Automate scheduled backups",
+      "Store offline copy",
+      "Quarterly restore test",
+      "Develop OT cyber recovery procedure"
+    ],
     "maturity": {
       "basic": "Manual backup periodically; no test",
       "mature": "Automated backup; offline copy; quarterly restore test; RTO defined",
       "advanced": "Immutable backup storage; cyber incident-specific recovery procedure tested annually; operations engineering integrated in recovery plan"
     },
-    "nacsa": ["s18"],
-    "nistCsf": ["PR.DS-11", "RC.RP-04"],
-    "mitreAttackIcs": ["T0809"]
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.DS-11",
+      "RC.RP-04"
+    ],
+    "mitreAttackIcs": [
+      "T0809"
+    ]
   },
   {
     "slug": "ot-change-management",
@@ -158,17 +297,32 @@
     "type": "preventive",
     "slMin": 2,
     "description": "Formal change management process for all OT configuration changes: change request, technical review, operational approval, rollback plan, maintenance window deployment, post-change verification.",
-    "sections": ["CM-R2"],
-    "iec62443SRs": ["SR-7.6"],
-    "keyActivities": ["Define OT change management procedure", "Require change requests for all OT modifications", "Document rollback plans", "Conduct post-change functional verification"],
+    "sections": [
+      "CM-R2"
+    ],
+    "iec62443SRs": [
+      "SR-7.6"
+    ],
+    "keyActivities": [
+      "Define OT change management procedure",
+      "Require change requests for all OT modifications",
+      "Document rollback plans",
+      "Conduct post-change functional verification"
+    ],
     "maturity": {
       "basic": "Some change tracking; ad hoc approval",
       "mature": "Formal change management; rollback plans; post-change verification; emergency change process",
       "advanced": "Automated change detection; configuration monitoring alerts reconciled with change log; unauthorised change triggers incident"
     },
-    "nacsa": ["s18"],
-    "nistCsf": ["PR.PS-01"],
-    "mitreAttackIcs": ["T0895"]
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.PS-01"
+    ],
+    "mitreAttackIcs": [
+      "T0895"
+    ]
   },
   {
     "slug": "ot-vendor-security-assessment",
@@ -177,17 +331,34 @@
     "type": "preventive",
     "slMin": 2,
     "description": "Security questionnaire, assessment, and contractual requirements for all OT vendors, system integrators, and service providers. Approved vendor register with annual review.",
-    "sections": ["SC-R1"],
-    "iec62443SRs": ["SR-3.4", "SR-2.3"],
-    "keyActivities": ["Develop vendor security questionnaire", "Assess all critical vendors", "Include security requirements in OT contracts", "Maintain approved vendor register"],
+    "sections": [
+      "SC-R1"
+    ],
+    "iec62443SRs": [
+      "SR-3.4",
+      "SR-2.3"
+    ],
+    "keyActivities": [
+      "Develop vendor security questionnaire",
+      "Assess all critical vendors",
+      "Include security requirements in OT contracts",
+      "Maintain approved vendor register"
+    ],
     "maturity": {
       "basic": "Informal vendor assessment; no contract requirements",
       "mature": "Questionnaire for critical vendors; contractual security requirements; approved vendor register",
       "advanced": "Annual vendor reassessment; right-to-audit clauses; SBOM requirement for new products"
     },
-    "nacsa": ["s18"],
-    "nistCsf": ["GV.SC-06", "GV.SC-09"],
-    "mitreAttackIcs": ["T0862"]
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "GV.SC-06",
+      "GV.SC-09"
+    ],
+    "mitreAttackIcs": [
+      "T0862"
+    ]
   },
   {
     "slug": "nacsa-incident-notification",
@@ -196,16 +367,253 @@
     "type": "corrective",
     "slMin": 2,
     "description": "Documented and tested procedure for classifying OT incidents against NACSA s26 significant-impact threshold and notifying NACSA within 6 hours. Includes 72-hour follow-up and 30-day final report procedures.",
-    "sections": ["IR-R2"],
-    "iec62443SRs": ["SR-6.1", "SR-6.2"],
-    "keyActivities": ["Develop incident classification matrix", "Define notification decision authority", "Pre-populate notification templates", "Test in tabletop exercises"],
+    "sections": [
+      "IR-R2"
+    ],
+    "iec62443SRs": [
+      "SR-6.1",
+      "SR-6.2"
+    ],
+    "keyActivities": [
+      "Develop incident classification matrix",
+      "Define notification decision authority",
+      "Pre-populate notification templates",
+      "Test in tabletop exercises"
+    ],
     "maturity": {
       "basic": "Awareness that notification is required; no tested procedure",
       "mature": "Documented procedure; NACSA contacts maintained; tested in tabletop",
       "advanced": "Automated alert triage support; duty officer 24/7; notification tested under simulated incident conditions; sub-6h demonstrated in exercises"
     },
-    "nacsa": ["s26"],
-    "nistCsf": ["RS.CO-02", "RS.CO-03"],
+    "nacsa": [
+      "s26"
+    ],
+    "nistCsf": [
+      "RS.CO-02",
+      "RS.CO-03"
+    ],
     "mitreAttackIcs": []
+  },
+  {
+    "slug": "ot-mfa-implementation",
+    "name": "Multi-Factor Authentication for OT",
+    "domain": "identity-access",
+    "type": "preventive",
+    "slMin": 2,
+    "description": "Enforce multi-factor authentication for all human access to OT systems. MFA prevents credential-based attacks \u2014 the primary OT initial access vector after remote access exploitation. Applies to remote access gateway, engineering workstation login, and SCADA/HMI admin access.",
+    "sections": [
+      "IAM-R3"
+    ],
+    "iec62443SRs": [
+      "SR-1.1",
+      "SR-1.13"
+    ],
+    "keyActivities": [
+      "Deploy OT remote access gateway with MFA enforcement (hardware token, authenticator app, or smart card)",
+      "Enforce MFA at the IDMZ jump server for all privileged OT access",
+      "Configure Windows Hello for Business or smart card on OT engineering workstations",
+      "Document MFA exemptions for operator HMI terminals with operational justification and compensating controls",
+      "Test MFA lockout recovery procedure to ensure it does not block emergency access"
+    ],
+    "maturity": {
+      "basic": "MFA deployed for remote access VPN; on-site OT access still password-only",
+      "mature": "MFA enforced at IDMZ remote access gateway and on engineering workstations; operator HMIs on policy exemption with documented compensating controls",
+      "advanced": "MFA on all OT human access; hardware tokens for privileged accounts; MFA integrated with PAM for just-in-time privilege elevation; safety system access requires hardware key + MFA"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-01",
+      "PR.AA-03"
+    ],
+    "mitreAttackIcs": [
+      "T0859",
+      "T0822"
+    ]
+  },
+  {
+    "slug": "ot-rbac-implementation",
+    "name": "Role-Based Access Control for OT",
+    "domain": "identity-access",
+    "type": "preventive",
+    "slMin": 2,
+    "description": "Define and implement OT-specific roles with least-privilege access. OT RBAC must balance security with operational availability \u2014 operator access to process control, engineer access to programming, administrator access to security configuration. RBAC reduces the blast radius of account compromise.",
+    "sections": [
+      "IAM-R2"
+    ],
+    "iec62443SRs": [
+      "SR-2.1",
+      "SR-2.1"
+    ],
+    "keyActivities": [
+      "Define OT role taxonomy: Operator, Engineer, SCADA Admin, Security Admin, Vendor/Contractor",
+      "Map each role to specific access rights per OT system (HMI, SCADA, historian, EWS, PAM)",
+      "Implement RBAC in SCADA/DCS/HMI user management and Active Directory where integrated",
+      "Restrict PLC programming access to Engineering Workstation Zone \u2014 Operator HMI cannot reach engineering functions",
+      "Quarterly review of Engineer and Admin role assignments"
+    ],
+    "maturity": {
+      "basic": "Basic role separation (Operator vs Admin); informal assignment",
+      "mature": "Defined RBAC with least privilege; all roles documented; quarterly privileged role review; vendor accounts most restricted by default",
+      "advanced": "Fine-grained RBAC; separation of duties for safety-critical changes; PAM for all privilege escalation; dual-authorisation for safety system configuration changes"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-05",
+      "PR.AA-06"
+    ],
+    "mitreAttackIcs": [
+      "T0859"
+    ]
+  },
+  {
+    "slug": "ot-physical-access-control",
+    "name": "OT Zone Physical Access Control",
+    "domain": "physical-security",
+    "type": "preventive",
+    "slMin": 1,
+    "description": "Control physical access to OT control rooms, server rooms, relay rooms, and MCC rooms. Physical access is the most direct path to OT compromise \u2014 an attacker with physical access to a PLC can reprogram it regardless of network controls.",
+    "sections": [
+      "PS-R1"
+    ],
+    "iec62443SRs": [
+      "SR-2.3"
+    ],
+    "keyActivities": [
+      "Install electronic access control (card reader / PIN) on all OT control rooms, server rooms, and relay/MCC rooms",
+      "Retain access logs for minimum 90 days; review monthly",
+      "Remove access for personnel who have changed roles or left within 24 hours",
+      "Implement anti-tailgating controls in high-security OT areas (mantrap, security guard, camera review)",
+      "Conduct annual physical access list review \u2014 remove all personnel who no longer require access"
+    ],
+    "maturity": {
+      "basic": "Mechanical locks on OT rooms; key holder list maintained",
+      "mature": "Electronic access control with audit log; access list reviewed annually; visitors escorted; any personnel change triggers access review",
+      "advanced": "Mantrap or security guard for highest-security OT areas; biometric access for safety system rooms; real-time access anomaly detection; integration with HR for automated access revocation"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-01",
+      "PR.IR-01"
+    ],
+    "mitreAttackIcs": []
+  },
+  {
+    "slug": "ot-tamper-detection",
+    "name": "OT Equipment Tamper Detection",
+    "domain": "physical-security",
+    "type": "detective",
+    "slMin": 2,
+    "description": "Deploy tamper-evident and tamper-detection controls on critical OT equipment \u2014 PLCs, RTUs, safety system controllers, and field cabinets. Physical tampering enables hardware implants, firmware modification, and bypass of logical security controls.",
+    "sections": [
+      "PS-R2"
+    ],
+    "iec62443SRs": [
+      "SR-3.4"
+    ],
+    "keyActivities": [
+      "Apply tamper-evident seals to PLC chassis, RTU enclosures, and SIS controller panels",
+      "Lock field cabinets with uniquely keyed locks \u2014 not shared keys",
+      "Inspect tamper seals at every maintenance visit; document and investigate any broken seal",
+      "Configure chassis intrusion detection on OT servers and workstations where available",
+      "Photograph OT equipment at commissioning and after each maintenance visit \u2014 baseline documentation"
+    ],
+    "maturity": {
+      "basic": "Key locks on field cabinets; basic seal on critical equipment",
+      "mature": "Tamper-evident seals documented with IDs; inspection at each maintenance visit; broken seal triggers investigation; chassis intrusion detection on OT servers",
+      "advanced": "Hardware security modules with physical tamper detection; anti-tamper enclosures on highest-criticality PLCs/RTUs; camera coverage on SIS controller rooms; any tamper event triggers immediate security response"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "DE.CM-01",
+      "PR.IR-01"
+    ],
+    "mitreAttackIcs": [
+      "T0800",
+      "T0856"
+    ]
+  },
+  {
+    "slug": "ot-data-encryption",
+    "name": "OT Data Encryption (Transit and Rest)",
+    "domain": "data-protection",
+    "type": "preventive",
+    "slMin": 2,
+    "description": "Encrypt sensitive OT data in transit (remote access sessions, inter-zone communications, historian replication) and at rest (portable media, backup files, sensitive configuration documents). Encryption protects against interception and data exfiltration from OT environments.",
+    "sections": [
+      "DP-R2",
+      "DP-R3"
+    ],
+    "iec62443SRs": [
+      "SR-4.1",
+      "SR-4.3"
+    ],
+    "keyActivities": [
+      "Enforce TLS 1.2+ (TLS 1.3 preferred) on all remote access sessions and inter-zone communications",
+      "Configure historian replication over encrypted tunnel (IPsec or TLS) \u2014 not plain TCP",
+      "Encrypt all portable media used to carry OT data (BitLocker, VeraCrypt)",
+      "Disable weak cipher suites (RC4, DES, 3DES, TLS 1.0/1.1) on OT servers and remote access gateways",
+      "Implement certificate lifecycle management \u2014 expiry monitoring and renewal procedure"
+    ],
+    "maturity": {
+      "basic": "TLS for remote access; portable media encryption policy",
+      "mature": "TLS 1.2+ enforced for all inter-zone communications; weak ciphers disabled; portable media technically enforced; certificate expiry monitoring",
+      "advanced": "TLS 1.3 preferred; OT PKI for device authentication; HSM for key management; post-quantum cryptography roadmap; all OT data at rest encrypted on servers"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.DS-01",
+      "PR.DS-02"
+    ],
+    "mitreAttackIcs": [
+      "T0830"
+    ]
+  },
+  {
+    "slug": "ot-historian-integrity",
+    "name": "Historian and Process Data Integrity",
+    "domain": "data-protection",
+    "type": "preventive",
+    "slMin": 2,
+    "description": "Protect OT historian and process data from unauthorised modification. Historian data is critical for operational decisions, incident investigation, and NACSA s26 evidence. Unauthorised modification undermines all post-incident analysis.",
+    "sections": [
+      "DP-R4"
+    ],
+    "iec62443SRs": [
+      "SR-3.4",
+      "SR-3.9"
+    ],
+    "keyActivities": [
+      "Configure historian write access to SCADA/DCS data bus only \u2014 human users read-only by default",
+      "Enable historian access logging (reads and writes)",
+      "Ensure historian database is accessible from IT network only via IDMZ proxy, not directly",
+      "Implement historian backup with integrity verification (hash or checksum)",
+      "Restrict bulk historian data export \u2014 require authorisation and log all exports"
+    ],
+    "maturity": {
+      "basic": "Historian access logged; write access restricted to SCADA data bus",
+      "mature": "RBAC enforced on historian; access logging enabled; backup with integrity verification; IDMZ proxy for IT access",
+      "advanced": "Automated integrity monitoring; alert on any unexpected write; cryptographic integrity on historian backup files; any integrity violation triggers immediate incident investigation"
+    },
+    "nacsa": [
+      "s18",
+      "s26"
+    ],
+    "nistCsf": [
+      "PR.DS-06",
+      "PR.PS-04"
+    ],
+    "mitreAttackIcs": [
+      "T0882"
+    ]
   }
 ]

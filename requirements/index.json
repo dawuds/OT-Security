@@ -13,6 +13,7 @@
     { "id": "asset-inventory", "name": "Asset Inventory and Management", "description": "OT asset discovery, inventory maintenance, asset classification", "primaryFR": ["FR7"], "primarySRs": ["SR-7.8"], "file": "requirements/by-domain/asset-inventory.json" },
     { "id": "configuration-management", "name": "Configuration Management", "description": "Baseline configurations, change management, configuration monitoring", "primaryFR": ["FR7"], "primarySRs": ["SR-7.6", "SR-3.4"], "file": "requirements/by-domain/configuration-management.json" },
     { "id": "backup-recovery", "name": "Backup and Recovery", "description": "OT system backup, recovery procedures, RTO for control systems", "primaryFR": ["FR7"], "primarySRs": ["SR-7.3", "SR-7.4"], "file": "requirements/by-domain/backup-recovery.json" },
-    { "id": "monitoring-logging", "name": "Monitoring and Logging", "description": "Audit log generation, centralised logging, SIEM integration, OT-specific monitoring", "primaryFR": ["FR2", "FR6"], "primarySRs": ["SR-2.8", "SR-2.9", "SR-6.1", "SR-6.2"], "file": "requirements/by-domain/monitoring-logging.json" }
+    { "id": "monitoring-logging", "name": "Monitoring and Logging", "description": "Audit log generation, centralised logging, SIEM integration, OT-specific monitoring", "primaryFR": ["FR2", "FR6"], "primarySRs": ["SR-2.8", "SR-2.9", "SR-6.1", "SR-6.2"], "file": "requirements/by-domain/monitoring-logging.json" },
+    { "id": "data-protection", "name": "Data Confidentiality and Integrity", "description": "OT data classification, encryption in transit and at rest, historian integrity, secure disposal", "primaryFR": ["FR4"], "primarySRs": ["SR-4.1", "SR-4.2", "SR-4.3"], "file": "requirements/by-domain/data-protection.json" }
   ]
 }

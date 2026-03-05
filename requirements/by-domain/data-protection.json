@@ -1,0 +1,150 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "data-protection",
+  "name": "Data Confidentiality and Integrity",
+  "description": "Requirements for protecting sensitive OT data — process data, engineering configurations, credentials, and operational records — from unauthorised disclosure and modification. Applies to data in transit, at rest, and during decommissioning.",
+  "iec62443FRs": ["FR4"],
+  "primarySRs": ["SR-4.1", "SR-4.2", "SR-4.3"],
+  "requirements": [
+    {
+      "id": "DP-R1", "name": "OT data classification and inventory",
+      "description": "Identify and classify all sensitive OT data: credentials, PLC programs, engineering drawings, process setpoints, historian data, and audit logs. Classification drives protection requirements.",
+      "legal": {
+        "basis": ["IEC 62443-3-3 SR-4.1", "NACSA Act 854 s18", "IEC 62443-3-3 SR-7.8"],
+        "summary": "SR-4.1 requires protection of information from unauthorised disclosure. Classification is the prerequisite — you cannot protect what you haven't identified. NACSA s18 requires appropriate security measures; for OT this includes protecting sensitive operational data.",
+        "owner": "OT Security Engineer / Information Security team"
+      },
+      "technical": {
+        "summary": "Create an OT data inventory covering: credentials (stored in PAM vault), PLC programs (backed up with integrity controls), engineering drawings and configuration documents (access-controlled document management), historian data (access-controlled; read-only for operations, admin-only for schema changes), audit logs (write-once, access restricted).",
+        "actions": [
+          "Create OT data inventory with classification (confidential, restricted, internal)",
+          "Map each data class to its storage location and access controls",
+          "Ensure credentials are only in PAM vault — not in spreadsheets, shared drives, or email",
+          "Classify historian data as restricted — prevent bulk export without authorisation",
+          "Classify PLC programs and engineering drawings as confidential — theft enables sophisticated attacks"
+        ]
+      },
+      "governance": {
+        "summary": "Data classification scheme reviewed annually. Ownership assigned per data class. Access to classified data requires OT manager approval.",
+        "actions": [
+          "Define OT data classification policy",
+          "Assign data owners per classification category",
+          "Annual review of data inventory and access controls"
+        ]
+      },
+      "evidenceItems": ["OT data classification register", "Access control matrix per data class", "PAM vault contains all OT credentials (none in other locations)"],
+      "slMapping": {
+        "sl1": "Key OT data identified; credentials not stored in plain text",
+        "sl2": "Formal data classification; access controls applied; credentials in PAM vault; historian data access logged",
+        "sl3": "Data classification scheme with formal access control policy; data access anomaly detection; DLP controls for sensitive data exfiltration",
+        "sl4": "Hardware-encrypted storage for all classified OT data; encryption keys in HSM; any sensitive data exfiltration triggers immediate security alert"
+      },
+      "mitreAttackIcs": ["T0830", "T0882"]
+    },
+    {
+      "id": "DP-R2", "name": "Encryption for data in transit",
+      "description": "Sensitive OT data transmitted between zones or over untrusted networks must be encrypted using approved algorithms. This applies to remote access sessions, inter-zone historian replication, and cloud/IT-to-OT data flows.",
+      "legal": {
+        "basis": ["IEC 62443-3-3 SR-4.1 RE(1)", "IEC 62443-3-3 SR-4.3", "NACSA Act 854 s18"],
+        "summary": "SR-4.1 RE(1) requires encryption for data in transit where it traverses untrusted networks. SR-4.3 specifies approved cryptographic algorithms. NACSA s18 security measures for NCII data protection.",
+        "owner": "OT Network Security Engineer"
+      },
+      "technical": {
+        "summary": "All communications leaving the OT zone boundary must be encrypted: remote access sessions (TLS 1.2+ minimum, TLS 1.3 preferred), historian replication from OT to IDMZ/IT (TLS or IPsec tunnel), engineering remote access (TLS within remote access gateway). OT-internal protocol traffic (Modbus TCP, DNP3, EtherNet/IP) within a trusted zone does not require encryption at SL 2 — compensate with physical access control and network monitoring.",
+        "actions": [
+          "Enforce TLS 1.2+ minimum (TLS 1.3 preferred) for all remote access and inter-zone communications",
+          "Configure historian replication over encrypted tunnel (not plain TCP)",
+          "Disable weak cipher suites on all OT servers and firewalls",
+          "Document which OT protocols lack built-in encryption and what compensating controls are in place",
+          "Implement OT PKI or use vendor-provided certificate management for inter-device authentication"
+        ]
+      },
+      "governance": {
+        "summary": "Encryption standards reviewed annually against current cryptographic recommendations. Certificate lifecycle managed — expiry monitoring and renewal procedure.",
+        "actions": [
+          "Annual review of cipher suites against NIST SP 800-52 recommendations",
+          "Certificate expiry monitoring — alert 60 days before expiry",
+          "Cryptographic algorithm deprecation plan (migration away from TLS 1.2 when TLS 1.3 is universally supported)"
+        ]
+      },
+      "evidenceItems": ["TLS configuration on remote access gateway and historian", "Certificate inventory with expiry dates", "List of OT protocols lacking encryption with compensating controls documented"],
+      "slMapping": {
+        "sl1": "Encryption for remote access sessions; no encryption required for intra-zone OT protocol traffic",
+        "sl2": "TLS 1.2+ for all inter-zone and remote access communications; weak cipher suites disabled",
+        "sl3": "TLS 1.3 preferred; OT PKI for device authentication; message authentication for OT protocols where supported",
+        "sl4": "Hardware-enforced encryption; HSM for key management; post-quantum cryptography roadmap established"
+      },
+      "mitreAttackIcs": ["T0830"]
+    },
+    {
+      "id": "DP-R3", "name": "Encryption and protection for data at rest",
+      "description": "Sensitive OT data stored on OT servers, workstations, and portable media must be protected from unauthorised access. This includes PLC program files, historian databases, engineering configuration files, and credential stores.",
+      "legal": {
+        "basis": ["IEC 62443-3-3 SR-4.1", "IEC 62443-3-3 SR-4.2", "NACSA Act 854 s18"],
+        "summary": "SR-4.1 covers confidentiality at rest; SR-4.2 covers information persistence (secure disposal). NACSA s18 requires appropriate security measures for NCII asset data.",
+        "owner": "OT Security Engineer"
+      },
+      "technical": {
+        "summary": "Protect OT data at rest using: access controls (RBAC limits who can read sensitive files), encryption for portable media (any USB drives or laptops carrying OT data must be encrypted), secure disposal for decommissioned OT hardware (certified wipe or physical destruction), write-protect for audit logs.",
+        "actions": [
+          "Encrypt any portable media (USB drives, laptops) used to carry OT data off-site",
+          "Apply NTFS access controls on OT servers to restrict access to PLC programs, SCADA databases, and engineering files",
+          "Implement secure erase procedure for all decommissioned OT equipment (NIST SP 800-88 or physical destruction)",
+          "Ensure historian backup files are access-controlled — not on open network shares",
+          "Implement write-protection on audit log directories"
+        ]
+      },
+      "governance": {
+        "summary": "Decommission procedure includes secure data disposal step. Any transfer of OT data to IT or cloud systems requires authorisation and encryption.",
+        "actions": [
+          "OT decommission checklist includes secure data disposal",
+          "Authorisation required for any OT data transfer to IT or cloud systems",
+          "Annual review of data-at-rest access controls"
+        ]
+      },
+      "evidenceItems": ["Secure disposal records for decommissioned OT equipment", "Encryption configuration for portable media", "Access control configuration on OT data stores"],
+      "slMapping": {
+        "sl1": "Sensitive data on access-controlled shares; portable media handling policy",
+        "sl2": "Encrypted portable media for OT data; access controls on all OT data stores; secure disposal procedure",
+        "sl3": "Full-disk encryption on OT laptops and portable media; certified decommission records; data loss prevention controls",
+        "sl4": "Hardware-encrypted storage on all OT servers; HSM for encryption keys; tamper-evident asset disposal chain of custody"
+      },
+      "mitreAttackIcs": ["T0830", "T0882"]
+    },
+    {
+      "id": "DP-R4", "name": "Process data integrity and historian protection",
+      "description": "Historian data and real-time process data must be protected against unauthorised modification. Integrity of process data is critical for operational decision-making, incident investigation, and regulatory compliance.",
+      "legal": {
+        "basis": ["IEC 62443-3-3 SR-3.4", "IEC 62443-3-3 SR-4.1", "NACSA Act 854 s18", "IEC 62443-3-3 SR-3.9"],
+        "summary": "SR-3.4 (software and information integrity) covers process data integrity. SR-3.9 requires audit log protection. Historian data that has been altered cannot be used for incident investigation or as evidence under NACSA s26.",
+        "owner": "OT Security Engineer / SCADA Administrator"
+      },
+      "technical": {
+        "summary": "Protect historian data integrity: restrict write access to historian to the SCADA/DCS data bus only (not modifiable by operators or engineers), implement historian access logging, use historian-native integrity features where available, ensure historian backup includes integrity verification.",
+        "actions": [
+          "Configure historian write access to data bus only — human users read-only by default",
+          "Enable historian access logging (reads and any writes)",
+          "Implement historian backup with integrity verification (hash of backup contents)",
+          "Ensure historian database is not accessible from IT network without IDMZ proxy",
+          "Document and restrict any bulk historian data export capability"
+        ]
+      },
+      "governance": {
+        "summary": "Any modification to historian data requires OT manager authorisation and is recorded. Historian integrity audit conducted annually.",
+        "actions": [
+          "Policy: historian data is read-only for all users except automated data bus writes",
+          "Any manual historian modification requires OT manager approval and is documented",
+          "Annual historian integrity audit — verify no unauthorised data modifications"
+        ]
+      },
+      "evidenceItems": ["Historian access control configuration", "Historian access log sample", "Backup integrity verification records"],
+      "slMapping": {
+        "sl1": "Historian access logged; write access restricted to SCADA data bus",
+        "sl2": "Access controls enforced; access logging enabled; backup with integrity verification",
+        "sl3": "Automated integrity monitoring; alert on any unexpected write; historian IDMZ replication with encryption",
+        "sl4": "Cryptographic integrity on historian records; tamper-evident storage; any integrity violation triggers immediate investigation"
+      },
+      "mitreAttackIcs": ["T0830", "T0882"]
+    }
+  ]
+}

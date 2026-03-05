@@ -4,56 +4,451 @@
   "sourceType": "constructed-indicative",
   "verificationNote": "Mapping constructed from analysis of IEC 62443 SR objectives and NIST CSF 2.0 subcategory descriptions. Not normatively specified by either standard body.",
   "mappings": [
-    { "srId": "SR-1.1", "nistCsf": ["PR.AA-01", "PR.AA-02", "PR.AA-05"], "similarity": "high" },
-    { "srId": "SR-1.2", "nistCsf": ["PR.AA-01", "PR.AA-03"], "similarity": "high" },
-    { "srId": "SR-1.3", "nistCsf": ["PR.AA-05", "PR.AA-06"], "similarity": "high" },
-    { "srId": "SR-1.4", "nistCsf": ["PR.AA-01"], "similarity": "medium" },
-    { "srId": "SR-1.5", "nistCsf": ["PR.AA-02", "PR.AA-05"], "similarity": "high" },
-    { "srId": "SR-1.6", "nistCsf": ["PR.AA-01", "PR.IR-01"], "similarity": "high" },
-    { "srId": "SR-1.7", "nistCsf": ["PR.AA-02"], "similarity": "high" },
-    { "srId": "SR-1.8", "nistCsf": ["PR.AA-03", "PR.DS-02"], "similarity": "medium" },
-    { "srId": "SR-1.9", "nistCsf": ["PR.DS-02"], "similarity": "medium" },
-    { "srId": "SR-1.10", "nistCsf": ["PR.AA-01"], "similarity": "medium" },
-    { "srId": "SR-1.11", "nistCsf": ["PR.AA-02"], "similarity": "high" },
-    { "srId": "SR-1.12", "nistCsf": ["GV.PO-01"], "similarity": "low" },
-    { "srId": "SR-1.13", "nistCsf": ["PR.AA-01", "PR.AA-05", "PR.IR-01"], "similarity": "high" },
-    { "srId": "SR-2.1", "nistCsf": ["PR.AA-05", "PR.AA-06"], "similarity": "high" },
-    { "srId": "SR-2.2", "nistCsf": ["PR.AA-01", "PR.IR-01"], "similarity": "high" },
-    { "srId": "SR-2.3", "nistCsf": ["PR.AA-05", "PR.DS-01"], "similarity": "high" },
-    { "srId": "SR-2.4", "nistCsf": ["PR.PS-01", "PR.PS-02"], "similarity": "high" },
-    { "srId": "SR-2.5", "nistCsf": ["PR.AA-05"], "similarity": "medium" },
-    { "srId": "SR-2.6", "nistCsf": ["PR.AA-05"], "similarity": "medium" },
-    { "srId": "SR-2.7", "nistCsf": ["PR.AA-05"], "similarity": "medium" },
-    { "srId": "SR-2.8", "nistCsf": ["DE.AE-02", "PR.PT-01"], "similarity": "high" },
-    { "srId": "SR-2.9", "nistCsf": ["PR.PT-01"], "similarity": "high" },
-    { "srId": "SR-2.10", "nistCsf": ["DE.AE-02"], "similarity": "high" },
-    { "srId": "SR-2.11", "nistCsf": ["PR.PT-01"], "similarity": "medium" },
-    { "srId": "SR-2.12", "nistCsf": ["PR.PT-01", "DE.AE-02"], "similarity": "high" },
-    { "srId": "SR-3.1", "nistCsf": ["PR.DS-02", "PR.DS-10"], "similarity": "high" },
-    { "srId": "SR-3.2", "nistCsf": ["DE.CM-09", "PR.PS-04"], "similarity": "high" },
-    { "srId": "SR-3.3", "nistCsf": ["PR.PS-04", "DE.CM-03"], "similarity": "high" },
-    { "srId": "SR-3.4", "nistCsf": ["PR.DS-01", "PR.DS-10", "DE.CM-03"], "similarity": "high" },
-    { "srId": "SR-3.5", "nistCsf": ["PR.PS-04"], "similarity": "high" },
-    { "srId": "SR-3.6", "nistCsf": ["PR.PS-04"], "similarity": "medium" },
-    { "srId": "SR-3.7", "nistCsf": ["PR.PS-04"], "similarity": "medium" },
-    { "srId": "SR-3.8", "nistCsf": ["PR.DS-02"], "similarity": "high" },
-    { "srId": "SR-3.9", "nistCsf": ["PR.DS-01", "PR.PT-01"], "similarity": "high" },
-    { "srId": "SR-4.1", "nistCsf": ["PR.DS-01", "PR.DS-02"], "similarity": "high" },
-    { "srId": "SR-4.2", "nistCsf": ["PR.DS-01"], "similarity": "high" },
-    { "srId": "SR-4.3", "nistCsf": ["PR.DS-02", "PR.DS-10"], "similarity": "high" },
-    { "srId": "SR-5.1", "nistCsf": ["PR.IR-01", "PR.IR-02"], "similarity": "high" },
-    { "srId": "SR-5.2", "nistCsf": ["PR.IR-01"], "similarity": "high" },
-    { "srId": "SR-5.3", "nistCsf": ["PR.IR-01"], "similarity": "high" },
-    { "srId": "SR-5.4", "nistCsf": ["PR.IR-01", "PR.IR-02"], "similarity": "high" },
-    { "srId": "SR-6.1", "nistCsf": ["DE.AE-02", "RS.AN-03"], "similarity": "high" },
-    { "srId": "SR-6.2", "nistCsf": ["DE.AE-02", "DE.AE-06", "DE.CM-01", "DE.CM-06", "DE.CM-09"], "similarity": "high" },
-    { "srId": "SR-7.1", "nistCsf": ["PR.IR-04", "DE.CM-01"], "similarity": "high" },
-    { "srId": "SR-7.2", "nistCsf": ["PR.IR-04"], "similarity": "high" },
-    { "srId": "SR-7.3", "nistCsf": ["PR.DS-11", "RC.RP-04"], "similarity": "high" },
-    { "srId": "SR-7.4", "nistCsf": ["RC.RP-01", "RC.RP-04", "RC.RP-05"], "similarity": "high" },
-    { "srId": "SR-7.5", "nistCsf": ["PR.IR-04"], "similarity": "high" },
-    { "srId": "SR-7.6", "nistCsf": ["PR.PS-01", "DE.CM-03"], "similarity": "high" },
-    { "srId": "SR-7.7", "nistCsf": ["PR.PS-01", "PR.PS-03"], "similarity": "high" },
-    { "srId": "SR-7.8", "nistCsf": ["ID.AM-01", "ID.AM-02", "ID.AM-03"], "similarity": "high" }
+    {
+      "iec62443SR": "SR-1.1",
+      "srName": "Human user identification and authentication",
+      "nistCsfSubcategories": [
+        "PR.AA-01",
+        "PR.AA-02",
+        "PR.AA-05"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-1.2",
+      "srName": "Software process and device identification and authentication",
+      "nistCsfSubcategories": [
+        "PR.AA-01",
+        "PR.AA-03"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-1.3",
+      "srName": "Account management",
+      "nistCsfSubcategories": [
+        "PR.AA-05",
+        "PR.AA-06"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-1.4",
+      "srName": "Identifier management",
+      "nistCsfSubcategories": [
+        "PR.AA-01"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-1.5",
+      "srName": "Authenticator management",
+      "nistCsfSubcategories": [
+        "PR.AA-02",
+        "PR.AA-05"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-1.6",
+      "srName": "Wireless access management",
+      "nistCsfSubcategories": [
+        "PR.AA-01",
+        "PR.IR-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-1.7",
+      "srName": "Strength of password-based authentication",
+      "nistCsfSubcategories": [
+        "PR.AA-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-1.8",
+      "srName": "Public key infrastructure certificates",
+      "nistCsfSubcategories": [
+        "PR.AA-03",
+        "PR.DS-02"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-1.9",
+      "srName": "Strength of public key authentication",
+      "nistCsfSubcategories": [
+        "PR.DS-02"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-1.10",
+      "srName": "Authenticator feedback",
+      "nistCsfSubcategories": [
+        "PR.AA-01"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-1.11",
+      "srName": "Unsuccessful login attempts",
+      "nistCsfSubcategories": [
+        "PR.AA-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-1.12",
+      "srName": "System use notification",
+      "nistCsfSubcategories": [
+        "GV.PO-01"
+      ],
+      "similarity": "Low"
+    },
+    {
+      "iec62443SR": "SR-1.13",
+      "srName": "Access via untrusted networks",
+      "nistCsfSubcategories": [
+        "PR.AA-01",
+        "PR.AA-05",
+        "PR.IR-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.1",
+      "srName": "Authorization enforcement",
+      "nistCsfSubcategories": [
+        "PR.AA-05",
+        "PR.AA-06"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.2",
+      "srName": "Wireless use control",
+      "nistCsfSubcategories": [
+        "PR.AA-01",
+        "PR.IR-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.3",
+      "srName": "Use of portable and mobile devices",
+      "nistCsfSubcategories": [
+        "PR.AA-05",
+        "PR.DS-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.4",
+      "srName": "Mobile code",
+      "nistCsfSubcategories": [
+        "PR.PS-01",
+        "PR.PS-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.5",
+      "srName": "Session lock",
+      "nistCsfSubcategories": [
+        "PR.AA-05"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-2.6",
+      "srName": "Remote session termination",
+      "nistCsfSubcategories": [
+        "PR.AA-05"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-2.7",
+      "srName": "Concurrent session control",
+      "nistCsfSubcategories": [
+        "PR.AA-05"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-2.8",
+      "srName": "Auditable events",
+      "nistCsfSubcategories": [
+        "DE.AE-02",
+        "PR.PT-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.9",
+      "srName": "Audit storage capacity",
+      "nistCsfSubcategories": [
+        "PR.PT-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.10",
+      "srName": "Response to audit processing failures",
+      "nistCsfSubcategories": [
+        "DE.AE-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-2.11",
+      "srName": "Timestamps",
+      "nistCsfSubcategories": [
+        "PR.PT-01"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-2.12",
+      "srName": "Non-repudiation",
+      "nistCsfSubcategories": [
+        "PR.PT-01",
+        "DE.AE-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-3.1",
+      "srName": "Communication integrity",
+      "nistCsfSubcategories": [
+        "PR.DS-02",
+        "PR.DS-10"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-3.2",
+      "srName": "Malicious code protection",
+      "nistCsfSubcategories": [
+        "DE.CM-09",
+        "PR.PS-04"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-3.3",
+      "srName": "Security functionality verification",
+      "nistCsfSubcategories": [
+        "PR.PS-04",
+        "DE.CM-03"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-3.4",
+      "srName": "Software and information integrity",
+      "nistCsfSubcategories": [
+        "PR.DS-01",
+        "PR.DS-10",
+        "DE.CM-03"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-3.5",
+      "srName": "Input validation",
+      "nistCsfSubcategories": [
+        "PR.PS-04"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-3.6",
+      "srName": "Deterministic output",
+      "nistCsfSubcategories": [
+        "PR.PS-04"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-3.7",
+      "srName": "Error handling",
+      "nistCsfSubcategories": [
+        "PR.PS-04"
+      ],
+      "similarity": "Medium"
+    },
+    {
+      "iec62443SR": "SR-3.8",
+      "srName": "Session integrity",
+      "nistCsfSubcategories": [
+        "PR.DS-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-3.9",
+      "srName": "Protection of audit information",
+      "nistCsfSubcategories": [
+        "PR.DS-01",
+        "PR.PT-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-4.1",
+      "srName": "Information confidentiality",
+      "nistCsfSubcategories": [
+        "PR.DS-01",
+        "PR.DS-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-4.2",
+      "srName": "Information persistence",
+      "nistCsfSubcategories": [
+        "PR.DS-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-4.3",
+      "srName": "Use of cryptography",
+      "nistCsfSubcategories": [
+        "PR.DS-02",
+        "PR.DS-10"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-5.1",
+      "srName": "Network segmentation",
+      "nistCsfSubcategories": [
+        "PR.IR-01",
+        "PR.IR-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-5.2",
+      "srName": "Zone boundary protection",
+      "nistCsfSubcategories": [
+        "PR.IR-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-5.3",
+      "srName": "General purpose person-to-person communication restrictions",
+      "nistCsfSubcategories": [
+        "PR.IR-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-5.4",
+      "srName": "Application partitioning",
+      "nistCsfSubcategories": [
+        "PR.IR-01",
+        "PR.IR-02"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-6.1",
+      "srName": "Audit log accessibility",
+      "nistCsfSubcategories": [
+        "DE.AE-02",
+        "RS.AN-03"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-6.2",
+      "srName": "Continuous monitoring",
+      "nistCsfSubcategories": [
+        "DE.AE-02",
+        "DE.AE-06",
+        "DE.CM-01",
+        "DE.CM-06",
+        "DE.CM-09"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.1",
+      "srName": "Denial of service protection",
+      "nistCsfSubcategories": [
+        "PR.IR-04",
+        "DE.CM-01"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.2",
+      "srName": "Resource management",
+      "nistCsfSubcategories": [
+        "PR.IR-04"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.3",
+      "srName": "Control system backup",
+      "nistCsfSubcategories": [
+        "PR.DS-11",
+        "RC.RP-04"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.4",
+      "srName": "Control system recovery and reconstitution",
+      "nistCsfSubcategories": [
+        "RC.RP-01",
+        "RC.RP-04",
+        "RC.RP-05"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.5",
+      "srName": "Emergency power",
+      "nistCsfSubcategories": [
+        "PR.IR-04"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.6",
+      "srName": "Network and security configuration settings",
+      "nistCsfSubcategories": [
+        "PR.PS-01",
+        "DE.CM-03"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.7",
+      "srName": "Least functionality",
+      "nistCsfSubcategories": [
+        "PR.PS-01",
+        "PR.PS-03"
+      ],
+      "similarity": "High"
+    },
+    {
+      "iec62443SR": "SR-7.8",
+      "srName": "Control system component inventory",
+      "nistCsfSubcategories": [
+        "ID.AM-01",
+        "ID.AM-02",
+        "ID.AM-03"
+      ],
+      "similarity": "High"
+    }
   ]
 }

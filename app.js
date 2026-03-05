@@ -67,6 +67,7 @@ async function render(view, sub) {
     case 'threats':         return renderThreats(sub);
     case 'sectors':         return renderSectors(sub);
     case 'cross-ref':       return renderCrossRef(sub);
+    case 'framework':       return renderFramework(sub);
     case 'artifacts':       return renderArtifacts(sub);
     case 'search':          return renderSearch(sub);
     default:                return renderOverview();
@@ -280,22 +281,23 @@ async function renderIecOverview() {
 
 async function renderIecSL() {
   const data = await load('standards/iec62443/security-levels.json');
-  const levelsHtml = data.securityLevels ? data.securityLevels.map(sl => `
+  const levelsHtml = data.levels ? data.levels.map(sl => `
     <div class="card">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">
-        ${slBadge(sl.level)} ${slDots(sl.level)}
+        ${slBadge(sl.sl)} ${slDots(sl.sl)}
         <span class="card-title" style="margin:0">${escHtml(sl.label)}</span>
       </div>
-      <div class="card-desc">${escHtml(sl.description)}</div>
+      <div class="card-desc">${escHtml(sl.shortDescription || sl.description || '')}</div>
       <div class="detail-section" style="margin-top:0.75rem">
         <div style="font-size:0.75rem;color:var(--text-muted)"><strong>Threat Profile:</strong> ${escHtml(sl.threatProfile || '')}</div>
         <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem"><strong>Malaysia Context:</strong> ${escHtml(sl.malaysiaContext || '')}</div>
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem"><strong>Typical Applicability:</strong> ${escHtml(sl.typicalApplicability || '')}</div>
+        ${Array.isArray(sl.typicalApplicability) ? `
+        <div style="margin-top:0.35rem"><div style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.25rem">Typical Applicability</div>${tagList(sl.typicalApplicability)}</div>` : ''}
       </div>
       ${sl.controlCharacteristics ? `
         <div style="margin-top:0.75rem">
           <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.35rem">Control Characteristics</div>
-          ${tagList(sl.controlCharacteristics)}
+          ${typeof sl.controlCharacteristics === 'string' ? `<p style="font-size:0.8rem;color:var(--text-muted)">${escHtml(sl.controlCharacteristics)}</p>` : tagList(sl.controlCharacteristics)}
         </div>` : ''}
     </div>`).join('') : '';
 
@@ -303,9 +305,10 @@ async function renderIecSL() {
     <h2>Security Level Definitions</h2>
     <div class="two-col">${levelsHtml}</div>
     ${data.slTargetingProcess ? `
-      <h2>SL Targeting Process</h2>
-      <div class="attack-chain">${data.slTargetingProcess.map((step, i) => `
-        <div class="attack-step"><strong>Step ${i+1}:</strong> ${escHtml(step)}</div>`).join('')}
+      <h2>SL Targeting Process (IEC 62443-3-2)</h2>
+      <div class="card-desc" style="margin-bottom:0.75rem">${escHtml(data.slTargetingProcess.description || '')}</div>
+      <div class="attack-chain">${(data.slTargetingProcess.steps || []).map(step => `
+        <div class="attack-step"><strong>Step ${step.step}:</strong> ${escHtml(step.action)}</div>`).join('')}
       </div>` : ''}
   `;
 }
@@ -337,10 +340,11 @@ async function renderIecFR() {
 
 async function renderIecSR() {
   const data = await load('standards/iec62443/system-requirements.json');
-  if (!data.systemRequirements) return '<div class="empty-state">No data</div>';
+  const allSRs = data.systemRequirements || data.requirements || [];
+  if (!allSRs.length) return '<div class="empty-state">No data</div>';
 
   const frGroups = {};
-  data.systemRequirements.forEach(sr => {
+  allSRs.forEach(sr => {
     const fr = sr.fr || 'Other';
     if (!frGroups[fr]) frGroups[fr] = [];
     frGroups[fr].push(sr);
@@ -365,7 +369,7 @@ async function renderIecSR() {
   `).join('');
 
   return `
-    <div class="page-sub">Click any SR for full SL 1–4 descriptions and mappings. ${data.systemRequirements.length} SRs across 7 FRs.</div>
+    <div class="page-sub">Click any SR for full SL 1–4 descriptions and mappings. ${allSRs.length} SRs across 7 FRs.</div>
     <div id="sr-detail-panel"></div>
     ${srHtml}
   `;
@@ -611,8 +615,8 @@ async function renderRequirements(sub) {
       <div class="card-sub">${escHtml(d.id)}</div>
       <div class="card-desc">${escHtml(d.description || '')}</div>
       <div class="card-tags">
-        ${d.primaryFRs ? d.primaryFRs.map(f => `<span class="badge badge-sl2">${escHtml(f)}</span>`).join('') : ''}
-        ${d.nacsa ? d.nacsa.map(n => `<span class="badge badge-malaysia">${escHtml(n)}</span>`).join('') : ''}
+        ${(d.primaryFRs || d.primaryFR || []).map(f => `<span class="badge badge-sl2">${escHtml(f)}</span>`).join('')}
+        ${(d.nacsa || []).map(n => `<span class="badge badge-malaysia">${escHtml(n)}</span>`).join('')}
       </div>
     </div>`).join('');
 
@@ -642,18 +646,25 @@ async function renderDomainDetail(domainId, domains) {
       ${r.legal ? `
         <div class="detail-section" style="margin-top:0.75rem">
           <h3>Legal Basis</h3>
-          <div class="detail-body">${escHtml(r.legal.basis || '')}</div>
+          <div class="detail-body">${escHtml(r.legal.summary || '')}</div>
           <div class="card-tags" style="margin-top:0.35rem">
-            ${r.legal.iec62443 ? r.legal.iec62443.map(s => `<span class="badge badge-sl2">${escHtml(s)}</span>`).join('') : ''}
-            ${r.legal.nacsa ? r.legal.nacsa.map(n => `<span class="badge badge-malaysia">${escHtml(n)}</span>`).join('') : ''}
+            ${Array.isArray(r.legal.basis) ? r.legal.basis.map(s => `<span class="badge badge-sl2" style="margin:1px">${escHtml(s)}</span>`).join('') : ''}
           </div>
+          ${r.legal.owner ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem"><strong>Owner:</strong> ${escHtml(r.legal.owner)}</div>` : ''}
         </div>` : ''}
 
       ${r.technical ? `
         <div class="detail-section">
-          <h3>Technical Requirement</h3>
-          <div class="detail-body">${escHtml(r.technical.requirement || '')}</div>
-          ${r.technical.implementation ? `<div style="margin-top:0.35rem;font-size:0.8rem;color:var(--text-muted)">${r.technical.implementation}</div>` : ''}
+          <h3>Technical Implementation</h3>
+          <div class="detail-body">${escHtml(r.technical.summary || r.technical.requirement || '')}</div>
+          ${Array.isArray(r.technical.actions) ? `<ul style="margin-top:0.5rem;padding-left:1.25rem;font-size:0.8rem;color:var(--text-muted)">${r.technical.actions.map(a => `<li style="margin-bottom:0.2rem">${escHtml(a)}</li>`).join('')}</ul>` : ''}
+        </div>` : ''}
+
+      ${r.governance ? `
+        <div class="detail-section">
+          <h3>Governance</h3>
+          <div class="detail-body">${escHtml(r.governance.summary || '')}</div>
+          ${Array.isArray(r.governance.actions) ? `<ul style="margin-top:0.5rem;padding-left:1.25rem;font-size:0.8rem;color:var(--text-muted)">${r.governance.actions.map(a => `<li style="margin-bottom:0.2rem">${escHtml(a)}</li>`).join('')}</ul>` : ''}
         </div>` : ''}
 
       ${r.slMapping ? `
@@ -671,9 +682,9 @@ async function renderDomainDetail(domainId, domains) {
           <ul style="font-size:0.8rem;color:var(--text-muted);padding-left:1.25rem">${r.evidenceItems.map(e => `<li>${escHtml(e)}</li>`).join('')}</ul>
         </div>` : ''}
 
-      <div class="card-tags">
-        ${r.mitreAttackIcs ? r.mitreAttackIcs.map(m => `<span class="tag" style="color:var(--danger)">${escHtml(m)}</span>`).join('') : ''}
-        ${r.nacsa ? r.nacsa.map(n => `<span class="badge badge-malaysia">${escHtml(n)}</span>`).join('') : ''}
+      <div class="card-tags" style="margin-top:0.5rem">
+        ${(r.nacsa || (r.legal && r.legal.nacsa) || []).map(n => `<span class="badge badge-malaysia">${escHtml(n)}</span>`).join('')}
+        ${(r.mitreAttackIcs || []).map(m => `<span class="tag" style="color:var(--danger)">${escHtml(m)}</span>`).join('')}
       </div>
     </div>`).join('');
 
@@ -809,8 +820,17 @@ async function renderEvidence(sub) {
   const domains = Object.keys(byDomain);
   const active = sub && domains.includes(sub) ? sub : domains[0];
 
-  const tabsHtml = `<div class="tabs">${domains.map(d =>
-    `<button class="tab-btn${d === active ? ' active' : ''}" onclick="navigate('evidence','${d}')">${escHtml(byDomain[d]?.description ? d : d)}</button>`
+  const domainLabels = {
+    'network-segmentation': 'Network Segmentation', 'identity-access': 'Identity & Access',
+    'remote-access': 'Remote Access', 'patch-vulnerability': 'Patch & Vulnerability',
+    'monitoring-logging': 'Monitoring & Logging', 'incident-response': 'Incident Response',
+    'asset-management': 'Asset Management', 'safety-system': 'Safety Systems',
+    'configuration-management': 'Configuration Mgmt', 'supply-chain': 'Supply Chain',
+    'backup-recovery': 'Backup & Recovery', 'physical-security': 'Physical Security',
+    'data-protection': 'Data Protection',
+  };
+  const tabsHtml = `<div class="tabs" style="flex-wrap:wrap">${domains.map(d =>
+    `<button class="tab-btn${d === active ? ' active' : ''}" onclick="navigate('evidence','${d}')">${escHtml(domainLabels[d] || d)}</button>`
   ).join('')}</div>`;
 
   const domainData = byDomain[active] || {};
@@ -818,9 +838,10 @@ async function renderEvidence(sub) {
 
   const itemsHtml = items.map(item => `
     <div class="card">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+      <div style="display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap">
         <span class="badge badge-sl2">${escHtml(item.id)}</span>
-        <span class="card-title" style="margin:0">${escHtml(item.name)}</span>
+        <span class="card-title" style="margin:0;flex:1">${escHtml(item.name)}</span>
+        ${item.mandatory ? '<span class="badge badge-critical" style="flex-shrink:0">Mandatory</span>' : '<span class="badge badge-minor" style="flex-shrink:0">Advisory</span>'}
       </div>
       <div class="two-col">
         <div class="detail-section">
@@ -1028,7 +1049,9 @@ function renderSectorDetail(sector) {
 
     ${sector.regulatoryOverlap ? `
       <h2 style="margin-top:1rem">Regulatory Overlap</h2>
-      <div class="attack-chain">${sector.regulatoryOverlap.map(r => `<div class="attack-step">${escHtml(r)}</div>`).join('')}</div>` : ''}
+      <div class="attack-chain">${Array.isArray(sector.regulatoryOverlap)
+        ? sector.regulatoryOverlap.map(r => `<div class="attack-step">${escHtml(r)}</div>`).join('')
+        : `<div class="attack-step">${escHtml(String(sector.regulatoryOverlap))}</div>`}</div>` : ''}
   `);
 }
 
@@ -1067,22 +1090,28 @@ async function renderCrossNacsa() {
     <div class="card">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap">
         <span class="badge badge-malaysia">${escHtml(m.nacsaSection)}</span>
-        <span class="card-title" style="margin:0">${escHtml(m.nacsaObligation)}</span>
+        <span class="card-title" style="margin:0">${escHtml(m.nacsaTitle || m.nacsaObligation || '')}</span>
       </div>
-      <div class="card-desc">${escHtml(m.description || '')}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;font-style:italic">${escHtml(m.nacsaObligation || '')}</div>
+      <div class="card-desc">${escHtml(m.iec62443Alignment || m.description || '')}</div>
       <div style="margin-top:0.75rem">
         <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem">Related IEC 62443 SRs</div>
-        ${tagList(m.iec62443SRs || [])}
+        ${tagList(m.relevantSRs || m.iec62443SRs || [])}
       </div>
-      ${m.domains ? `<div style="margin-top:0.35rem">${tagList(m.domains)}</div>` : ''}
+      ${(m.relevantDomains || m.domains) ? `<div style="margin-top:0.35rem">${tagList(m.relevantDomains || m.domains)}</div>` : ''}
+      ${m.notes ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;border-top:1px solid var(--border);padding-top:0.5rem">${escHtml(m.notes)}</div>` : ''}
     </div>`).join('');
 
-  const slHtml = data.slToNacsaMapping ? `
+  const slMapping = data.slToNacsaMapping;
+  const slHtml = slMapping ? `
     <h2 style="margin-top:1.5rem">Security Level → NACSA Obligation</h2>
     <div class="table-wrap"><table>
       <thead><tr><th>SL</th><th>NACSA Minimum</th><th>Applicability</th></tr></thead>
-      <tbody>${data.slToNacsaMapping.map(m => `
-        <tr><td>${slBadge(m.sl)}</td><td>${escHtml(m.nacsaMinimum || '')}</td><td>${escHtml(m.applicability || '')}</td></tr>`).join('')}
+      <tbody>${Array.isArray(slMapping)
+        ? slMapping.map(m => `
+        <tr><td>${slBadge(m.sl)}</td><td>${escHtml(m.nacsaMinimum || '')}</td><td>${escHtml(m.applicability || '')}</td></tr>`).join('')
+        : Object.entries(slMapping).map(([sl, desc]) => `
+        <tr><td>${slBadge(parseInt(sl.replace('sl', '')))}</td><td colspan="2">${escHtml(String(desc))}</td></tr>`).join('')}
       </tbody>
     </table></div>` : '';
 
@@ -1096,13 +1125,19 @@ async function renderCrossNist() {
   const html = `
     <div class="table-wrap"><table>
       <thead><tr><th>IEC 62443 SR</th><th>SR Name</th><th>NIST CSF 2.0 Subcategories</th><th>Similarity</th></tr></thead>
-      <tbody>${mappings.map(m => `
+      <tbody>${mappings.map(m => {
+        const srId = m.iec62443SR || m.srId || '';
+        const srName = m.srName || '';
+        const csf = (m.nistCsfSubcategories || m.nistCsf || []).join(', ');
+        const sim = m.similarity || '';
+        const simNorm = sim.charAt(0).toUpperCase() + sim.slice(1).toLowerCase();
+        return `
         <tr>
-          <td><strong>${escHtml(m.iec62443SR)}</strong></td>
-          <td>${escHtml(m.srName || '')}</td>
-          <td style="font-size:0.75rem">${(m.nistCsfSubcategories || []).join(', ')}</td>
-          <td><span class="badge ${m.similarity === 'High' ? 'badge-preventive' : m.similarity === 'Medium' ? 'badge-corrective' : 'badge-minor'}">${escHtml(m.similarity || '')}</span></td>
-        </tr>`).join('')}
+          <td><strong>${escHtml(srId)}</strong></td>
+          <td>${escHtml(srName)}</td>
+          <td style="font-size:0.75rem">${escHtml(csf)}</td>
+          <td><span class="badge ${simNorm === 'High' ? 'badge-preventive' : simNorm === 'Medium' ? 'badge-corrective' : 'badge-minor'}">${escHtml(simNorm)}</span></td>
+        </tr>`;}).join('')}
       </tbody>
     </table></div>
   `;
@@ -1296,6 +1331,217 @@ function initSearch() {
   input.addEventListener('keydown', e => {
     if (e.key === 'Escape') { input.value = ''; searchQuery = ''; navigate('overview'); }
   });
+}
+
+// ─── FRAMEWORK MAPPING ───────────────────────────────────────────────────────
+async function renderFramework(sub) {
+  const tabs = [
+    { id: 'matrix',   label: 'FR → NACSA × CSF Matrix' },
+    { id: 'flow',     label: 'How Standards Connect' },
+    { id: 'mitre',    label: 'MITRE → Controls' },
+  ];
+  const active = sub || 'matrix';
+
+  const tabsHtml = `<div class="tabs">${tabs.map(t =>
+    `<button class="tab-btn${t.id === active ? ' active' : ''}" onclick="navigate('framework','${t.id}')">${t.label}</button>`
+  ).join('')}</div>`;
+
+  let content = '';
+  if (active === 'matrix')  content = await renderFrameworkMatrix();
+  else if (active === 'flow')   content = renderFrameworkFlow();
+  else if (active === 'mitre')  content = await renderFrameworkMitre();
+
+  setMain(`
+    <div class="page-title">Framework Mapping</div>
+    <div class="page-sub">How IEC 62443, NACSA Act 854, NIST CSF 2.0, and MITRE ATT&amp;CK for ICS interconnect — navigation guide for security professionals.</div>
+    <div class="disclaimer">All cross-framework mappings are constructed-indicative. Verify against official standard texts before use in formal assessments.</div>
+    ${tabsHtml}
+    ${content}
+  `);
+}
+
+async function renderFrameworkMatrix() {
+  const [frData, nacsaData, nistData] = await Promise.all([
+    load('standards/iec62443/foundational-requirements.json'),
+    load('cross-references/iec62443-to-nacsa.json'),
+    load('cross-references/iec62443-to-nist-csf.json'),
+  ]);
+
+  const frs = frData.foundationalRequirements || [];
+  const nacsaMappings = nacsaData.mappings || [];
+  const nistMappings = nistData.mappings || [];
+
+  // Build a quick lookup: NACSA section → which FRs are relevant
+  const frToNacsa = {};
+  const frToNist = {};
+
+  frs.forEach(fr => {
+    // Map based on FR → SR ranges; look up NIST subcategories for the FR's SRs
+    const frSRs = nistMappings.filter(m => {
+      const srId = m.srId || m.iec62443SR || '';
+      return srId.startsWith(`SR-${fr.id.replace('FR','')}.`);
+    });
+    const csfCodes = [...new Set(frSRs.flatMap(m => m.nistCsf || m.nistCsfSubcategories || []))].slice(0, 4);
+    frToNist[fr.id] = csfCodes;
+
+    // NACSA: find relevant sections mentioning any SR in this FR
+    const nacsaForFR = nacsaMappings
+      .filter(nm => (nm.relevantSRs || nm.iec62443SRs || []).some(sr => sr.includes(`-${fr.id.replace('FR','')}.`)))
+      .map(nm => nm.nacsaSection);
+    frToNacsa[fr.id] = [...new Set(nacsaForFR)];
+  });
+
+  const frColors = { FR1: 'badge-sl2', FR2: 'badge-sl3', FR3: 'badge-preventive', FR4: 'badge-corrective', FR5: 'badge-critical', FR6: 'badge-sl2', FR7: 'badge-sl3' };
+
+  const rows = frs.map(fr => {
+    const nacsa = (frToNacsa[fr.id] || [fr.nacsa || []].flat()).slice(0, 4);
+    const nist = frToNist[fr.id] || [];
+    return `
+    <tr>
+      <td><span class="badge ${frColors[fr.id] || 'badge-minor'}">${escHtml(fr.id)}</span></td>
+      <td><strong>${escHtml(fr.abbreviation || '')}</strong><div style="font-size:0.75rem;color:var(--text-muted)">${escHtml(fr.name)}</div></td>
+      <td><span class="tag">${escHtml(fr.srRange || '')}</span></td>
+      <td>${nacsa.length ? nacsa.map(n => `<span class="badge badge-malaysia" style="margin:1px">${escHtml(n)}</span>`).join('') : '<span style="color:var(--text-muted);font-size:0.75rem">—</span>'}</td>
+      <td style="font-size:0.75rem">${nist.length ? nist.map(c => `<span class="tag" style="margin:1px">${escHtml(c)}</span>`).join('') : '<span style="color:var(--text-muted)">—</span>'}</td>
+      <td><button class="back-link" style="font-size:0.75rem;padding:0.2rem 0.5rem" onclick="navigate('standards','iec-fr')">View FRs</button></td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <h2>IEC 62443 FRs × NACSA Act 854 × NIST CSF 2.0</h2>
+    <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem">Each IEC 62443 Foundational Requirement (FR) and its related NACSA obligations and NIST CSF 2.0 subcategories. Use this to plan assessments that satisfy multiple frameworks simultaneously.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>FR</th><th>Name</th><th>SRs</th><th>NACSA Act 854</th><th>NIST CSF 2.0</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+
+    <h2 style="margin-top:1.5rem">Coverage Summary</h2>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">IEC 62443 Scope</div>
+        <div class="card-desc">7 Foundational Requirements (FRs), 51 System Requirements (SRs). SRs are the measurable, testable technical requirements used in IEC 62443-3-2 zone assessments and IEC 62443-3-3 system specification.</div>
+        <div class="card-tags"><span class="tag">7 FRs</span><span class="tag">51 SRs</span><span class="tag">4 Security Levels</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">NACSA Act 854 Scope</div>
+        <div class="card-desc">IEC 62443 SL 2 substantially satisfies s18 duties for most NCII-designated OT operators. s21 risk assessment uses IEC 62443-3-2 methodology. s23 audit uses IEC 62443-3-3 SL assessment framework.</div>
+        <div class="card-tags"><span class="badge badge-malaysia">s17</span><span class="badge badge-malaysia">s18</span><span class="badge badge-malaysia">s21</span><span class="badge badge-malaysia">s22</span><span class="badge badge-malaysia">s23</span><span class="badge badge-malaysia">s26</span></div>
+      </div>
+    </div>`;
+}
+
+function renderFrameworkFlow() {
+  const nodes = [
+    { id: 'iec', label: 'IEC 62443', sub: '7 FRs · 51 SRs · 4 Security Levels', view: 'standards', vsub: 'iec-overview', color: 'var(--sl3)' },
+    { id: 'nacsa', label: 'NACSA Act 854', sub: 's17-s26 obligations · NCII-designated entities', view: 'cross-ref', vsub: 'nacsa', color: 'var(--accent)' },
+    { id: 'csf', label: 'NIST CSF 2.0', sub: '6 Functions · 22 Categories · 106 Subcategories', view: 'cross-ref', vsub: 'nist', color: 'var(--success)' },
+    { id: 'nist80082', label: 'NIST SP 800-82 Rev 3', sub: 'OT security guidance · Publicly available', view: 'standards', vsub: 'nist', color: 'var(--sl2)' },
+    { id: 'mitre', label: 'MITRE ATT&CK for ICS', sub: '12 Tactics · 80+ Techniques · public domain', view: 'standards', vsub: 'mitre', color: 'var(--danger)' },
+    { id: 'iec61511', label: 'IEC 61511 / SIL', sub: 'Functional safety · SIS design · SIL certification', view: 'requirements', vsub: 'safety-system-security', color: 'var(--sl4)' },
+  ];
+
+  const nodesHtml = nodes.map(n => `
+    <div class="card card-link" onclick="navigate('${n.view}','${n.vsub}')" style="border-left:3px solid ${n.color}">
+      <div class="card-title">${escHtml(n.label)}</div>
+      <div class="card-desc">${escHtml(n.sub)}</div>
+    </div>`).join('');
+
+  const relationships = [
+    { from: 'IEC 62443', to: 'NACSA Act 854', rel: 'IEC 62443 SL 2 is the implementation standard for NACSA s18 security measures and s21 risk assessment methodology (IEC 62443-3-2).' },
+    { from: 'IEC 62443', to: 'NIST CSF 2.0', rel: '51 SRs map to CSF 2.0 Protect/Detect subcategories. CSF provides governance context; IEC 62443 provides OT-specific technical requirements.' },
+    { from: 'IEC 62443', to: 'NIST SP 800-82', rel: 'NIST 800-82 provides OT security guidance complementary to IEC 62443. 800-82 covers legacy OT without SL targeting; IEC 62443 provides the SL framework.' },
+    { from: 'MITRE ATT&CK ICS', to: 'IEC 62443', rel: 'Each MITRE ICS technique maps to the IEC 62443 SRs that prevent or detect it. SR-5.1/5.2 (segmentation) counters most lateral movement techniques.' },
+    { from: 'IEC 61511', to: 'IEC 62443', rel: 'IEC 61511 governs SIS functional safety (SIL). IEC 62443 adds security (SL 4 required for SIS). Both standards must be satisfied simultaneously for safety system security.' },
+    { from: 'NACSA Act 854', to: 'NIST CSF 2.0', rel: 'CSF 2.0 Identify/Govern functions align with NACSA s21 risk assessment and s18 governance duties. NACSA does not mandate CSF but it is a useful parallel framework.' },
+  ];
+
+  const relHtml = relationships.map(r => `
+    <div class="card" style="margin-bottom:0.5rem">
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.35rem">
+        <strong style="font-size:0.85rem">${escHtml(r.from)}</strong>
+        <span style="color:var(--text-muted)">→</span>
+        <strong style="font-size:0.85rem">${escHtml(r.to)}</strong>
+      </div>
+      <div class="card-desc">${escHtml(r.rel)}</div>
+    </div>`).join('');
+
+  return `
+    <h2>Standards in this Framework</h2>
+    <div class="two-col">${nodesHtml}</div>
+    <h2 style="margin-top:1.5rem">How They Relate</h2>
+    ${relHtml}
+    <div class="card" style="margin-top:1rem;background:rgba(99,102,241,0.06);border-color:var(--accent)">
+      <div class="card-title">Recommended Assessment Order</div>
+      <div class="attack-chain" style="margin-top:0.75rem">
+        <div class="attack-step"><strong>1. Asset Inventory (SR-7.8)</strong> — Establish asset scope. You cannot assess what you haven't inventoried.</div>
+        <div class="attack-step"><strong>2. Zone Risk Assessment (IEC 62443-3-2)</strong> — Define zones, assign SL-T. This satisfies NACSA s21.</div>
+        <div class="attack-step"><strong>3. Gap Assessment (IEC 62443-3-3)</strong> — Measure SL-A per zone. SRs that are not met become remediation items. This is the NACSA s23 audit framework.</div>
+        <div class="attack-step"><strong>4. Remediation Roadmap</strong> — Prioritise by SL gap size and consequence. Use this repo's controls library for implementation guidance.</div>
+        <div class="attack-step"><strong>5. Monitoring &amp; Notification (SR-6.1, s26)</strong> — Deploy OT monitoring, test NACSA s26 notification procedure. 6-hour notification window starts from detection.</div>
+      </div>
+    </div>`;
+}
+
+async function renderFrameworkMitre() {
+  let mitreData;
+  try {
+    mitreData = await load('cross-references/mitre-to-controls.json');
+  } catch (e) {
+    mitreData = null;
+  }
+
+  const techniques = await load('standards/mitre-attack-ics/techniques.json');
+  const techs = techniques.techniques || [];
+
+  const controls = await load('controls/library.json');
+  const ctrlMap = {};
+  (Array.isArray(controls) ? controls : []).forEach(c => { ctrlMap[c.slug] = c; });
+
+  const mappings = mitreData ? (mitreData.mappings || []) : [];
+  const mappingMap = {};
+  mappings.forEach(m => { mappingMap[m.techniqueId] = m; });
+
+  const tacticGroups = {};
+  techs.forEach(t => {
+    if (!tacticGroups[t.tactic]) tacticGroups[t.tactic] = [];
+    tacticGroups[t.tactic].push(t);
+  });
+
+  const tacticLabels = {
+    'TA0104': 'Initial Access', 'TA0108': 'Execution', 'TA0110': 'Persistence',
+    'TA0111': 'Privilege Escalation', 'TA0103': 'Evasion', 'TA0102': 'Discovery',
+    'TA0109': 'Lateral Movement', 'TA0100': 'Collection', 'TA0101': 'Command & Control',
+    'TA0107': 'Inhibit Response Function', 'TA0106': 'Impair Process Control', 'TA0105': 'Impact',
+  };
+
+  const html = Object.entries(tacticGroups).map(([tactic, techList]) => {
+    const techHtml = techList.map(t => {
+      const m = mappingMap[t.id];
+      const ctrlSlugs = m ? (m.controlSlugs || []) : [];
+      const ctrlBadges = ctrlSlugs.slice(0, 2).map(s => {
+        const c = ctrlMap[s];
+        return c ? `<span class="tag" style="font-size:0.7rem">${escHtml(c.name)}</span>` : '';
+      }).join('');
+      return `
+      <tr>
+        <td><span class="tag" style="font-size:0.7rem;color:var(--danger)">${escHtml(t.id)}</span></td>
+        <td style="font-size:0.8rem">${escHtml(t.name)}</td>
+        <td style="font-size:0.75rem">${(t.iec62443SRs || []).map(s => `<span class="badge badge-sl2" style="margin:1px">${escHtml(s)}</span>`).join('')}</td>
+        <td>${ctrlBadges || `<span style="color:var(--text-muted);font-size:0.75rem">—</span>`}</td>
+      </tr>`;
+    }).join('');
+    return `
+    <h3 style="margin-top:1.25rem">${escHtml(tacticLabels[tactic] || tactic)}</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Technique</th><th>Name</th><th>IEC 62443 SRs</th><th>Defensive Controls</th></tr></thead>
+      <tbody>${techHtml}</tbody>
+    </table></div>`;
+  }).join('');
+
+  return `
+    <h2>MITRE ATT&amp;CK for ICS → Defensive Controls</h2>
+    <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem">Maps ICS techniques to the IEC 62443 SRs and controls library entries that prevent or detect each technique. Use this to prioritise controls based on threat actor TTPs.</p>
+    ${html}`;
 }
 
 // ─── Bootstrap ───────────────────────────────────────────────────────────────
