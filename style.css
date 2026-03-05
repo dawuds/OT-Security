@@ -426,6 +426,85 @@ tr:hover td { background: #FAFBFD; }
 }
 .risk-item:hover { box-shadow: var(--shadow-md); }
 
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a2e;
+    --surface: #16213e;
+    --surface2: #1e2a45;
+    --border: #2a2a4a;
+    --text: #E2E8F0;
+    --text-muted: #A0AEC0;
+    --accent: #818CF8;
+    --accent-light: rgba(129,140,248,0.15);
+    --accent-dark: #6366F1;
+    --accent2: #A78BFA;
+    --danger: #F87171;
+    --warning: #FBBF24;
+    --success: #34D399;
+    --sl1: #94A3B8;
+    --sl2: #818CF8;
+    --sl3: #FBBF24;
+    --sl4: #F87171;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
+    --bg-offset: #1e2a45;
+  }
+
+  a { color: var(--accent); }
+
+  .header {
+    background: #0f0f23;
+  }
+
+  .header-search input,
+  #search-input {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  #search-input:focus {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.03); }
+
+  .badge-sl1 { background: rgba(148,163,184,0.15); }
+  .badge-sl2 { background: rgba(129,140,248,0.15); }
+  .badge-sl3 { background: rgba(251,191,36,0.15); }
+  .badge-sl4 { background: rgba(248,113,113,0.15); }
+  .badge-critical { background: rgba(248,113,113,0.15); }
+  .badge-significant { background: rgba(251,191,36,0.15); }
+  .badge-minor { background: rgba(148,163,184,0.15); }
+  .badge-malaysia { background: rgba(129,140,248,0.15); }
+  .badge-preventive { background: rgba(52,211,153,0.15); }
+  .badge-detective { background: rgba(167,139,250,0.15); }
+  .badge-corrective { background: rgba(251,191,36,0.15); }
+
+  .disclaimer {
+    background: rgba(251,191,36,0.1);
+    border-color: rgba(251,191,36,0.3);
+    color: #FBBF24;
+  }
+
+  .attack-step {
+    background: var(--surface2);
+    border-left-color: var(--accent2);
+  }
+
+  .attack-step strong { color: var(--accent2); }
+
+  .tag {
+    background: var(--surface2);
+    border-color: var(--border);
+    color: var(--text-muted);
+  }
+
+  .accordion-header { background: var(--surface2); }
+  .accordion-header:hover { background: var(--border); }
+}
+
 /* ===== PRINT ===== */
 @media print {
   header { position: static; }
