@@ -1,4 +1,4 @@
-/* OT Security Framework — SPA
+/* OT Security Framework — SPA v1.1
    Static, zero-dependency, hash-routed.
    Data loaded lazily and cached in Map.
 */
