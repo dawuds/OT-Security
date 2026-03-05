@@ -522,7 +522,7 @@ async function renderPurdue() {
       ${l.securityCharacteristics ? `
         <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text-muted)">
           <div><strong>Primary Controls:</strong> ${escHtml((l.securityCharacteristics.primaryControls || []).join(', '))}</div>
-          <div style="margin-top:0.25rem"><strong>Key Vulnerabilities:</strong> ${escHtml((l.securityCharacteristics.vulnerabilities || []).join(', '))}</div>
+          <div style="margin-top:0.25rem"><strong>Key Vulnerabilities:</strong> ${escHtml(Array.isArray(l.securityCharacteristics.vulnerabilities) ? l.securityCharacteristics.vulnerabilities.join(', ') : (l.securityCharacteristics.vulnerabilities || ''))}</div>
         </div>` : ''}
     </div>`).join('');
 
