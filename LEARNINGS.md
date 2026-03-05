@@ -129,8 +129,9 @@ The Audit Package data layer is **fully wired** in this repo. UI rendering in ap
 - **`artifactSlugs[]` added to all 48 evidence items** in `evidence/index.json` — 1-2 artifact slugs per evidence item.
 - `controls/library.json`: 17 controls across 13 domains — all domains now have at least one control except `data-protection` (which has 2: `ot-data-encryption`, `ot-historian-integrity`).
 
+- `app.js`: Audit Package UI implemented in `renderControlDetail()` with accordion-based artifact cards and evidence checklist. Accordion CSS and click handler added.
+
 **Remaining work:**
-- `app.js`: No Audit Package rendering code yet — implement `renderControlDetail()` Audit Package section
 - `data-protection` domain has no evidence section in `evidence/index.json` — add evidence items for E-DP-01 through E-DP-03
 - Validation script (`validate.js`) not yet written — should assert domain ID consistency across all files
 
