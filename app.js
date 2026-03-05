@@ -517,7 +517,7 @@ async function renderPurdue() {
       ${l.typicalComponents ? `
         <div style="margin-top:0.75rem">
           <div style="font-size:0.7rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.35rem">Typical Components</div>
-          ${tagList(l.typicalComponents.map(c => typeof c === 'string' ? c : c.name || JSON.stringify(c)))}
+          ${tagList(l.typicalComponents.map(c => typeof c === 'string' ? c : c.type || c.name || JSON.stringify(c)))}
         </div>` : ''}
       ${l.securityCharacteristics ? `
         <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text-muted)">
