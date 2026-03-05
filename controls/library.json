@@ -2,7 +2,7 @@
   {
     "slug": "idmz-implementation",
     "name": "Industrial DMZ Implementation",
-    "domain": "zone-architecture",
+    "domain": "network-segmentation",
     "type": "preventive",
     "slMin": 2,
     "description": "Deploy a two-firewall Industrial DMZ between OT Level 3 and IT Level 4, breaking the direct IT-to-OT network path. All IT-OT data exchange flows through IDMZ-hosted services.",
@@ -78,7 +78,7 @@
   {
     "slug": "ot-passive-monitoring",
     "name": "Passive OT Network Monitoring",
-    "domain": "monitoring-detection",
+    "domain": "monitoring-logging",
     "type": "detective",
     "slMin": 2,
     "description": "Deploy passive OT network monitoring sensors to capture and analyse all OT network traffic without sending any packets to control systems. Provides asset discovery, anomaly detection, and security alerting.",
@@ -114,7 +114,7 @@
   {
     "slug": "ot-asset-inventory",
     "name": "OT Asset Inventory",
-    "domain": "asset-management",
+    "domain": "asset-inventory",
     "type": "preventive",
     "slMin": 1,
     "description": "Maintain a comprehensive, current inventory of all OT assets including hardware, software/firmware versions, network addresses, zone assignment, and criticality classification.",
@@ -149,7 +149,7 @@
   {
     "slug": "default-credential-elimination",
     "name": "Default Credential Elimination",
-    "domain": "identity-access",
+    "domain": "identity-access-management",
     "type": "preventive",
     "slMin": 1,
     "description": "Change all default vendor credentials on OT devices before network connection at commissioning. Audit all existing OT assets for default credentials. The single highest-impact, lowest-cost OT security action.",
@@ -183,7 +183,7 @@
   {
     "slug": "sis-network-isolation",
     "name": "SIS Physical Network Isolation",
-    "domain": "safety-system",
+    "domain": "safety-system-security",
     "type": "preventive",
     "slMin": 4,
     "description": "Physically isolate Safety Instrumented System controllers from all other networks. No network cables between SIS and DCS/HMI. Data diode for outbound SIS status data only. Hardware key switch required for engineering mode.",
@@ -219,7 +219,7 @@
   {
     "slug": "ot-patch-management",
     "name": "OT Patch Management Programme",
-    "domain": "patch-vulnerability",
+    "domain": "patch-vulnerability-management",
     "type": "preventive",
     "slMin": 2,
     "description": "Structured OT patch management: vendor advisory subscriptions, applicability assessment, vendor qualification check, test environment validation, change management approval, maintenance window deployment, and compensating controls for unpatchable assets.",
@@ -255,7 +255,7 @@
   {
     "slug": "ot-backup-recovery",
     "name": "OT Configuration Backup and Recovery",
-    "domain": "incident-response",
+    "domain": "backup-recovery",
     "type": "corrective",
     "slMin": 2,
     "description": "Automated backup of all OT configuration \u2014 PLC programs, DCS config, HMI, SCADA DB, historian, network devices. Offline copy. Quarterly restore test. OT-specific cyber recovery procedure.",
@@ -293,7 +293,7 @@
   {
     "slug": "ot-change-management",
     "name": "OT Change Management",
-    "domain": "asset-management",
+    "domain": "configuration-management",
     "type": "preventive",
     "slMin": 2,
     "description": "Formal change management process for all OT configuration changes: change request, technical review, operational approval, rollback plan, maintenance window deployment, post-change verification.",
@@ -363,7 +363,7 @@
   {
     "slug": "nacsa-incident-notification",
     "name": "NACSA Incident Notification Procedure",
-    "domain": "incident-response",
+    "domain": "incident-detection-response",
     "type": "corrective",
     "slMin": 2,
     "description": "Documented and tested procedure for classifying OT incidents against NACSA s26 significant-impact threshold and notifying NACSA within 6 hours. Includes 72-hour follow-up and 30-day final report procedures.",
@@ -397,7 +397,7 @@
   {
     "slug": "ot-mfa-implementation",
     "name": "Multi-Factor Authentication for OT",
-    "domain": "identity-access",
+    "domain": "identity-access-management",
     "type": "preventive",
     "slMin": 2,
     "description": "Enforce multi-factor authentication for all human access to OT systems. MFA prevents credential-based attacks \u2014 the primary OT initial access vector after remote access exploitation. Applies to remote access gateway, engineering workstation login, and SCADA/HMI admin access.",
@@ -435,7 +435,7 @@
   {
     "slug": "ot-rbac-implementation",
     "name": "Role-Based Access Control for OT",
-    "domain": "identity-access",
+    "domain": "identity-access-management",
     "type": "preventive",
     "slMin": 2,
     "description": "Define and implement OT-specific roles with least-privilege access. OT RBAC must balance security with operational availability \u2014 operator access to process control, engineer access to programming, administrator access to security configuration. RBAC reduces the blast radius of account compromise.",

@@ -121,17 +121,18 @@ Section-based joins (via provision maps) explode on broad provisions. In the PDP
 
 ### Current State (OT-Security)
 
-The Audit Package pattern is **documented but not yet implemented** in this repo:
+The Audit Package data layer is **fully wired** in this repo. UI rendering in app.js is the remaining step.
 
-- `artifacts/inventory.json`: 28 artifacts exist but use `sections[]` (SR IDs) — **`controlSlugs[]` not yet added**
-- `evidence/index.json`: 48 evidence items across 12 domains — **`artifactSlugs[]` not yet added**
-- `controls/library.json`: 17 controls across 11 domains — structure ready but 2 domains missing (backup-recovery, configuration-management)
-- `app.js`: No Audit Package rendering code yet
+**Completed (2026-03-05):**
+- **Domain ID standardization:** All files now use canonical IDs from `requirements/index.json`. Fixed `controls/library.json` (9 domain renames: `zone-architecture` -> `network-segmentation`, `identity-access` -> `identity-access-management`, `monitoring-detection` -> `monitoring-logging`, `asset-management` -> `asset-inventory` / `configuration-management`, `patch-vulnerability` -> `patch-vulnerability-management`, `safety-system` -> `safety-system-security`, `incident-response` -> `backup-recovery` / `incident-detection-response`). Fixed `controls/domains.json` (all 13 canonical domains now present, including previously missing `backup-recovery`, `configuration-management`, `monitoring-logging`). Verified `evidence/index.json` keys already matched canonical IDs (12 of 13 domains covered; `data-protection` has no evidence section yet).
+- **`controlSlugs[]` added to all 28 artifacts** in `artifacts/inventory.json` — 1-3 curated control slugs per artifact based on semantic relevance.
+- **`artifactSlugs[]` added to all 48 evidence items** in `evidence/index.json` — 1-2 artifact slugs per evidence item.
+- `controls/library.json`: 17 controls across 13 domains — all domains now have at least one control except `data-protection` (which has 2: `ot-data-encryption`, `ot-historian-integrity`).
 
-**Known issues to fix before implementing:**
-- **Critical domain ID mismatch:** Three different naming schemes across requirements (`network-segmentation`), controls (`zone-architecture`), and evidence (`network-segmentation`). Only `data-protection` matches across all three. Must standardize on requirements/index.json IDs as canonical source.
-- Controls missing for `backup-recovery` and `configuration-management` domains
-- `controls/domains.json` lists 11 domains but `requirements/index.json` has 13
+**Remaining work:**
+- `app.js`: No Audit Package rendering code yet — implement `renderControlDetail()` Audit Package section
+- `data-protection` domain has no evidence section in `evidence/index.json` — add evidence items for E-DP-01 through E-DP-03
+- Validation script (`validate.js`) not yet written — should assert domain ID consistency across all files
 
 ### Reference Implementation
 
