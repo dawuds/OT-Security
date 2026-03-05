@@ -24,6 +24,7 @@ A structured, open-access knowledge base for Operational Technology (OT) cyberse
 | **Controls** | Control library with maturity levels and NACSA/NIST CSF mappings |
 | **Evidence** | Audit evidence items per domain — what auditors look for, common gaps, how to verify |
 | **Threats** | Threat actor profiles, known incidents (Stuxnet, TRITON, Ukraine, Colonial Pipeline) mapped to preventive controls |
+| **Risk Management** | OT/ICS risk methodology, 5x5 safety-weighted matrix, 20-risk register, assessment checklist, treatment options |
 | **Sectors** | Energy, water, oil & gas, transport, manufacturing, building automation — with NACSA NCII obligations |
 | **Cross-References** | IEC 62443 ↔ NACSA Act 854, NIST CSF 2.0, NIST SP 800-82, sector ↔ NACSA codes of practice |
 

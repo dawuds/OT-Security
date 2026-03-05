@@ -1,0 +1,134 @@
+{
+  "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Risk treatment options constructed for OT/ICS environments based on ISO 31000, IEC 62443, and OT security best practices. Not endorsed by any standards body -- verify against authoritative sources before use in formal assessments.",
+  "title": "OT/ICS Risk Treatment Options",
+  "description": "Four standard risk treatment strategies applied to OT/ICS environments. Critical difference from IT: safety-related risks generally cannot be accepted -- they must be mitigated or avoided. The potential for human harm makes risk acceptance inappropriate for safety risks.",
+  "safetyConstraint": {
+    "rule": "Risks with safety impact at Level 4 (Major: permanent disability or multiple hospitalisations) or Level 5 (Catastrophic: loss of life) CANNOT be accepted. They must be mitigated or avoided.",
+    "rationale": "Accepting a known risk that could result in loss of life or serious injury is ethically unacceptable, legally indefensible, and inconsistent with IEC 61511 (functional safety) principles. Where risk acceptance is not possible and mitigation is insufficient, the process or system must be redesigned or shut down (avoidance).",
+    "regulatoryNote": "Under NACSA Act 854 s18, NCII operators are obligated to implement appropriate security measures. Accepting a safety-critical cybersecurity risk may be viewed as failure to meet this obligation."
+  },
+  "strategies": [
+    {
+      "id": "mitigate",
+      "name": "Mitigate (Reduce)",
+      "description": "Implement controls to reduce risk likelihood, impact, or both to an acceptable level. Most common treatment strategy in OT. Controls may be technical (network segmentation, monitoring), procedural (access management, change control), or physical (locks, tamper seals).",
+      "whenToUse": "When the risk can be reduced to an acceptable level through practical controls. This is the default strategy for most OT risks.",
+      "otExamples": [
+        {
+          "risk": "IT/OT lateral movement",
+          "mitigation": "Deploy IDMZ with deny-all firewalls, separate IT/OT credential stores, and OT network monitoring with boundary crossing alerts.",
+          "residualRisk": "Reduced from Critical to High -- residual risk from zero-day exploits and misconfiguration remains."
+        },
+        {
+          "risk": "Legacy protocol exploitation (Modbus/DNP3)",
+          "mitigation": "Deploy OT protocol-aware DPI on zone boundaries, implement function code allowlisting, and network micro-segmentation to limit protocol exposure.",
+          "residualRisk": "Reduced from High to Medium -- residual risk from any access within the micro-segment remains since protocols lack authentication."
+        },
+        {
+          "risk": "Unpatched HMI vulnerability",
+          "mitigation": "Application allowlisting on HMI workstations, network segmentation limiting HMI exposure, and compensating monitoring until vendor-qualified patch is available.",
+          "residualRisk": "Reduced from High to Medium -- residual risk from application-layer exploits that bypass allowlisting."
+        },
+        {
+          "risk": "SIS compromise (TRITON-style)",
+          "mitigation": "Physical SIS isolation with annual cable trace verification, SIS program integrity monitoring, data diode for SIS data export, and two-person rule for all SIS modifications.",
+          "residualRisk": "Remains Critical despite mitigation due to catastrophic safety impact -- continuous monitoring and periodic verification required."
+        }
+      ],
+      "considerations": [
+        "Compensating controls must be verified as effective, not just documented",
+        "Multiple layers of mitigation (defence in depth) preferred over single control",
+        "OT mitigation must not introduce new safety risks (e.g., a security control that delays emergency shutdown)",
+        "Mitigation timeline must account for OT maintenance windows and change management"
+      ]
+    },
+    {
+      "id": "transfer",
+      "name": "Transfer (Share)",
+      "description": "Transfer the financial impact of the risk to a third party, typically through insurance or contractual arrangements. Does NOT transfer the safety obligation or regulatory liability -- only the financial consequence.",
+      "whenToUse": "When financial loss from risk materialisation is the primary concern and technical mitigation is not cost-effective. Common for business continuity risks. Rarely appropriate as the sole treatment for safety risks.",
+      "otExamples": [
+        {
+          "risk": "Ransomware causing extended plant outage",
+          "transfer": "Cyber insurance policy covering business interruption, incident response costs, and regulatory fines. Policy must explicitly cover OT/ICS systems (many cyber policies exclude OT).",
+          "limitation": "Insurance does not reduce the probability of attack or speed recovery. Must be combined with technical mitigation (backups, segmentation)."
+        },
+        {
+          "risk": "Vendor software vulnerability causing process disruption",
+          "transfer": "Contractual liability clause requiring vendor to cover remediation costs and provide emergency patches. Service Level Agreement with financial penalties for delayed vulnerability response.",
+          "limitation": "Does not prevent the vulnerability from being exploited. Vendor may not have resources to respond to sophisticated OT attack."
+        }
+      ],
+      "considerations": [
+        "Cyber insurance for OT must explicitly include ICS/SCADA systems -- many policies exclude them",
+        "Insurance does not transfer safety obligation -- operator remains responsible for safe operations",
+        "Transfer is rarely sufficient alone for OT risks -- usually combined with mitigation",
+        "NACSA Act 854 obligations cannot be transferred to insurers or vendors",
+        "Verify insurer understands OT environment -- standard IT cyber policies may not cover physical damage from cyber attack"
+      ]
+    },
+    {
+      "id": "avoid",
+      "name": "Avoid (Eliminate)",
+      "description": "Eliminate the risk entirely by removing the threat source, removing the vulnerable asset, or ceasing the risky activity. In OT, avoidance may mean redesigning a process, decommissioning a system, or disconnecting a network path.",
+      "whenToUse": "When the risk cannot be reduced to an acceptable level through mitigation. Required for safety risks where residual risk after mitigation remains unacceptable. Also appropriate when the business benefit does not justify the risk.",
+      "otExamples": [
+        {
+          "risk": "Internet-exposed SCADA system",
+          "avoidance": "Remove internet connectivity entirely. If remote access is required, route through dedicated IDMZ gateway -- never expose SCADA directly to internet.",
+          "tradeoff": "Loss of direct remote access convenience. Compensated by secure remote access gateway."
+        },
+        {
+          "risk": "SIS connected to IT network for data export",
+          "avoidance": "Disconnect SIS from all networks. If data export is required, implement unidirectional data diode (hardware-enforced).",
+          "tradeoff": "Loss of real-time SIS data in enterprise systems. Compensated by data diode providing one-way data flow."
+        },
+        {
+          "risk": "End-of-life PLC with critical vulnerability and no vendor support",
+          "avoidance": "Replace PLC with supported model. If immediate replacement is not possible, isolate completely with dedicated firewall and enhanced monitoring until replacement.",
+          "tradeoff": "Capital expenditure for replacement. Justified by elimination of unpatchable critical vulnerability."
+        }
+      ],
+      "considerations": [
+        "Avoidance is the strongest treatment but may require significant investment or process redesign",
+        "For safety-critical risks, avoidance may mean controlled plant shutdown until risk is eliminated",
+        "Document the risk that was avoided and verify avoidance controls remain effective during periodic review",
+        "Avoidance decisions should involve operations engineering to assess process impact"
+      ]
+    },
+    {
+      "id": "accept",
+      "name": "Accept (Retain)",
+      "description": "Consciously decide to retain the risk without additional controls, based on the judgement that the risk is within acceptable tolerance. In OT, acceptance must be formally documented with management sign-off and is subject to strict constraints for safety-related risks.",
+      "whenToUse": "When the risk is low and the cost of mitigation significantly exceeds the potential impact. When residual risk after mitigation is within tolerance. NEVER for safety risks at Level 4 or 5 impact.",
+      "otExamples": [
+        {
+          "risk": "Minor process data visibility delay during monitoring platform maintenance",
+          "acceptance": "Accept 4-hour monitoring gap during quarterly maintenance window. Compensated by manual operator vigilance and shortened maintenance procedure.",
+          "signOff": "OT Security Manager with OT Operations Manager concurrence"
+        },
+        {
+          "risk": "NTP time drift on isolated field devices",
+          "acceptance": "Accept up to 5-second time drift on field devices that cannot be configured for NTP. Log correlation slightly degraded but field devices are on isolated segment with other detection controls.",
+          "signOff": "OT Security Engineer"
+        }
+      ],
+      "constraints": [
+        "Safety risks at Level 4 (Major) or Level 5 (Catastrophic) impact CANNOT be accepted regardless of likelihood",
+        "Acceptance requires formal documented sign-off from risk owner (OT Security Manager minimum, CISO for High risks)",
+        "Accepted risks must be reviewed at defined intervals (quarterly for Medium, monthly for High)",
+        "Acceptance must include defined triggers for re-evaluation (e.g., threat landscape change, new vulnerability, incident in sector)",
+        "NACSA s21 audit may challenge risk acceptance decisions -- be prepared to justify with documented rationale",
+        "Risk acceptance is time-limited -- set an expiry date and re-evaluate"
+      ],
+      "considerations": [
+        "Acceptance is a deliberate decision, not a failure to assess",
+        "Ensure acceptance is not used as default when mitigation is difficult but possible",
+        "Maintain a risk acceptance register reviewed by CISO quarterly",
+        "Track industry incidents -- if a peer suffers an incident from an accepted risk category, trigger immediate re-evaluation"
+      ]
+    }
+  ]
+}

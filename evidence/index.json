@@ -632,6 +632,68 @@
         }
       ]
     },
+    "data-protection": {
+      "description": "Evidence that OT data — process values, engineering configurations, credentials, and historian records — is classified, encrypted where required, and protected against unauthorised disclosure or modification.",
+      "primarySRs": [
+        "SR-4.1",
+        "SR-4.2",
+        "SR-4.3",
+        "SR-3.4"
+      ],
+      "evidenceItems": [
+        {
+          "id": "E-DP-01",
+          "name": "OT data flow diagrams showing data classification per flow",
+          "mandatory": true,
+          "artifactSlugs": ["zone-conduit-diagram", "ot-network-baseline"],
+          "whatGoodLooksLike": [
+            "Data flow diagram covers all OT zones including historian replication, remote access, and cloud/IT integration paths",
+            "Each data flow labelled with classification (confidential, restricted, internal) and encryption status",
+            "Unencrypted legacy protocol flows documented with compensating controls"
+          ],
+          "commonGaps": [
+            "Data flow diagram exists for IT but not OT-specific flows",
+            "Historian replication to IT/cloud shown but encryption status unknown",
+            "Legacy protocol flows (Modbus TCP, DNP3) not documented as unencrypted"
+          ],
+          "howToVerify": "Review data flow diagram against zone-conduit diagram. Verify encryption status for each inter-zone flow by checking firewall/switch configuration. Confirm compensating controls for unencrypted flows."
+        },
+        {
+          "id": "E-DP-02",
+          "name": "OT data classification register with access controls per data class",
+          "mandatory": true,
+          "artifactSlugs": ["ot-asset-register", "rbac-role-definitions"],
+          "whatGoodLooksLike": [
+            "All OT data types classified: PLC programs (confidential), historian data (restricted), engineering drawings (confidential), credentials (confidential), audit logs (restricted)",
+            "Access control matrix mapping each data class to authorised roles",
+            "Classification scheme reviewed within last 12 months"
+          ],
+          "commonGaps": [
+            "No formal OT data classification — IT classification scheme applied without OT-specific categories",
+            "PLC programs and engineering drawings not classified as confidential despite enabling sophisticated attacks if stolen",
+            "Historian data accessible to broad user groups without access logging"
+          ],
+          "howToVerify": "Review OT data classification register. Select 3 data classes and verify access controls match the register. Check historian access logs for unexpected users."
+        },
+        {
+          "id": "E-DP-03",
+          "name": "Historian backup integrity verification and data protection records",
+          "mandatory": true,
+          "artifactSlugs": ["ot-backup-register", "backup-integrity-hashes"],
+          "whatGoodLooksLike": [
+            "Historian backups include integrity verification (SHA-256 hash or equivalent) stored separately from backup media",
+            "Backup access restricted — not on open network shares accessible from IT network",
+            "Restore test within last 12 months verifying data integrity post-restore"
+          ],
+          "commonGaps": [
+            "Historian backup stored on shared network drive accessible to broad user group",
+            "No integrity verification — backup corruption would go undetected",
+            "Restore test covers file-level restore but does not verify historian data integrity post-restore"
+          ],
+          "howToVerify": "Review historian backup configuration. Verify hash records exist for recent backups. Check backup storage access controls. Request most recent restore test report and verify integrity check was performed."
+        }
+      ]
+    },
     "incident-detection-response": {
       "description": "Evidence that the organisation can detect, classify, respond, and notify for OT security incidents.",
       "primarySRs": [

@@ -69,6 +69,7 @@ async function render(view, sub) {
     case 'cross-ref':       return renderCrossRef(sub);
     case 'framework':       return renderFramework(sub);
     case 'artifacts':       return renderArtifacts(sub);
+    case 'risk-management': return renderRiskManagement(sub);
     case 'search':          return renderSearch(sub);
     default:                return renderOverview();
   }
@@ -1614,6 +1615,309 @@ async function renderFrameworkMitre() {
     <h2>MITRE ATT&amp;CK for ICS → Defensive Controls</h2>
     <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem">Maps ICS techniques to the IEC 62443 SRs and controls library entries that prevent or detect each technique. Use this to prioritise controls based on threat actor TTPs.</p>
     ${html}`;
+}
+
+// ─── RISK MANAGEMENT ─────────────────────────────────────────────────────────
+async function renderRiskManagement(sub) {
+  const tabs = [
+    { id: 'methodology', label: 'Methodology' },
+    { id: 'matrix',      label: 'Risk Matrix' },
+    { id: 'register',    label: 'Risk Register' },
+    { id: 'checklist',   label: 'Assessment Checklist' },
+    { id: 'treatment',   label: 'Treatment Options' },
+  ];
+  const active = sub || 'methodology';
+
+  const tabsHtml = `<div class="tabs">${tabs.map(t =>
+    `<button class="tab-btn${t.id === active ? ' active' : ''}" onclick="navigate('risk-management','${t.id}')">${t.label}</button>`
+  ).join('')}</div>`;
+
+  let content = '';
+  if (active === 'methodology')  content = await renderRMMethodology();
+  else if (active === 'matrix')  content = await renderRMMatrix();
+  else if (active === 'register') content = await renderRMRegister();
+  else if (active === 'checklist') content = await renderRMChecklist();
+  else if (active === 'treatment') content = await renderRMTreatment();
+
+  setMain(`
+    <div class="page-title">Risk Management</div>
+    <div class="page-sub">OT/ICS-specific risk assessment methodology, 5x5 matrix, risk register, and treatment options</div>
+    <div class="disclaimer"><strong>Safety Priority:</strong> In OT environments, risk must account for safety (human life), environmental damage, and process integrity — not just the IT-centric CIA triad. Safety-related risks cannot be accepted.</div>
+    ${tabsHtml}
+    ${content}
+  `);
+}
+
+async function renderRMMethodology() {
+  const data = await load('risk-management/methodology.json');
+  const dims = data.impactDimensions?.dimensions || [];
+  const factors = data.otSpecificRiskFactors?.factors || [];
+  const steps = data.assessmentProcess?.steps || [];
+  const impactLevels = data.impactScale?.levels || [];
+  const likelihoodLevels = data.likelihoodScale?.levels || [];
+
+  const dimsHtml = dims.map(d => `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+        <span class="badge badge-sl${d.weight === 'Highest' ? '4' : d.weight === 'High' ? '3' : '2'}">${escHtml(d.weight)}</span>
+        <span class="card-title" style="margin:0">${escHtml(d.name)}</span>
+      </div>
+      <div class="card-desc">${escHtml(d.description)}</div>
+      ${d.examples ? `<div style="margin-top:0.5rem">${tagList(d.examples)}</div>` : ''}
+    </div>`).join('');
+
+  const factorsHtml = factors.map(f => `
+    <div class="card">
+      <div class="card-title">${escHtml(f.name)}</div>
+      <div class="card-desc">${escHtml(f.description)}</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;border-top:1px solid var(--border);padding-top:0.5rem"><strong>Guidance:</strong> ${escHtml(f.guidance)}</div>
+    </div>`).join('');
+
+  const stepsHtml = steps.map(s => `
+    <div class="attack-step"><strong>Step ${s.step}: ${escHtml(s.name)}</strong><br><span style="font-size:0.8rem">${escHtml(s.description)}</span></div>`).join('');
+
+  const impactTableHtml = impactLevels.map(l => `
+    <tr>
+      <td><span class="badge badge-sl${l.level >= 4 ? '4' : l.level >= 3 ? '3' : l.level >= 2 ? '2' : '1'}">${l.level}</span></td>
+      <td><strong>${escHtml(l.label)}</strong></td>
+      <td style="font-size:0.75rem">${escHtml(l.safety)}</td>
+      <td style="font-size:0.75rem">${escHtml(l.environmental)}</td>
+      <td style="font-size:0.75rem">${escHtml(l.availability)}</td>
+    </tr>`).join('');
+
+  const likelihoodTableHtml = likelihoodLevels.map(l => `
+    <tr>
+      <td><strong>${l.level}</strong></td>
+      <td><strong>${escHtml(l.label)}</strong></td>
+      <td style="font-size:0.8rem">${escHtml(l.frequency)}</td>
+      <td style="font-size:0.75rem">${escHtml(l.otContext)}</td>
+    </tr>`).join('');
+
+  return `
+    <div class="disclaimer">${escHtml(data.verificationNote || '')}</div>
+    <h2>${escHtml(data.title || 'Methodology')}</h2>
+    <div class="detail-body" style="margin-bottom:1rem">${escHtml(data.description || '')}</div>
+    <div class="card" style="border-left:3px solid var(--danger);margin-bottom:1.5rem">
+      <div class="card-desc"><strong>Key Principle:</strong> ${escHtml(data.keyPrinciple || '')}</div>
+    </div>
+
+    <h2>Impact Dimensions (OT-Weighted)</h2>
+    <div class="page-sub">${escHtml(data.impactDimensions?.description || '')}</div>
+    <div class="two-col">${dimsHtml}</div>
+
+    <h2>Impact Scale</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Level</th><th>Label</th><th>Safety</th><th>Environmental</th><th>Availability</th></tr></thead>
+      <tbody>${impactTableHtml}</tbody>
+    </table></div>
+
+    <h2>Likelihood Scale</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Level</th><th>Label</th><th>Frequency</th><th>OT Context</th></tr></thead>
+      <tbody>${likelihoodTableHtml}</tbody>
+    </table></div>
+
+    <h2>OT-Specific Risk Factors</h2>
+    <div class="page-sub">${escHtml(data.otSpecificRiskFactors?.description || '')}</div>
+    <div class="two-col">${factorsHtml}</div>
+
+    <h2>Assessment Process (IEC 62443-3-2)</h2>
+    <div class="attack-chain">${stepsHtml}</div>
+  `;
+}
+
+async function renderRMMatrix() {
+  const data = await load('risk-management/risk-matrix.json');
+  const bands = data.bands || [];
+  const matrix = data.matrix || [];
+  const safetyOverride = data.safetyOverride || {};
+
+  const bandColors = {};
+  bands.forEach(b => { bandColors[b.band] = b.color; });
+
+  // Build 5x5 grid
+  let gridHtml = '<tr><th style="width:6rem"></th>';
+  for (let i = 1; i <= 5; i++) {
+    const imp = (data.axes?.impact?.scale || []).find(s => s.level === i);
+    gridHtml += `<th style="text-align:center;font-size:0.7rem">${i}<br>${escHtml(imp?.label || '')}</th>`;
+  }
+  gridHtml += '</tr>';
+
+  for (let l = 5; l >= 1; l--) {
+    const lk = (data.axes?.likelihood?.scale || []).find(s => s.level === l);
+    gridHtml += `<tr><td style="font-size:0.7rem;font-weight:600"><span style="display:inline-block;width:1.2rem">${l}</span> ${escHtml(lk?.label || '')}</td>`;
+    for (let i = 1; i <= 5; i++) {
+      const cell = matrix.find(m => m.likelihood === l && m.impact === i);
+      const color = cell ? (bandColors[cell.band] || '#666') : '#666';
+      gridHtml += `<td style="text-align:center;background:${color}20;border:1px solid ${color}40;font-weight:600;color:${color};font-size:0.8rem">${cell?.score || ''}<br><span style="font-size:0.65rem">${escHtml(cell?.band || '')}</span></td>`;
+    }
+    gridHtml += '</tr>';
+  }
+
+  const bandsHtml = bands.map(b => `
+    <div class="card" style="border-left:4px solid ${b.color}">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+        <span class="badge" style="background:${b.color};color:white">${escHtml(b.band)}</span>
+        <span style="font-size:0.75rem;color:var(--text-muted)">Score ${escHtml(b.scoreRange)}</span>
+        <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto">Review: ${escHtml(b.reviewCadence)}</span>
+      </div>
+      <div class="card-desc">${escHtml(b.action)}</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem"><strong>Escalation:</strong> ${escHtml(b.escalation)}</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem"><strong>OT Note:</strong> ${escHtml(b.otNote)}</div>
+    </div>`).join('');
+
+  return `
+    <h2>5x5 Risk Matrix</h2>
+    <div class="page-sub">${escHtml(data.description || '')}</div>
+    <div class="table-wrap"><table style="border-collapse:collapse">${gridHtml}</table></div>
+
+    <div class="card" style="border-left:3px solid var(--danger);margin:1.5rem 0">
+      <div class="card-title">Safety Override Rule</div>
+      <div class="card-desc">${escHtml(safetyOverride.description || '')}</div>
+      <div style="font-family:var(--mono);font-size:0.8rem;background:var(--bg-offset);padding:0.5rem;border-radius:4px;margin-top:0.5rem">${escHtml(safetyOverride.rule || '')}</div>
+    </div>
+
+    <h2>Band Actions</h2>
+    ${bandsHtml}
+  `;
+}
+
+async function renderRMRegister() {
+  const data = await load('risk-management/risk-register.json');
+  const risks = data.risks || [];
+  const categories = [...new Set(risks.map(r => r.category))];
+
+  const filterHtml = `<div class="tabs" style="flex-wrap:wrap;margin-bottom:1rem">
+    <button class="tab-btn active" onclick="filterRisks('all')">All (${risks.length})</button>
+    ${categories.map(c => `<button class="tab-btn" onclick="filterRisks('${c}')">${escHtml(c)} (${risks.filter(r=>r.category===c).length})</button>`).join('')}
+  </div>`;
+
+  const bandColor = b => b === 'Critical' ? '#EF4444' : b === 'High' ? '#F97316' : b === 'Medium' ? '#F59E0B' : '#22C55E';
+
+  const risksHtml = risks.map(r => `
+    <div class="card risk-item" data-category="${escHtml(r.category)}" style="margin-bottom:0.75rem">
+      <div style="display:flex;align-items:flex-start;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem">
+        <span class="badge badge-sl2">${escHtml(r.id)}</span>
+        <span class="card-title" style="margin:0;flex:1">${escHtml(r.title)}</span>
+        ${r.safetyImpact ? '<span class="badge badge-critical">Safety</span>' : ''}
+        <span class="badge" style="background:${bandColor(r.inherentRisk)};color:white">Inherent: ${escHtml(r.inherentRisk)}</span>
+        <span class="badge" style="background:${bandColor(r.residualRisk)};color:white">Residual: ${escHtml(r.residualRisk)}</span>
+      </div>
+      <div class="card-desc">${escHtml(r.description)}</div>
+      <div class="two-col" style="margin-top:0.75rem">
+        <div class="detail-section">
+          <h3>Existing Controls</h3>
+          <ul style="font-size:0.8rem;padding-left:1.25rem">${(r.existingControls||[]).map(c => `<li>${escHtml(c)}</li>`).join('')}</ul>
+        </div>
+        <div class="detail-section">
+          <h3>Treatment Plan (${escHtml(r.treatment)})</h3>
+          <div style="font-size:0.8rem">${escHtml(r.treatmentPlan)}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.5rem;font-size:0.7rem;color:var(--text-muted);border-top:1px solid var(--border);padding-top:0.5rem">
+        <span><strong>Category:</strong> ${escHtml(r.category)}</span>
+        <span><strong>Owner:</strong> ${escHtml(r.owner)}</span>
+        <span><strong>Review:</strong> ${escHtml(r.reviewDate)}</span>
+        <span><strong>IEC 62443:</strong> ${(r.iec62443Ref||[]).map(s => `<span class="badge badge-sl2" style="margin:1px;font-size:0.6rem">${escHtml(s)}</span>`).join('')}</span>
+        <span><strong>Scores:</strong> L${r.likelihood}xI${r.impact}=${r.likelihood*r.impact} → L${r.residualLikelihood}xI${r.residualImpact}=${r.residualLikelihood*r.residualImpact}</span>
+      </div>
+    </div>`).join('');
+
+  return `
+    <h2>OT/ICS Risk Register (${risks.length} Risks)</h2>
+    <div class="page-sub">${escHtml(data.description || '')}</div>
+    ${filterHtml}
+    <div id="risk-list">${risksHtml}</div>
+  `;
+}
+
+window.filterRisks = function(cat) {
+  document.querySelectorAll('.risk-item').forEach(el => {
+    el.style.display = (cat === 'all' || el.dataset.category === cat) ? '' : 'none';
+  });
+  const tabs = document.querySelectorAll('.tabs .tab-btn');
+  tabs.forEach(t => {
+    const isAll = cat === 'all' && t.textContent.startsWith('All');
+    const isCat = t.textContent.startsWith(cat);
+    t.classList.toggle('active', isAll || isCat);
+  });
+};
+
+async function renderRMChecklist() {
+  const data = await load('risk-management/checklist.json');
+  const items = data.items || [];
+  const categories = [...new Set(items.map(i => i.category))];
+
+  const html = categories.map(cat => {
+    const catItems = items.filter(i => i.category === cat);
+    return `
+      <h3 style="margin-top:1.25rem">${escHtml(cat)}</h3>
+      ${catItems.map(item => `
+        <div class="card" style="margin-bottom:0.5rem">
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.5rem">
+            <span class="badge badge-sl2">${escHtml(item.id)}</span>
+            <span class="card-title" style="margin:0;flex:1">${escHtml(item.item)}</span>
+            ${item.mandatory ? '<span class="badge badge-critical">Mandatory</span>' : '<span class="badge badge-minor">Advisory</span>'}
+          </div>
+          <div class="card-desc">${escHtml(item.guidance)}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;border-top:1px solid var(--border);padding-top:0.5rem"><strong>Evidence Required:</strong> ${escHtml(item.evidenceRequired)}</div>
+        </div>`).join('')}`;
+  }).join('');
+
+  return `
+    <h2>OT Risk Assessment Checklist (${items.length} Items)</h2>
+    <div class="page-sub">${escHtml(data.description || '')}</div>
+    <div class="detail-body" style="margin-bottom:1rem">${escHtml(data.usage || '')}</div>
+    ${html}
+  `;
+}
+
+async function renderRMTreatment() {
+  const data = await load('risk-management/treatment-options.json');
+  const strategies = data.strategies || [];
+  const constraint = data.safetyConstraint || {};
+
+  const strategiesHtml = strategies.map(s => `
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title" style="font-size:1rem">${escHtml(s.name)}</div>
+      <div class="card-desc">${escHtml(s.description)}</div>
+      <div style="font-size:0.8rem;color:var(--accent);margin-top:0.5rem"><strong>When to use:</strong> ${escHtml(s.whenToUse)}</div>
+
+      ${s.otExamples ? `
+        <div style="margin-top:0.75rem">
+          <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.35rem">OT Examples</div>
+          ${s.otExamples.map(ex => `
+            <div style="background:var(--bg-offset);padding:0.5rem 0.75rem;border-radius:4px;margin-bottom:0.35rem;font-size:0.8rem">
+              <strong>${escHtml(ex.risk)}:</strong> ${escHtml(ex.mitigation || ex.transfer || ex.avoidance || ex.acceptance || '')}
+              ${ex.residualRisk ? `<div style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem">${escHtml(ex.residualRisk)}</div>` : ''}
+              ${ex.limitation ? `<div style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem">${escHtml(ex.limitation)}</div>` : ''}
+              ${ex.tradeoff ? `<div style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem">Trade-off: ${escHtml(ex.tradeoff)}</div>` : ''}
+            </div>`).join('')}
+        </div>` : ''}
+
+      ${s.considerations ? `
+        <div style="margin-top:0.75rem">
+          <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.25rem">Considerations</div>
+          <ul style="font-size:0.8rem;padding-left:1.25rem;color:var(--text-muted)">${s.considerations.map(c => `<li style="margin-bottom:0.25rem">${escHtml(c)}</li>`).join('')}</ul>
+        </div>` : ''}
+
+      ${s.constraints ? `
+        <div style="margin-top:0.75rem">
+          <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--danger);margin-bottom:0.25rem">Constraints</div>
+          <ul style="font-size:0.8rem;padding-left:1.25rem;color:var(--danger)">${s.constraints.map(c => `<li style="margin-bottom:0.25rem">${escHtml(c)}</li>`).join('')}</ul>
+        </div>` : ''}
+    </div>`).join('');
+
+  return `
+    <div class="card" style="border-left:3px solid var(--danger);margin-bottom:1.5rem">
+      <div class="card-title">Safety Constraint</div>
+      <div class="card-desc">${escHtml(constraint.rule || '')}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">${escHtml(constraint.rationale || '')}</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem"><strong>Regulatory:</strong> ${escHtml(constraint.regulatoryNote || '')}</div>
+    </div>
+    <h2>Treatment Strategies</h2>
+    ${strategiesHtml}
+  `;
 }
 
 // ─── Bootstrap ───────────────────────────────────────────────────────────────

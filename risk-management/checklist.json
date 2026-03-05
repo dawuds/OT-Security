@@ -1,0 +1,154 @@
+{
+  "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "OT risk assessment checklist constructed from IEC 62443-3-2, NIST SP 800-82, and OT security audit experience. Not endorsed by any standards body -- verify against authoritative sources before use in formal assessments.",
+  "title": "OT Risk Assessment Checklist",
+  "description": "Pre-assessment checklist for OT/ICS risk assessments. Covers zone architecture, safety systems, remote access, asset inventory, backups, monitoring, and compliance. Complete before conducting formal risk assessment.",
+  "usage": "Review each item before commencing OT risk assessment. Items marked mandatory must be completed -- gaps in these areas indicate the assessment scope is incomplete.",
+  "items": [
+    {
+      "id": "RC-01",
+      "category": "Architecture",
+      "item": "Verify Purdue Model zone boundaries are documented and match physical/logical implementation",
+      "mandatory": true,
+      "guidance": "Compare zone-conduit diagram against live network topology from passive monitoring platform. All inter-zone traffic should pass through documented conduits. Any undocumented connections are immediate findings.",
+      "evidenceRequired": "Zone-conduit diagram dated within 6 months; passive monitoring asset list comparison"
+    },
+    {
+      "id": "RC-02",
+      "category": "Safety",
+      "item": "Check SIS independence from DCS and IT networks",
+      "mandatory": true,
+      "guidance": "Physical cable trace verification confirming no network cables between SIS controllers and DCS/IT networks. Verify data diodes (if used) are unidirectional. Check that SIS engineering workstation is dedicated and not shared with DCS.",
+      "evidenceRequired": "SIS isolation verification record signed by safety engineer and OT security engineer"
+    },
+    {
+      "id": "RC-03",
+      "category": "Remote Access",
+      "item": "Assess remote access controls for OT systems",
+      "mandatory": true,
+      "guidance": "Verify all remote access routes through dedicated OT gateway in IDMZ. Confirm MFA is enforced. Check for any undocumented remote access paths (vendor modems, cellular gateways, TeamViewer instances). Test that direct VPN to OT is blocked.",
+      "evidenceRequired": "Remote access architecture diagram; MFA configuration evidence; scan for undocumented remote access tools"
+    },
+    {
+      "id": "RC-04",
+      "category": "Asset Inventory",
+      "item": "Review OT asset inventory completeness against passive discovery",
+      "mandatory": true,
+      "guidance": "Compare formal asset register against passive monitoring platform device list. Gap greater than 10% indicates incomplete inventory. Verify firmware versions are recorded -- unknown firmware versions mean unknown vulnerabilities.",
+      "evidenceRequired": "Asset register; passive monitoring device list; gap analysis report"
+    },
+    {
+      "id": "RC-05",
+      "category": "Backup",
+      "item": "Validate OT backup procedures cover all system types",
+      "mandatory": true,
+      "guidance": "Verify backup scope includes: PLC/RTU programs, DCS configurations, SCADA databases, historian data, HMI configurations, network device configurations, and safety system programs. Backups stored offline (not only on network shares). Last successful backup timestamp within defined schedule.",
+      "evidenceRequired": "Backup register with scope, schedule, and last successful timestamp per system"
+    },
+    {
+      "id": "RC-06",
+      "category": "Backup",
+      "item": "Verify OT restore test includes functional restoration",
+      "mandatory": true,
+      "guidance": "File-level restore is insufficient. At least one annual test must demonstrate functional restoration of a PLC or DCS component to operational state. Operations engineering must participate in restore test.",
+      "evidenceRequired": "Restore test report showing functional restoration; RTO measurement vs target"
+    },
+    {
+      "id": "RC-07",
+      "category": "Architecture",
+      "item": "Verify IDMZ implementation and firewall rule hygiene",
+      "mandatory": true,
+      "guidance": "IDMZ must break all direct IT-to-OT Layer 3 routes. Firewall rules should be deny-all with explicit permits. Each permit should have documented business justification. Review for stale rules (decommissioned services). Check for any-any rules.",
+      "evidenceRequired": "IDMZ firewall ruleset; rule justification register; last review date"
+    },
+    {
+      "id": "RC-08",
+      "category": "Identity",
+      "item": "Check for shared accounts and default credentials in OT systems",
+      "mandatory": true,
+      "guidance": "Shared accounts in OT are common but prevent individual attribution. Document all shared accounts with justification. Test for default credentials on OT devices during maintenance window. Any default credential is a critical finding.",
+      "evidenceRequired": "Shared account register with justifications; default credential audit results"
+    },
+    {
+      "id": "RC-09",
+      "category": "Monitoring",
+      "item": "Verify OT monitoring coverage across all network segments",
+      "mandatory": true,
+      "guidance": "OT passive monitoring sensors should cover all OT network segments including remote sites. Coverage gaps mean blind spots. Verify alerts are actively reviewed -- monitoring without review is not monitoring.",
+      "evidenceRequired": "Monitoring coverage map; sample alert review records from last 30 days"
+    },
+    {
+      "id": "RC-10",
+      "category": "Compliance",
+      "item": "Confirm NACSA s26 notification procedure is current and tested",
+      "mandatory": true,
+      "guidance": "For NCII-designated operators: verify 6-hour initial notification procedure exists, NACSA contact details are current, incident classification matrix is defined, and team has been tested (tabletop exercise) within last 12 months.",
+      "evidenceRequired": "Notification procedure; current NACSA contact details; tabletop exercise records"
+    },
+    {
+      "id": "RC-11",
+      "category": "Legacy",
+      "item": "Identify all end-of-life OT components and compensating controls",
+      "mandatory": true,
+      "guidance": "End-of-life systems no longer receive security patches. Each must have documented compensating controls (network isolation, enhanced monitoring, access restriction). Risk acceptance from management required.",
+      "evidenceRequired": "EOL component register; compensating controls per component; risk acceptance sign-off"
+    },
+    {
+      "id": "RC-12",
+      "category": "Supply Chain",
+      "item": "Review vendor security assessment records for critical OT vendors",
+      "mandatory": false,
+      "guidance": "Top 5 OT vendors should have security assessment completed within last 12 months. Verify OT vendor contracts include security clauses (SBOM, vulnerability notification, audit rights). Check vendor remote access agreements.",
+      "evidenceRequired": "Vendor assessment records; contract security clause evidence"
+    },
+    {
+      "id": "RC-13",
+      "category": "Data Protection",
+      "item": "Verify OT data classification and encryption for inter-zone flows",
+      "mandatory": false,
+      "guidance": "Sensitive OT data (PLC programs, credentials, historian data) should be classified. All inter-zone data flows should be encrypted (TLS 1.2+ minimum). Legacy protocol flows lacking encryption should have compensating controls documented.",
+      "evidenceRequired": "Data classification register; encryption configuration for inter-zone flows"
+    },
+    {
+      "id": "RC-14",
+      "category": "Physical",
+      "item": "Verify physical access controls on OT control rooms and field cabinets",
+      "mandatory": false,
+      "guidance": "OT control rooms should have access control with logging. Field cabinets should be locked with tamper-evident seals. Access list should be reviewed annually. Check that combination codes are changed after personnel changes.",
+      "evidenceRequired": "Access control logs; access list review records; field site inspection records"
+    },
+    {
+      "id": "RC-15",
+      "category": "Patch Management",
+      "item": "Review OT vulnerability tracking and patch deployment pipeline",
+      "mandatory": true,
+      "guidance": "Vendor advisory subscriptions active for all major OT vendors. Advisories assessed within 30 days of publication. Patch deployment follows vendor qualification and change management. Unpatched vulnerabilities have compensating controls.",
+      "evidenceRequired": "Vendor advisory tracking register; patch deployment records with vendor qualification; compensating controls register"
+    },
+    {
+      "id": "RC-16",
+      "category": "Safety",
+      "item": "Verify SIS program integrity verification process",
+      "mandatory": true,
+      "guidance": "SIS programs must have baseline checksums established at commissioning. Pre- and post-maintenance hash comparison with two-person sign-off. Key switch configuration verified (Run mode during normal operation, key held by named individual).",
+      "evidenceRequired": "SIS checksum register; maintenance comparison records; key switch configuration records"
+    },
+    {
+      "id": "RC-17",
+      "category": "Incident Response",
+      "item": "Verify OT Incident Response Plan includes OT-specific runbooks",
+      "mandatory": true,
+      "guidance": "OT IRP must be separate from IT IRP or have dedicated OT appendix. Must include runbooks for: ransomware, HMI compromise, PLC logic modification, SIS anomaly, and loss of view/control. Operations engineering involvement documented.",
+      "evidenceRequired": "OT IRP document; OT-specific runbooks; operations engineering review sign-off"
+    },
+    {
+      "id": "RC-18",
+      "category": "Architecture",
+      "item": "Check for wireless access points and cellular gateways in OT zones",
+      "mandatory": false,
+      "guidance": "Undocumented wireless access points and cellular gateways are common shadow IT in OT. Scan for rogue wireless. Verify all authorised wireless in OT uses encryption and authentication. Cellular gateways should be inventoried and firewalled.",
+      "evidenceRequired": "Wireless survey results; authorised wireless device register; cellular gateway inventory"
+    }
+  ]
+}

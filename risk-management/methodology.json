@@ -1,0 +1,244 @@
+{
+  "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Risk assessment methodology constructed from IEC 62443-3-2, NIST SP 800-82, and OT security best practices. Not endorsed by any standards body -- verify against authoritative sources before use in formal assessments.",
+  "title": "OT/ICS Risk Assessment Methodology",
+  "description": "Risk assessment methodology tailored for Operational Technology and Industrial Control Systems. The critical difference from IT risk assessment is that OT risk must account for SAFETY (human life), ENVIRONMENTAL damage, PROCESS INTEGRITY, and AVAILABILITY as primary impact dimensions -- not just the IT-centric CIA triad (Confidentiality, Integrity, Availability).",
+  "keyPrinciple": "In OT environments, a cybersecurity incident can cause physical harm, environmental damage, or loss of life. Risk assessment must therefore weight safety and physical consequences above data confidentiality.",
+  "standardsAlignment": [
+    "IEC 62443-3-2 (Security risk assessment for system design)",
+    "NIST SP 800-82 Rev 3 (Guide to OT Security)",
+    "NACSA Act 854 s21 (Risk assessment obligation for NCII operators)",
+    "IEC 61511 (Safety Instrumented Systems -- functional safety context)",
+    "ISO 31000 (Risk management framework)"
+  ],
+  "impactDimensions": {
+    "description": "OT risk assessment uses five impact dimensions. Safety is weighted highest -- any risk with safety impact cannot be accepted without exhaustive mitigation.",
+    "dimensions": [
+      {
+        "id": "safety",
+        "name": "Safety (Human Life)",
+        "weight": "Highest",
+        "description": "Potential for injury or loss of human life. Any risk scoring Level 4 or 5 on safety impact triggers mandatory safety review and cannot be risk-accepted without HAZOP/SIL review.",
+        "examples": ["SIS compromise enabling unsafe process state", "Loss of emergency shutdown capability", "Incorrect process variable display leading to unsafe operator action"]
+      },
+      {
+        "id": "environmental",
+        "name": "Environmental Damage",
+        "weight": "High",
+        "description": "Potential for release of hazardous materials, contamination, or ecological damage. Regulated under environmental legislation in addition to cybersecurity law.",
+        "examples": ["Chemical release due to manipulated process controls", "Water treatment contamination (Oldsmar-type)", "Oil/gas pipeline rupture or uncontrolled flaring"]
+      },
+      {
+        "id": "process-integrity",
+        "name": "Process Integrity",
+        "weight": "High",
+        "description": "Ability to maintain correct and predictable process operation. Loss of process integrity can cascade to safety and environmental impacts.",
+        "examples": ["Unauthorised PLC logic modification", "Historian data manipulation affecting operational decisions", "DCS configuration drift causing incorrect control actions"]
+      },
+      {
+        "id": "availability",
+        "name": "Operational Availability",
+        "weight": "Medium-High",
+        "description": "Ability to maintain continuous operation of critical infrastructure. In OT, availability often outweighs confidentiality -- a plant shutdown can cost millions per hour and affect public services.",
+        "examples": ["Ransomware causing SCADA system shutdown", "DDoS on OT network causing loss of control visibility", "Corrupted firmware requiring manual recommissioning"]
+      },
+      {
+        "id": "confidentiality",
+        "name": "Data Confidentiality",
+        "weight": "Medium",
+        "description": "Protection of sensitive OT data from unauthorised disclosure. While less critical than safety in OT, stolen PLC programs and engineering drawings enable sophisticated follow-on attacks.",
+        "examples": ["Theft of PLC program logic enabling Stuxnet-style attack", "Exfiltration of network diagrams enabling lateral movement", "Exposure of safety system configurations"]
+      }
+    ]
+  },
+  "impactScale": {
+    "description": "5-level impact scale weighted toward safety and physical consequences. Level 5 represents the worst-case OT scenario -- loss of life or major environmental disaster.",
+    "levels": [
+      {
+        "level": 1,
+        "label": "Negligible",
+        "safety": "No injury potential",
+        "environmental": "No environmental impact",
+        "processIntegrity": "Minor process deviation, self-correcting",
+        "availability": "Momentary disruption (<1 hour), no operational impact",
+        "confidentiality": "Internal OT data exposed with no operational value to attacker"
+      },
+      {
+        "level": 2,
+        "label": "Minor",
+        "safety": "First aid injury potential only",
+        "environmental": "Contained release, no offsite impact",
+        "processIntegrity": "Process deviation requiring manual intervention, no equipment damage",
+        "availability": "Short disruption (1-8 hours), production loss but no cascading impact",
+        "confidentiality": "Restricted OT data exposed (network diagrams, non-safety configurations)"
+      },
+      {
+        "level": 3,
+        "label": "Moderate",
+        "safety": "Hospitalisation-level injury potential",
+        "environmental": "Reportable release, localised cleanup required",
+        "processIntegrity": "Significant process upset, equipment damage possible, extended recovery",
+        "availability": "Extended disruption (8-72 hours), significant production or service impact",
+        "confidentiality": "Confidential OT data exposed (PLC programs, safety system configurations)"
+      },
+      {
+        "level": 4,
+        "label": "Major",
+        "safety": "Permanent disability or multiple hospitalisations",
+        "environmental": "Major release requiring external response, offsite impact",
+        "processIntegrity": "Major equipment damage, extended outage, potential cascading failure",
+        "availability": "Prolonged disruption (>72 hours), critical infrastructure service failure affecting public",
+        "confidentiality": "Credential compromise enabling further OT attacks; sensitive data enabling nation-state targeting"
+      },
+      {
+        "level": 5,
+        "label": "Catastrophic",
+        "safety": "Loss of life or major environmental disaster",
+        "environmental": "Catastrophic release, widespread ecological damage, long-term remediation",
+        "processIntegrity": "Destruction of critical infrastructure, total loss of process control",
+        "availability": "Indefinite outage, national-level critical infrastructure impact",
+        "confidentiality": "Complete OT intellectual property theft enabling replication of attack across sector"
+      }
+    ]
+  },
+  "likelihoodScale": {
+    "description": "5-level likelihood scale incorporating OT-specific factors: Purdue Model exposure, connectivity, threat actor capability, and historical precedent.",
+    "levels": [
+      {
+        "level": 1,
+        "label": "Rare",
+        "frequency": "Less than once in 10 years",
+        "otContext": "Air-gapped system at Purdue Level 0-1, no known threat actor capability, no historical precedent in sector"
+      },
+      {
+        "level": 2,
+        "label": "Unlikely",
+        "frequency": "Once in 5-10 years",
+        "otContext": "Isolated OT network with controlled access, limited threat actor interest, few sector precedents"
+      },
+      {
+        "level": 3,
+        "label": "Possible",
+        "frequency": "Once in 1-5 years",
+        "otContext": "OT network with IDMZ but IT connectivity, known threat actor interest in sector, ICS-CERT advisories for components in use"
+      },
+      {
+        "level": 4,
+        "label": "Likely",
+        "frequency": "Once per year or more",
+        "otContext": "OT network with direct IT connectivity, active threat actor campaigns in sector, unpatched known vulnerabilities"
+      },
+      {
+        "level": 5,
+        "label": "Almost Certain",
+        "frequency": "Multiple times per year",
+        "otContext": "Internet-exposed OT systems, active exploitation in the wild, commodity malware targeting OT, legacy systems with public exploits"
+      }
+    ]
+  },
+  "otSpecificRiskFactors": {
+    "description": "Additional factors that must be considered when assessing OT risk -- these do not exist in IT risk assessments.",
+    "factors": [
+      {
+        "id": "purdue-level",
+        "name": "Purdue Model Level",
+        "description": "Risk increases as attack moves deeper into the Purdue Model (Level 3 toward Level 0). Attacks at Level 0-1 (field devices, SIS) have highest safety impact potential.",
+        "guidance": "Assets at Purdue Level 0-1 should have impact weighted +1 level for safety dimension."
+      },
+      {
+        "id": "sis-involvement",
+        "name": "Safety Instrumented System (SIS) Involvement",
+        "description": "Any risk that could compromise SIS function must be treated as safety-critical. SIS is the last line of defence against catastrophic physical events.",
+        "guidance": "If SIS is in scope, minimum safety impact is Level 4 (Major). SIS risks cannot be accepted -- they must be mitigated or avoided."
+      },
+      {
+        "id": "air-gap-status",
+        "name": "Air-Gap and Network Isolation Status",
+        "description": "True air-gapped systems have lower likelihood but are not immune (Stuxnet). Systems with any connectivity must be assessed for lateral movement paths.",
+        "guidance": "Verify air-gap claims with physical cable trace. Air-gapped systems reduce likelihood by 1-2 levels. Verify no maintenance laptops bridge the gap."
+      },
+      {
+        "id": "legacy-protocol-vulnerability",
+        "name": "Legacy Protocol Vulnerability",
+        "description": "OT protocols (Modbus, DNP3, OPC Classic, BACnet, PROFINET) generally lack authentication and encryption. Exploitation requires network access only -- no credentials needed.",
+        "guidance": "Systems using unauthenticated protocols should have likelihood weighted +1 if any network access path exists from IT or remote access."
+      },
+      {
+        "id": "patch-availability",
+        "name": "Patch Availability and Applicability",
+        "description": "Many OT systems cannot be patched due to vendor certification requirements, uptime constraints, or end-of-life status. Unpatchable vulnerabilities require compensating controls.",
+        "guidance": "For unpatchable assets, likelihood is based on compensating control effectiveness, not on vulnerability age."
+      },
+      {
+        "id": "cascade-potential",
+        "name": "Cross-System Cascade Potential",
+        "description": "OT processes are interconnected -- a failure in one system can cascade to others. Risk assessment must consider the blast radius beyond the directly affected system.",
+        "guidance": "Identify upstream and downstream process dependencies. If a compromised system can affect other zones or sites, assess the cascaded impact."
+      }
+    ]
+  },
+  "assessmentProcess": {
+    "description": "Step-by-step OT risk assessment process aligned with IEC 62443-3-2.",
+    "steps": [
+      {
+        "step": 1,
+        "name": "Define System Under Consideration (SUC)",
+        "description": "Identify the OT system boundary, all connected components, and all external interfaces. Map to Purdue Model levels.",
+        "outputs": ["System boundary diagram", "Asset inventory within SUC", "External interface register"]
+      },
+      {
+        "step": 2,
+        "name": "Zone and Conduit Partitioning",
+        "description": "Partition the SUC into zones (groups of assets with common security requirements) and conduits (communication paths between zones). Assign initial SL-T per zone.",
+        "outputs": ["Zone register with SL-T", "Conduit register with permitted traffic", "Zone-conduit diagram"]
+      },
+      {
+        "step": 3,
+        "name": "Threat Analysis",
+        "description": "Identify threats per zone using MITRE ATT&CK for ICS, historical incidents, and sector-specific threat intelligence. Consider nation-state, criminal, insider, and accidental threats.",
+        "outputs": ["Threat register per zone", "MITRE technique applicability assessment"]
+      },
+      {
+        "step": 4,
+        "name": "Consequence Assessment",
+        "description": "For each threat-zone combination, assess consequences across all five impact dimensions (safety, environmental, process integrity, availability, confidentiality). Use worst-case credible scenario.",
+        "outputs": ["Consequence matrix per zone", "Safety-critical scenarios identified"]
+      },
+      {
+        "step": 5,
+        "name": "Vulnerability Assessment",
+        "description": "Identify vulnerabilities per zone: unpatched CVEs, legacy protocols, default credentials, missing controls, architectural weaknesses. Use passive scanning only in OT.",
+        "outputs": ["Vulnerability register per zone", "Compensating controls for unpatchable assets"]
+      },
+      {
+        "step": 6,
+        "name": "Risk Calculation",
+        "description": "Calculate inherent risk (likelihood x impact) using the OT-weighted scales. Apply existing controls to determine residual risk. Flag any safety-critical residual risks.",
+        "outputs": ["Risk register with inherent and residual scores", "Safety-critical risk list"]
+      },
+      {
+        "step": 7,
+        "name": "Risk Treatment",
+        "description": "Assign treatment strategy (mitigate, transfer, avoid, accept) per risk. Safety risks cannot be accepted. Document treatment plans with owner, timeline, and verification criteria.",
+        "outputs": ["Treatment plan per risk", "Risk acceptance register (non-safety risks only)"]
+      },
+      {
+        "step": 8,
+        "name": "SL-T Validation",
+        "description": "Verify that the assigned SL-T per zone is sufficient to address the identified risks. Adjust SL-T upward if residual risk exceeds tolerance.",
+        "outputs": ["Validated SL-T per zone", "SL gap analysis (SL-A vs SL-T)"]
+      }
+    ]
+  },
+  "reviewCadence": {
+    "standard": "Annual full reassessment",
+    "triggers": [
+      "Any OT security incident",
+      "Significant change to OT architecture or connectivity",
+      "New threat intelligence indicating changed threat landscape",
+      "Post-commissioning of new OT systems",
+      "Regulatory requirement (NACSA s21 audit cycle)"
+    ]
+  }
+}
