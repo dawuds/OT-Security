@@ -1,0 +1,37 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "asset-inventory",
+  "name": "Asset Inventory and Management",
+  "description": "A complete, current OT asset inventory is the foundation of all other OT security controls. You cannot patch what you do not know you have. You cannot segment what you have not identified. You cannot monitor what you cannot see. OT asset inventories are consistently the first thing found inadequate in OT security assessments.",
+  "requirements": [
+    {
+      "id": "AI-R1", "name": "OT asset inventory establishment",
+      "description": "Create and maintain a comprehensive inventory of all OT assets including PLCs, RTUs, HMIs, engineering workstations, historians, OT network devices, and all software deployed on OT systems.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-7.8", "NACSA Act 854 s18", "NACSA Act 854 s21"] },
+      "technical": { "summary": "OT asset inventory minimum fields: asset name, make/model, firmware/software version, IP address (if applicable), MAC address, physical location, zone assignment, owner, criticality rating, last security review date.", "actions": ["Conduct initial OT asset discovery using passive network monitoring (deploy OT monitoring sensor on SPAN/TAP)", "Supplement passive discovery with manual walkdown of OT areas for non-networked assets", "Populate asset inventory database with all discovered assets", "Include assets at remote sites (RTUs, field devices with network connectivity)", "Update inventory within 5 business days of any asset addition, modification, or removal", "Classify each asset by criticality: High (direct process control), Medium (supervisory/monitoring), Low (support systems)"] },
+      "governance": { "summary": "Asset inventory owned by OT engineering. Security team maintains security attributes. Reviewed quarterly.", "actions": ["Quarterly inventory review and reconciliation with physical walkdown", "New asset commissioning process includes inventory update as mandatory step", "Annual inventory completeness assessment"] },
+      "evidenceItems": ["OT asset inventory (with minimum required fields)", "Passive discovery scan results", "Quarterly inventory review records", "Asset change log"],
+      "nacsaMapping": ["s18", "s21"],
+      "slMapping": { "sl1": "Manual asset list — best effort", "sl2": "Comprehensive inventory; passive discovery used; quarterly review", "sl3": "Automated inventory with passive monitoring; asset changes trigger automated update; alert on new/changed devices", "sl4": "Continuous automated inventory; hardware identity verification; alert on any unregistered device" },
+      "mitreAttackIcs": []
+    },
+    {
+      "id": "AI-R2", "name": "Asset criticality classification",
+      "description": "Classify each OT asset by criticality based on the consequence of its compromise — to prioritise security controls, maintenance scheduling, and incident response.",
+      "legal": { "basis": ["IEC 62443-3-2 cl. 4 (consequence analysis)", "NACSA Act 854 s21(1) (risk assessment)"] },
+      "technical": { "summary": "Three-tier criticality: High (loss/compromise causes immediate safety, environmental, or major process impact), Medium (loss causes operational disruption requiring manual intervention), Low (loss causes minor inconvenience).", "actions": ["Assess consequence of compromise for each asset class", "Assign criticality tier (High/Medium/Low) to each asset", "Map High-criticality assets to NACSA NCII designation scope", "Apply enhanced security controls to High-criticality assets (higher SL-T, more frequent review)", "Document criticality rationale for each High-criticality asset"] },
+      "evidenceItems": ["Asset criticality classification records", "Criticality rationale for High-criticality assets", "Mapping of High-criticality assets to NCII designation scope"],
+      "nacsaMapping": ["s17", "s18", "s21"],
+      "slMapping": { "sl2": "Criticality classification documented; controls differentiated by criticality", "sl3": "Formal consequence analysis per IEC 62443-3-2; SL-T assigned per zone based on criticality" }
+    },
+    {
+      "id": "AI-R3", "name": "Software inventory and SBOM",
+      "description": "Maintain an inventory of all software (OS, applications, firmware) on OT systems including version and patch level. Request Software Bill of Materials (SBOM) from vendors for critical OT products.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-7.8", "IEC 62443-4-1 (SBOM — product development)", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Software inventory per OT asset: OS version, installed applications with versions, firmware version. Enables rapid vulnerability assessment when new CVE is published.", "actions": ["Record software and firmware versions for all OT assets in inventory", "Update software inventory whenever patches are applied", "Request SBOM from vendors for new OT product procurement (increasingly available; required for IEC 62443-4-1 certified products)", "Use software inventory to rapid-assess exposure when high-severity CVEs are published", "Flag OT assets running end-of-life OS (Windows XP, Windows 7 — still common in OT) for priority lifecycle replacement"] },
+      "evidenceItems": ["Software inventory (per asset: OS + applications + firmware + versions)", "EOL OS asset register", "SBOM records for new products"],
+      "nacsaMapping": ["s18", "s21"],
+      "slMapping": { "sl2": "Software inventory maintained per asset", "sl3": "Automated software inventory via monitoring platform; SBOM requested for critical products" }
+    }
+  ]
+}

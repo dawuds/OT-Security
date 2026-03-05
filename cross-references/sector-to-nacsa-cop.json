@@ -1,0 +1,105 @@
+{
+  "$schema": "ot-security-v1",
+  "title": "OT Sector to NACSA Code of Practice Cross-Reference",
+  "description": "Maps OT sectors to relevant NACSA Act 854 codes of practice (indicative instruments). For each sector, identifies the OT-specific requirements that the code of practice adds on top of base Act 854 obligations and IEC 62443 baseline.",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "NACSA codes of practice under Act 854 were not gazetted as of 2026-03. Mappings reference indicative codes from the nacsa repo (github.com/dawuds/nacsa). Verify against gazetted instruments when published.",
+  "nacsaRepoReference": "github.com/dawuds/nacsa — supplements/codes-of-practice/",
+  "sectorMappings": [
+    {
+      "sector": "energy",
+      "nacsaCop": "cop-energy.json",
+      "nacsaSector": "Energy",
+      "sectorLead": "Energy Commission (Suruhanjaya Tenaga)",
+      "otSpecificOverlays": [
+        "IEC 61850 implementation requirements for substation automation",
+        "NERC CIP-equivalent controls for grid-connected assets",
+        "Emergency Power System (EPS) cybersecurity requirements",
+        "Real-time OT monitoring requirements for transmission assets",
+        "Energy Management System (EMS) access control requirements"
+      ],
+      "iec62443SLRecommendation": "SL 3 minimum for TNB transmission and generation assets; SL 2 for distribution; SL 4 for SIS at generation plants",
+      "keyOtStandards": ["IEC 61850", "IEC 60870-5-101/104", "IEC 62351 (power system security)", "IEC 62443"],
+      "regulatoryOverlap": "Energy Commission Act 2001 (Act 610); Electricity Supply Act 1990 (Act 447)"
+    },
+    {
+      "sector": "water",
+      "nacsaCop": "cop-water-sewerage.json",
+      "nacsaSector": "Water and Sewerage",
+      "sectorLead": "National Water Services Commission (SPAN)",
+      "otSpecificOverlays": [
+        "Chemical dosing system input validation and hardware interlock requirements",
+        "Water quality monitoring system integrity requirements",
+        "OT monitoring for detection of process manipulation",
+        "Emergency manual override capability for all automated water treatment functions",
+        "Incident response procedures specific to public health emergency scenarios"
+      ],
+      "iec62443SLRecommendation": "SL 3-4 for chemical dosing control; SL 2-3 for pumping and distribution; SL 2 for monitoring systems",
+      "keyOtStandards": ["IEC 62443", "AWWA cybersecurity guidance", "NIST SP 800-82 Rev 3"],
+      "regulatoryOverlap": "Water Services Industry Act 2006 (Act 655); National Water Services Commission Act 2006 (Act 654)",
+      "publicHealthNote": "Any compromise of chemical dosing controls is a public health emergency. SL 3-4 for dosing zones is non-negotiable regardless of NCII designation status."
+    },
+    {
+      "sector": "oil-gas",
+      "nacsaCop": "No specific NACSA cop — covered under energy/critical infrastructure framework",
+      "nacsaSector": "Energy / Oil and Gas",
+      "sectorLead": "PETRONAS",
+      "otSpecificOverlays": [
+        "SIS/ESD/F&G security requirements aligned with IEC 61511",
+        "Process safety management (PSM) integration with OT security programme",
+        "Pipeline SCADA security requirements",
+        "Offshore platform OT security requirements (limited physical access)"
+      ],
+      "iec62443SLRecommendation": "SL 4 for SIS/ESD/F&G; SL 3 for DCS and pipeline SCADA; SL 2 for monitoring",
+      "keyOtStandards": ["IEC 62443", "IEC 61511 (functional safety)", "API 1164 (pipeline SCADA)", "ISA-84 (safety systems)"],
+      "regulatoryOverlap": "Petroleum Development Act 1974; PCSB (PETRONAS Carigali) operational requirements; DOSH safety regulations",
+      "tritонNote": "TRITON/TRISIS attack (2017) targeted petrochemical SIS. All Petronas and downstream oil/gas operators running Triconex, Honeywell SM, or Yokogawa ProSafe-RS must implement SIS-specific security controls from this repository."
+    },
+    {
+      "sector": "transport",
+      "nacsaCop": "cop-transport.json",
+      "nacsaSector": "Transport",
+      "sectorLead": "Ministry of Transport Malaysia",
+      "otSpecificOverlays": [
+        "Rail signalling system security requirements (ETCS/CBTC, ATP/ATO)",
+        "Aviation safety system security (ILS, ATIS, ATC integration)",
+        "Port vessel traffic service (VTS) security requirements",
+        "Traffic management centre (TMC) security requirements",
+        "Separation of safety-critical from operational OT systems"
+      ],
+      "iec62443SLRecommendation": "SL 3-4 for rail signalling; SL 3-4 for aviation safety systems; SL 3 for VTS; SL 2-3 for road TMC",
+      "keyOtStandards": ["IEC 62443", "IEC 62280 (railway security)", "CENELEC EN 50126/50128/50129 (rail safety)", "ICAO cybersecurity guidance"],
+      "regulatoryOverlap": "Railways Act 1991 (Act 463); Civil Aviation Act 1969 (Act 3); Merchant Shipping Ordinance 1952"
+    },
+    {
+      "sector": "manufacturing",
+      "nacsaCop": "No specific NACSA cop for manufacturing",
+      "nacsaSector": "Trade, Industry and Economy (subset)",
+      "sectorLead": "MITI",
+      "otSpecificOverlays": [
+        "Industry 4.0 / IIoT security requirements",
+        "Remote monitoring and diagnostic security for smart manufacturing",
+        "Production data and intellectual property protection requirements",
+        "Cloud-connected OT security requirements"
+      ],
+      "iec62443SLRecommendation": "SL 2-3 for process control; SL 2 for production monitoring; SL 3 for safety-critical manufacturing (pharma, chemical, semiconductor)",
+      "keyOtStandards": ["IEC 62443", "ISA-95", "NIST SP 800-82 Rev 3", "FDA 21 CFR Part 11 (pharma)"],
+      "regulatoryOverlap": "Factories and Machinery Act 1967 (Act 139); DOSH requirements"
+    },
+    {
+      "sector": "building-automation",
+      "nacsaCop": "No specific NACSA cop — government buildings under Government sector",
+      "nacsaSector": "Government (for government buildings)",
+      "sectorLead": "JKR for government buildings; MAMPU for digital infrastructure",
+      "otSpecificOverlays": [
+        "Data centre BMS security requirements (availability-critical)",
+        "Hospital HVAC/clean room security requirements (patient safety)",
+        "Integration security for converged BMS/IT platforms",
+        "Physical access control system security requirements"
+      ],
+      "iec62443SLRecommendation": "SL 2-3 for data centre BMS; SL 2 for hospital environmental controls; SL 1-2 for commercial BMS",
+      "keyOtStandards": ["IEC 62443", "BACnet/IP (ASHRAE 135)", "ISO/IEC 27001 (for IT-converged systems)"],
+      "regulatoryOverlap": "Uniform Building By-Laws 1984; Fire Services Act 1988 (Act 341)"
+    }
+  ]
+}

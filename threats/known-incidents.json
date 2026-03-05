@@ -1,0 +1,133 @@
+{
+  "$schema": "ot-security-v1",
+  "description": "Documented OT cybersecurity incidents used as teaching examples — each incident maps to the IEC 62443 requirements that would have prevented or mitigated it. These are real-world cases that demonstrate the consequences of OT security failures.",
+  "incidents": [
+    {
+      "id": "INC-001",
+      "name": "Stuxnet",
+      "year": 2010,
+      "sector": "Nuclear / Uranium Enrichment",
+      "country": "Iran (Natanz enrichment facility)",
+      "attribution": "United States and Israel (widely attributed; neither has officially confirmed)",
+      "summary": "Stuxnet was the first publicly known cyberweapon specifically designed to cause physical damage to industrial equipment. It targeted Siemens S7-315 and S7-417 PLCs controlling Siemens frequency converter drives operating Iranian uranium enrichment centrifuges. The malware manipulated centrifuge rotor speeds — causing damage — while replaying normal operation data to SCADA operators to hide the attack.",
+      "attackChain": [
+        { "stage": "Initial Access", "technique": "T0864", "description": "Spread via infected USB drives used by Siemens field engineers. Four Windows zero-day exploits used for propagation." },
+        { "stage": "Lateral Movement", "technique": "T0862", "description": "Spread through Windows networks and infected Siemens STEP 7 engineering project files." },
+        { "stage": "Execution", "technique": "T0873", "description": "Infected STEP 7 project files automatically injected malicious PLC blocks when projects were loaded." },
+        { "stage": "Persistence", "technique": "T0837", "description": "PLC rootkit modified Siemens S7 firmware to hide malicious code blocks from STEP 7 diagnostic tools." },
+        { "stage": "Impair Process Control", "technique": "T0836", "description": "Modified centrifuge frequency converter setpoints — alternating between high and low speeds to stress and damage centrifuge rotors." },
+        { "stage": "Denial of View", "technique": "T0832", "description": "Replayed pre-recorded normal process values to SCADA operators for approximately 13-27 days of each attack cycle, hiding the manipulation." }
+      ],
+      "physicalConsequence": "Approximately 1,000 centrifuges damaged or destroyed over approximately 2 years of undetected operation. Estimated 20% reduction in Iranian enrichment capacity.",
+      "detectability": "Extremely difficult — active denial of view component; PLC rootkit hid malicious blocks; normal SCADA displays",
+      "preventiveControls": [
+        { "control": "Transient device management (SC-R4)", "howItHelps": "Scanning USB media before use in OT would have detected the infected USB drives used for initial spread" },
+        { "control": "Software and firmware supply chain integrity (SC-R2)", "howItHelps": "Hash verification of Siemens software would have detected modified STEP 7 files" },
+        { "control": "SIS/Safety zone isolation — SIS network isolation (SS-R1)", "howItHelps": "Air-gapping centrifuge control zone from engineering network would have stopped propagation from STEP 7 workstations" },
+        { "control": "OT security monitoring (IR-R1)", "howItHelps": "Passive monitoring detecting abnormal frequency converter communications pattern would have identified anomaly" },
+        { "control": "SIS program integrity verification (SS-R3)", "howItHelps": "Regular program checksum verification would have detected the injected malicious PLC blocks" }
+      ],
+      "iec62443SRs": ["SR-2.3", "SR-3.2", "SR-3.4", "SR-5.1", "SR-6.2"]
+    },
+    {
+      "id": "INC-002",
+      "name": "TRITON / TRISIS",
+      "year": 2017,
+      "sector": "Oil & Gas / Petrochemical",
+      "country": "Saudi Arabia (Petro Rabigh / SABIC facility — commonly attributed)",
+      "attribution": "Russia — Central Scientific Research Institute of Chemistry and Mechanics (TsNIIKhM) (US DOJ indictment, 2022)",
+      "summary": "TRITON (also known as TRISIS and HatMan) is widely considered the most dangerous ICS malware ever discovered. It targeted Schneider Electric Triconex Safety Instrumented System (SIS) controllers — specifically Tricon 3008 Main Processors. The attackers attempted to modify the safety logic running on Triconex controllers to disable emergency shutdowns, enabling conditions that could have caused an explosion killing workers. The attack was discovered accidentally when a bug in the malware code caused the SIS to fail into a safe state (spurious shutdown) rather than successfully disable it.",
+      "attackChain": [
+        { "stage": "Initial Access", "technique": "T0865", "description": "Spearphishing emails targeting corporate IT. Attackers spent approximately 2 years in the IT/corporate network before pivoting to OT." },
+        { "stage": "Lateral Movement", "technique": "T0820", "description": "Moved from IT network to OT network, eventually reaching engineering workstation running TriStation protocol." },
+        { "stage": "Engineering Workstation Compromise", "technique": "T0818", "description": "Compromised engineering workstation that had TriStation software and network connectivity to Triconex controllers." },
+        { "stage": "Execution", "technique": "T0838", "description": "Used TriStation protocol (Triconex proprietary engineering protocol) to reprogram Tricon 3008 controllers with modified safety logic." },
+        { "stage": "Inhibit Response Function", "technique": "T0838", "description": "Attempted to inject malicious RAM payload into Triconex SIS to prevent the SIS from triggering a safe shutdown on process upsets." }
+      ],
+      "physicalConsequence": "Prevented by accidental discovery (attack bug caused spurious shutdown). Had the attack succeeded: SIS disabled, process safety protection removed — any subsequent process upset (overpressure, over-temperature, toxic release) would not trigger automatic emergency shutdown. Mass casualty potential.",
+      "detectability": "Essentially undetectable with standard IT security tools. TriStation protocol not parsed by generic network monitoring. Malicious payload designed to look like legitimate SIS diagnostics.",
+      "preventiveControls": [
+        { "control": "SIS network isolation (SS-R1)", "howItHelps": "Physical air gap from engineering workstation to SIS network would have prevented TriStation protocol reaching SIS controllers" },
+        { "control": "SIS engineering workstation controls (SS-R2)", "howItHelps": "Isolated SIS EWS with no network connectivity would have prevented attackers reaching TriStation software" },
+        { "control": "Hardware key switch", "howItHelps": "Triconex key switch in Program mode required for reprogramming — key switch in Run/Remote mode during normal operation prevents unauthorised reprogramming" },
+        { "control": "SIS program integrity verification (SS-R3)", "howItHelps": "Regular checksum verification of Tricon program would have detected the injected payload" },
+        { "control": "OT security monitoring (IR-R1)", "howItHelps": "OT monitoring with TriStation protocol awareness (Dragos, Claroty) can detect anomalous TriStation traffic" }
+      ],
+      "iec62443SRs": ["SR-5.1", "SR-3.4", "SR-6.2", "SR-1.1", "SR-1.13"],
+      "keyLesson": "Safety systems are a viable and attractive attack target. The TRITON attack represents the crossing of a significant threshold — an attacker willing and able to target safety systems to enable mass casualty outcomes. Every operator of SIS must treat SIS cybersecurity with the same rigour as SIS functional safety."
+    },
+    {
+      "id": "INC-003",
+      "name": "Ukraine Power Grid Attack (Industroyer / Crashoverride)",
+      "year": "2015 (first), 2016 (second)",
+      "sector": "Energy / Power Grid",
+      "country": "Ukraine",
+      "attribution": "Russia — Sandworm (GRU Unit 74455)",
+      "summary": "Two coordinated cyberattacks against Ukrainian power distribution companies. The 2015 attack (BlackEnergy3) caused power outages affecting approximately 230,000 customers for 1-6 hours. The 2016 attack (Industroyer/Crashoverride) used purpose-built malware that spoke native ICS protocols (IEC 104, IEC 101, IEC 61850-GOOSE, OPC-DA) to directly control substation circuit breakers, causing a 75-minute outage in Kyiv. A destructive payload (KillDisk) was deployed simultaneously to wipe workstations and prevent recovery.",
+      "attackChain": [
+        { "stage": "Initial Access", "technique": "T0865", "description": "Spearphishing emails with malicious Excel attachments targeting utility IT staff." },
+        { "stage": "Lateral Movement", "technique": "T0820", "description": "Moved from corporate IT to SCADA network over several months of reconnaissance." },
+        { "stage": "Collection", "technique": "T0801", "description": "Extensive reconnaissance of SCADA topology, protocol usage, and substation configurations." },
+        { "stage": "Execution", "technique": "T0834", "description": "Industroyer modules spoke native IEC-104, IEC-101, IEC 61850-GOOSE, and OPC-DA protocols to directly command substation breakers." },
+        { "stage": "Denial of Control", "technique": "T0813", "description": "Operators could not re-energise breakers from SCADA — Industroyer had already opened them via direct protocol commands." },
+        { "stage": "Impact", "technique": "T0809", "description": "KillDisk wiped control system workstations and modified MBR to prevent reboot, complicating recovery." }
+      ],
+      "physicalConsequence": "2015: 230,000 customers without power for up to 6 hours. 2016: 75-minute outage in Kyiv. Slow manual recovery (operators had to physically reset breakers in field). Total estimated 1 million customers affected across both incidents.",
+      "detectability": "2015: Detectable with proper monitoring — BlackEnergy3 left indicators. 2016: Extremely difficult — Industroyer used legitimate protocol commands that were syntactically indistinguishable from authorised operator commands.",
+      "preventiveControls": [
+        { "control": "Network segmentation — IDMZ (NS-R2)", "howItHelps": "Proper IDMZ implementation would have broken the IT-to-SCADA lateral movement path" },
+        { "control": "OT protocol-aware monitoring (IR-R1)", "howItHelps": "Monitoring detecting Industroyer's IEC-104 commands from unexpected source addresses would have identified the attack" },
+        { "control": "Remote access management (RA-R1 to RA-R4)", "howItHelps": "Secure remote access controls would have prevented attackers from maintaining persistent access to SCADA environment" },
+        { "control": "OT backup and recovery (BR-R1)", "howItHelps": "Offline backups unaffected by KillDisk wiper would have accelerated recovery" }
+      ],
+      "iec62443SRs": ["SR-5.1", "SR-5.2", "SR-6.2", "SR-7.3", "SR-7.4"]
+    },
+    {
+      "id": "INC-004",
+      "name": "Colonial Pipeline Ransomware",
+      "year": 2021,
+      "sector": "Oil & Gas / Pipeline",
+      "country": "United States",
+      "attribution": "DarkSide ransomware group (Russia-based)",
+      "summary": "Ransomware attack that encrypted Colonial Pipeline's IT network. Colonial proactively shut down its OT pipeline operations out of concern about OT network compromise and inability to bill customers due to IT system impact. The 6-day shutdown caused fuel shortages, panic buying, and a regional fuel crisis across the US East Coast. The attacker gained access via a VPN account with a compromised password — no MFA was enabled.",
+      "attackChain": [
+        { "stage": "Initial Access", "technique": "T0822", "description": "Compromised VPN credentials (username/password) without MFA. Credentials likely obtained from a previous data breach (found on dark web)." },
+        { "stage": "Lateral Movement", "technique": "T0820", "description": "Moved within IT network. Pipeline OT not directly compromised but Colonial could not confirm OT network integrity." },
+        { "stage": "Impact", "technique": "T0826", "description": "Ransomware encrypted IT systems including billing, business operations, and monitoring systems. Colonial shut down OT operations as precautionary measure." }
+      ],
+      "physicalConsequence": "6-day shutdown of 5,500-mile pipeline carrying 45% of East Coast fuel supply. Fuel shortages in 17 states. $4.4 million ransom paid (partially recovered by FBI). CEO called before US Congress.",
+      "detectability": "VPN access with valid credentials from attacker perspective appeared legitimate. IT-level ransomware activity detectable with EDR/SIEM.",
+      "preventiveControls": [
+        { "control": "MFA for remote access (RA-R2)", "howItHelps": "MFA would have prevented compromise even with stolen credentials — the single most direct preventive control for this incident" },
+        { "control": "Remote access architecture (RA-R1)", "howItHelps": "OT-dedicated remote access gateway with VPN separate from corporate IT VPN would have contained blast radius" },
+        { "control": "Network segmentation — IDMZ (NS-R2)", "howItHelps": "Strong IT/OT separation would have maintained OT visibility even during IT network compromise, potentially avoiding the precautionary OT shutdown" },
+        { "control": "OT incident recovery procedure (BR-R2)", "howItHelps": "Pre-tested OT incident recovery procedure would have supported faster, more confident restart" }
+      ],
+      "iec62443SRs": ["SR-1.1", "SR-1.13", "SR-5.1", "SR-7.4"],
+      "keyLesson": "MFA on remote access is not optional. A single compromised password without MFA caused a national infrastructure crisis. The cost of MFA implementation is immeasurably lower than the cost of a successful attack."
+    },
+    {
+      "id": "INC-005",
+      "name": "Oldsmar Water Treatment Plant",
+      "year": 2021,
+      "sector": "Water",
+      "country": "United States (Oldsmar, Florida)",
+      "attribution": "Unknown — suspected disgruntled insider or opportunistic attacker",
+      "summary": "An attacker gained remote access to the Oldsmar water treatment plant's computer system via TeamViewer remote desktop software that had been left installed and accessible. The attacker increased the sodium hydroxide (lye) concentration in the water supply from 111 parts per million to 11,100 parts per million — a 111x increase that would have created caustic water dangerous to drink. An alert operator noticed the cursor moving on screen and immediately reversed the change. The facility had multiple security failures: shared TeamViewer access, outdated Windows 7 with no MFA, all workstations sharing one TeamViewer password.",
+      "attackChain": [
+        { "stage": "Initial Access", "technique": "T0822", "description": "Unsecured TeamViewer remote desktop software accessible from internet. No MFA. Shared credentials." },
+        { "stage": "Impair Process Control", "technique": "T0836", "description": "Attacker used TeamViewer to directly manipulate SCADA setpoint — increasing sodium hydroxide dosing to dangerous level." }
+      ],
+      "physicalConsequence": "Averted by alert operator who noticed cursor movement. Had the change not been detected: caustic water delivered to ~15,000 Oldsmar residents.",
+      "detectability": "Detected only by operator visually observing remote control of workstation. No automated detection or alerting.",
+      "preventiveControls": [
+        { "control": "Remote access management — architecture and MFA (RA-R1, RA-R2)", "howItHelps": "MFA on remote access and eliminating direct TeamViewer internet exposure would have prevented access" },
+        { "control": "Network segmentation (NS-R2)", "howItHelps": "IDMZ with jump server as sole remote access path eliminates direct internet-to-SCADA exposure" },
+        { "control": "OT monitoring platform (IR-R1)", "howItHelps": "Automated detection of unusual SCADA setpoint modification during off-hours would have generated immediate alert rather than relying on operator vigilance" },
+        { "control": "Input validation and SL limits (SR-3.5)", "howItHelps": "Hardware interlock or software limit on sodium hydroxide dosing setpoint would have rejected the 11,100 ppm value as outside valid operating range" }
+      ],
+      "iec62443SRs": ["SR-1.1", "SR-1.13", "SR-3.5", "SR-5.1", "SR-6.2"],
+      "keyLesson": "Chemical dosing control systems must have both software input validation (setpoint limits enforced in SCADA) and independent hardware interlocks. Human vigilance is not a security control — it fails when the human is absent, distracted, or off-shift."
+    }
+  ]
+}

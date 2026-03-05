@@ -1,0 +1,45 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "remote-access",
+  "name": "Remote Access Management",
+  "description": "Requirements for secure remote access to OT environments — including vendor maintenance access, engineering remote access, and monitoring. Remote access is the most exploited initial access vector in OT incidents (Colonial Pipeline, Oldsmar, Ukraine). Every remote access connection to OT must be controlled, authenticated, monitored, and recorded.",
+  "requirements": [
+    {
+      "id": "RA-R1", "name": "Remote access architecture",
+      "description": "All remote access to OT must flow through a single, dedicated remote access zone in the IDMZ. No direct RDP, VNC, or SSH from the internet or corporate IT to OT components.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.13", "IEC 62443-3-3 SR-5.2", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Remote access gateway in IDMZ terminates all remote sessions. Gateway proxies connections to OT targets — vendor never gets direct Layer 3 access to OT network.", "actions": ["Remove all direct internet-to-OT connectivity (RDP, VNC, SSH)", "Deploy remote access gateway in IDMZ (Secomea, Claroty SRA, Fortinet)", "All OT remote access requires gateway authentication before OT session established", "Network firewall blocks all inbound connections to OT except through gateway"] },
+      "evidenceItems": ["Remote access architecture diagram", "Firewall rules blocking direct internet-to-OT", "Remote access gateway configuration"],
+      "slMapping": { "sl1": "Remote access exists — some controls", "sl2": "All remote access through single gateway in IDMZ; VPN required", "sl3": "Gateway with MFA + session recording + per-session approval", "sl4": "Zero-trust remote access; time-limited credentials; presence required for vendor sessions" },
+      "mitreAttackIcs": ["T0822", "T0820"]
+    },
+    {
+      "id": "RA-R2", "name": "Multi-factor authentication for remote access",
+      "description": "All remote access to OT requires MFA — a second factor in addition to a password. No single-factor remote access to OT is permitted at SL 2+.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.1 (SL 3)", "IEC 62443-3-3 SR-1.13", "NACSA Act 854 s18"] },
+      "technical": { "summary": "MFA enforced at remote access gateway before OT session is established. Acceptable second factors: TOTP authenticator app, hardware token (YubiKey), SMS OTP (SL 2 minimum; hardware token preferred for SL 3).", "actions": ["Enable MFA on remote access gateway for all user types including vendors", "Distribute hardware tokens for high-privilege OT remote access users", "Test MFA bypass resistance — ensure no backdoor accounts without MFA", "Configure MFA lockout after failed attempts"] },
+      "evidenceItems": ["MFA configuration documentation", "List of remote access accounts with MFA status", "Failed MFA attempt logs"],
+      "slMapping": { "sl1": "Password authentication", "sl2": "MFA (TOTP or SMS)", "sl3": "MFA with hardware token; certificate-based authentication preferred", "sl4": "Hardware token mandatory; certificate pinning; biometric option" },
+      "mitreAttackIcs": ["T0859", "T0822"]
+    },
+    {
+      "id": "RA-R3", "name": "Vendor remote access session controls",
+      "description": "Third-party vendor remote access must be subject to enhanced controls: per-session approval, time-limited credentials, session recording, and operator presence during the session.",
+      "legal": { "basis": ["IEC 62443-2-4 cl. 4.3.5", "NACSA Act 854 s18"], "summary": "Vendor remote access is the highest-risk remote access scenario. Vendor personnel are outside the operator's security control domain." },
+      "technical": { "summary": "Vendor access granted on a per-session basis with defined start/end time. Session credentials expire automatically. OT operator monitors vendor session in real time and can terminate. Full session recording retained.", "actions": ["Vendor requests access 24 hours in advance with scope of work", "Designated OT operator approves session and monitors in real-time", "Credentials issued with maximum 4-hour validity (renewable with re-approval)", "Full session recording (video + keystrokes) retained for minimum 90 days", "Vendor access terminated immediately on completion of work scope", "Review recording after each vendor session for any unusual activity"] },
+      "governance": { "summary": "Vendor access management policy defines approved vendors, access scope, and approval authority.", "actions": ["Approved vendor register maintained", "Annual review of vendor access requirements", "Access terminated when vendor contract ends"] },
+      "evidenceItems": ["Vendor access request records", "Session approval records", "Session recordings", "Post-session review records", "Approved vendor register"],
+      "slMapping": { "sl2": "VPN with MFA; session logging", "sl3": "Per-session approval; session recording; operator monitoring", "sl4": "Physical operator presence required; time-limited JIT credentials; recording with tamper-evident storage" },
+      "mitreAttackIcs": ["T0822", "T0859"]
+    },
+    {
+      "id": "RA-R4", "name": "Remote access session limits and termination",
+      "description": "Remote access sessions must have defined maximum duration, idle timeout, and the ability for OT operators to terminate any session immediately.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-2.5", "IEC 62443-3-3 SR-2.6"] },
+      "technical": { "summary": "Configure session timeout at gateway (15-minute idle, 4-hour absolute maximum for vendor sessions). OT operator console shows all active remote sessions with one-click terminate.", "actions": ["Configure idle session timeout (15 minutes maximum)", "Configure maximum session duration (4 hours for vendors, 8 hours for internal engineers)", "Provide OT operator with real-time view of active remote sessions", "One-click session termination available to OT operator without technical expertise"] },
+      "evidenceItems": ["Session timeout configuration", "Session management console documentation", "Session termination records"],
+      "slMapping": { "sl2": "Automatic session timeout; manual termination available", "sl3": "Operator-visible active session dashboard; one-click termination; session duration limits" },
+      "mitreAttackIcs": ["T0822"]
+    }
+  ]
+}

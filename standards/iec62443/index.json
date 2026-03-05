@@ -1,0 +1,63 @@
+{
+  "$schema": "ot-security-v1",
+  "standard": "IEC 62443",
+  "fullTitle": "Security for Industrial Automation and Control Systems (IACS)",
+  "publisher": "International Electrotechnical Commission (IEC) / International Society of Automation (ISA)",
+  "sourceType": "paraphrased-from-standard",
+  "verificationNote": "Content paraphrased from IEC 62443 series. Obtain normative text from iec.ch or isa.org. Clause references provided for source traceability.",
+  "lastUpdated": "2026-03-05",
+  "jurisdiction": "International — referenced by NACSA Act 854 codes of practice for OT-heavy NCII sectors (energy, water, transport, manufacturing)",
+  "scope": "Defines requirements for the security of Industrial Automation and Control Systems (IACS) across the entire system lifecycle — from policies and procedures through system design to component security. Applicable to any organisation that owns, operates, integrates or supplies components to an IACS.",
+  "malaysiaNexus": "NCII-designated entities in OT-heavy sectors (energy, water, oil-gas, transport, manufacturing) are expected to use IEC 62443 as the baseline cybersecurity framework for their operational technology environments. NACSA Act 854 s18 and s21 obligations are substantially met through IEC 62443 SL 2 compliance for most NCII sectors.",
+  "series": [
+    {
+      "id": "62443-1",
+      "title": "General",
+      "description": "Common concepts, terminology, metrics and models applicable across the entire series.",
+      "parts": [
+        { "part": "62443-1-1", "title": "Terminology, concepts and models", "status": "published-2007", "keyContent": "Defines IACS, zones, conduits, security levels (SL), foundational requirements (FR). Core vocabulary for the entire standard." },
+        { "part": "62443-1-2", "title": "Master glossary of terms and abbreviations", "status": "published-2012", "keyContent": "Normative definitions." },
+        { "part": "62443-1-3", "title": "System security conformance metrics", "status": "published-2009", "keyContent": "Quantitative metrics for measuring security conformance." },
+        { "part": "62443-1-4", "title": "IACS security lifecycle and use cases", "status": "draft", "keyContent": "Lifecycle model covering design, integration, operation, maintenance, decommission." }
+      ]
+    },
+    {
+      "id": "62443-2",
+      "title": "Policies and Procedures",
+      "description": "Requirements for asset owners — how to manage IACS security through policies, procedures, risk assessment and patch management.",
+      "parts": [
+        { "part": "62443-2-1", "title": "Requirements for an IACS security management system", "status": "published-2010", "keyContent": "IACS-equivalent of ISO 27001. Security management programme, risk assessment, security plan, awareness training, incident response." },
+        { "part": "62443-2-2", "title": "IACS protection levels", "status": "draft", "keyContent": "Operating security levels, protection levels, monitoring." },
+        { "part": "62443-2-3", "title": "Patch management in the IACS environment", "status": "published-2015", "keyContent": "Patch management lifecycle specific to OT — covering vendor patch availability, testing, deployment in constrained OT environments." },
+        { "part": "62443-2-4", "title": "Requirements for IACS solution suppliers", "status": "published-2015-amd2019", "keyContent": "Security requirements for system integrators and service providers who install or maintain IACS." }
+      ]
+    },
+    {
+      "id": "62443-3",
+      "title": "System",
+      "description": "System-level security requirements — zone and conduit design, security risk assessment, system security requirements.",
+      "parts": [
+        { "part": "62443-3-1", "title": "Security technologies for IACS", "status": "published-2009", "keyContent": "Survey of applicable security technologies (authentication, encryption, firewalls, IDS) in the OT context." },
+        { "part": "62443-3-2", "title": "Security risk assessment for system design", "status": "published-2020", "keyContent": "Methodology for zone and conduit definition, security level targeting (SL-T), threat and risk assessment for system design." },
+        { "part": "62443-3-3", "title": "System security requirements and security levels", "status": "published-2013", "keyContent": "The primary compliance checklist. Defines 51 System Requirements (SRs) under 7 Foundational Requirements (FRs), each specified at SL 1 through SL 4." }
+      ]
+    },
+    {
+      "id": "62443-4",
+      "title": "Component",
+      "description": "Component-level security — requirements for product developers manufacturing controllers, sensors, software components used in IACS.",
+      "parts": [
+        { "part": "62443-4-1", "title": "Product security development lifecycle requirements", "status": "published-2018", "keyContent": "Secure development lifecycle for IACS product manufacturers: security management, threat modelling, secure design, verification, defect management." },
+        { "part": "62443-4-2", "title": "Technical security requirements for IACS components", "status": "published-2019", "keyContent": "Component-level SRs for embedded devices, host devices, network devices and software applications used within IACS." }
+      ]
+    }
+  ],
+  "keyConceptSummary": {
+    "iacs": "Industrial Automation and Control System — the collective term for all systems used to control and monitor industrial processes. Includes SCADA, DCS, PLC-based systems, safety systems and supporting infrastructure.",
+    "zone": "A logical grouping of assets with the same security level target and security policies. Assets within a zone are protected by the same set of security controls.",
+    "conduit": "A communication path or grouping of communication channels that shares the same security characteristics. Conduits connect zones and are the primary mechanism for controlling inter-zone data flow.",
+    "sl": "Security Level. A discrete measure of protection required (SL-T: Target) or achieved (SL-A: Achieved) against specific threat categories. Ranges from SL 1 (low) to SL 4 (extreme).",
+    "fr": "Foundational Requirement. One of 7 high-level security objectives (IAC, UC, SI, DC, RDF, TRE, RA) that organise the 51 System Requirements.",
+    "sr": "System Requirement. A specific, testable security requirement derived from an FR. Defined at each SL with increasing stringency."
+  }
+}

@@ -1,0 +1,13 @@
+[
+  { "id": "zone-architecture", "name": "Zone Architecture and Segmentation", "frMapping": "FR5", "color": "#2563EB" },
+  { "id": "identity-access", "name": "Identity and Access Management", "frMapping": "FR1,FR2", "color": "#7C3AED" },
+  { "id": "remote-access", "name": "Remote Access Management", "frMapping": "FR1,FR2", "color": "#DB2777" },
+  { "id": "asset-management", "name": "Asset and Configuration Management", "frMapping": "FR7", "color": "#D97706" },
+  { "id": "patch-vulnerability", "name": "Patch and Vulnerability Management", "frMapping": "FR3,FR7", "color": "#059669" },
+  { "id": "monitoring-detection", "name": "Monitoring and Threat Detection", "frMapping": "FR6", "color": "#DC2626" },
+  { "id": "incident-response", "name": "Incident Response and Recovery", "frMapping": "FR7", "color": "#0891B2" },
+  { "id": "supply-chain", "name": "Supply Chain Security", "frMapping": "FR3", "color": "#65A30D" },
+  { "id": "physical-security", "name": "Physical Security", "frMapping": "FR1", "color": "#9333EA" },
+  { "id": "safety-system", "name": "Safety System Security", "frMapping": "FR3,FR5,FR6", "color": "#B91C1C" },
+  { "id": "data-protection", "name": "Data Confidentiality and Integrity", "frMapping": "FR3,FR4", "color": "#1D4ED8" }
+]

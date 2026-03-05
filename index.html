@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OT Security Framework — IEC 62443 · NACSA Act 854</title>
+  <meta name="description" content="Structured OT cybersecurity knowledge base covering IEC 62443, NIST SP 800-82, MITRE ATT&CK for ICS, and NACSA Act 854 compliance for Malaysian NCII operators.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" role="navigation" aria-label="Main navigation">
+
+    <div class="sidebar-logo">
+      <h1>OT Security</h1>
+      <p>IEC 62443 · NACSA Act 854</p>
+    </div>
+
+    <div class="search-wrap">
+      <input type="search" id="search-input" placeholder="Search SRs, controls, incidents…" aria-label="Search">
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <button class="nav-link" data-view="overview" onclick="navigate('overview')">
+        <span class="nav-icon">🏠</span> Dashboard
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Standards</div>
+      <button class="nav-link" data-view="standards" onclick="navigate('standards','iec-overview')">
+        <span class="nav-icon">📘</span> IEC 62443
+      </button>
+      <button class="nav-link" data-view="standards" onclick="navigate('standards','iec-sr')">
+        <span class="nav-icon">📋</span> 51 System Requirements
+      </button>
+      <button class="nav-link" data-view="standards" onclick="navigate('standards','nist')">
+        <span class="nav-icon">📗</span> NIST SP 800-82
+      </button>
+      <button class="nav-link" data-view="standards" onclick="navigate('standards','mitre')">
+        <span class="nav-icon">🎯</span> MITRE ATT&amp;CK for ICS
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Architecture</div>
+      <button class="nav-link" data-view="architecture" onclick="navigate('architecture','purdue')">
+        <span class="nav-icon">🏗️</span> Purdue Model
+      </button>
+      <button class="nav-link" data-view="architecture" onclick="navigate('architecture','zones')">
+        <span class="nav-icon">🔀</span> Zones &amp; Conduits
+      </button>
+      <button class="nav-link" data-view="architecture" onclick="navigate('architecture','assets')">
+        <span class="nav-icon">⚙️</span> Asset Types
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Requirements</div>
+      <button class="nav-link" data-view="requirements" onclick="navigate('requirements')">
+        <span class="nav-icon">📝</span> All Domains
+      </button>
+      <button class="nav-link" data-view="requirements" onclick="navigate('requirements','network-segmentation')">
+        <span class="nav-icon">🔒</span> Network Segmentation
+      </button>
+      <button class="nav-link" data-view="requirements" onclick="navigate('requirements','safety-system-security')">
+        <span class="nav-icon">⚡</span> Safety Systems (SIS)
+      </button>
+      <button class="nav-link" data-view="requirements" onclick="navigate('requirements','incident-detection-response')">
+        <span class="nav-icon">🚨</span> Incident Response
+      </button>
+      <button class="nav-link" data-view="requirements" onclick="navigate('requirements','remote-access')">
+        <span class="nav-icon">🔑</span> Remote Access
+      </button>
+      <button class="nav-link" data-view="requirements" onclick="navigate('requirements','identity-access-management')">
+        <span class="nav-icon">👤</span> Identity &amp; Access
+      </button>
+      <button class="nav-link" data-view="requirements" onclick="navigate('requirements','patch-vulnerability-management')">
+        <span class="nav-icon">🛡️</span> Patch &amp; Vulnerability
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Controls &amp; Audit</div>
+      <button class="nav-link" data-view="controls" onclick="navigate('controls')">
+        <span class="nav-icon">✅</span> Controls Library
+      </button>
+      <button class="nav-link" data-view="evidence" onclick="navigate('evidence')">
+        <span class="nav-icon">📂</span> Audit Evidence
+      </button>
+      <button class="nav-link" data-view="artifacts" onclick="navigate('artifacts')">
+        <span class="nav-icon">📄</span> Artifacts Inventory
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Threats</div>
+      <button class="nav-link" data-view="threats" onclick="navigate('threats','incidents')">
+        <span class="nav-icon">💥</span> Known Incidents
+      </button>
+      <button class="nav-link" data-view="threats" onclick="navigate('threats','actors')">
+        <span class="nav-icon">🕵️</span> Threat Actors
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Malaysia NCII</div>
+      <button class="nav-link" data-view="sectors" onclick="navigate('sectors')">
+        <span class="nav-icon">🏭</span> Sectors
+      </button>
+      <button class="nav-link" data-view="cross-ref" onclick="navigate('cross-ref','nacsa')">
+        <span class="nav-icon">⚖️</span> NACSA Act 854 Mapping
+      </button>
+      <button class="nav-link" data-view="cross-ref" onclick="navigate('cross-ref','nist')">
+        <span class="nav-icon">🔗</span> NIST CSF 2.0 Mapping
+      </button>
+      <button class="nav-link" data-view="cross-ref" onclick="navigate('cross-ref','sector')">
+        <span class="nav-icon">🗺️</span> Sector COP Mapping
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- Main content -->
+  <main class="main-content" id="main" role="main">
+    <div class="empty-state">
+      <div class="empty-state-text">Loading…</div>
+    </div>
+  </main>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

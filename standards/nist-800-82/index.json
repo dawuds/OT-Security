@@ -1,0 +1,55 @@
+{
+  "$schema": "ot-security-v1",
+  "standard": "NIST SP 800-82 Rev 3",
+  "fullTitle": "Guide to Operational Technology (OT) Security",
+  "publisher": "National Institute of Standards and Technology (NIST), United States",
+  "sourceType": "paraphrased-from-standard",
+  "verificationNote": "NIST SP 800-82 Rev 3 is publicly available at nvlpubs.nist.gov. Content paraphrased for navigability.",
+  "publiclyAvailable": true,
+  "publicURL": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-82r3.pdf",
+  "status": "Final — September 2023",
+  "lastUpdated": "2026-03-05",
+  "scope": "Provides guidance for securing Operational Technology (OT) systems including Industrial Control Systems (ICS), SCADA, DCS, PLC-based systems, and other cyber-physical systems. Rev 3 significantly expands coverage beyond ICS to include medical devices, building automation, smart grid, and transportation.",
+  "keyChangesRev3": [
+    "Expanded scope from ICS to all OT systems",
+    "Aligned with NIST CSF 2.0 and SP 800-53 Rev 5",
+    "Enhanced supply chain risk management guidance",
+    "Added cloud, edge computing, and IIoT considerations",
+    "Expanded coverage of OT network architecture patterns",
+    "New guidance on OT incident response",
+    "Updated threat landscape including ransomware and nation-state TTPs"
+  ],
+  "relationToIEC62443": "NIST SP 800-82 and IEC 62443 are complementary. 800-82 provides the US federal government framework reference and extensive architecture guidance; IEC 62443 provides the internationally recognised certification framework with SL-based requirements. Malaysian NCII operators should use IEC 62443 as the primary standard with 800-82 as supplementary architecture guidance.",
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Introduction",
+      "keyContent": "OT system types, components, and architectures. Differences between OT and IT security. Key concepts: availability-first, physical consequences, legacy constraints, real-time requirements."
+    },
+    {
+      "chapter": 2,
+      "title": "Overview of OT",
+      "keyContent": "SCADA, DCS, PLC systems, Remote I/O, safety systems, building automation, medical device systems, smart grid. Component descriptions: RTU, PLC, HMI, historian, engineering workstation, data concentrator."
+    },
+    {
+      "chapter": 3,
+      "title": "OT Cybersecurity Program",
+      "keyContent": "OT security program structure: risk management, policies, asset management, workforce development, incident response, supply chain. Roles and responsibilities: CISO, OT security engineer, operations."
+    },
+    {
+      "chapter": 4,
+      "title": "OT Security Architecture",
+      "keyContent": "Network zone segmentation, Industrial DMZ, reference architectures (single site, enterprise, cloud-connected). Purdue model evolution. Remote access architecture. Cloud-connected OT patterns."
+    },
+    {
+      "chapter": 5,
+      "title": "Managing Risk",
+      "keyContent": "OT-specific risk assessment methodology. Asset-based risk model. Threat identification, vulnerability assessment, consequence analysis. Risk treatment options in OT context."
+    },
+    {
+      "chapter": 6,
+      "title": "Applying Security Controls",
+      "keyContent": "SP 800-53 control families applied to OT context. OT-specific control considerations per family. Compensating controls for legacy OT. Control testing approaches for OT."
+    }
+  ]
+}

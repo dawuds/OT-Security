@@ -1,0 +1,29 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "backup-recovery",
+  "name": "Backup and Recovery",
+  "description": "OT backup and recovery is fundamentally different from IT backup. Restoring a SCADA server is only step one — the system must then be synchronised with the physical plant state before it can resume control. Recovery planning must include operations engineering, not just IT.",
+  "requirements": [
+    {
+      "id": "BR-R1", "name": "OT configuration backup",
+      "description": "Back up all OT system configurations, programs, and data that are required to restore OT functionality: PLC ladder logic, DCS configuration, HMI screens/tags, SCADA database, historian configuration, network device configurations.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-7.3", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Scheduled automated backup of all recoverable OT configuration. Offline/isolated backup copies. Include all components in backup scope.", "actions": ["Define backup scope — every OT system must be included: PLC programs, DCS configuration, HMI application, SCADA database, historian configuration, network device configs, engineering tool databases", "Automate backups where possible (scheduled SCADA database backup, historian backup)", "For PLCs and RTUs: upload and save current program after any change; store in version-controlled repository", "Store backup copies on isolated media (not connected to production OT network or internet)", "Offsite or offline copy for disaster recovery (NAS at separate site, encrypted cloud backup for non-safety-critical configs)", "Test backup restoration quarterly — a backup that cannot be restored is not a backup"] },
+      "governance": { "summary": "Backup completion monitored. Failed backups escalated. Quarterly restore test.", "actions": ["Backup status reported monthly to OT manager", "Quarterly restore test documented", "Annual backup scope review — add new assets, remove decommissioned assets"] },
+      "evidenceItems": ["OT backup scope register", "Backup schedule and automation documentation", "Backup completion logs", "Quarterly restore test records", "Offline backup media inventory"],
+      "nacsaMapping": ["s18"],
+      "slMapping": { "sl1": "Manual backup periodically", "sl2": "Automated scheduled backup; offline copy; quarterly restore test", "sl3": "Immutable backup storage; restore test includes process reconstitution steps; RTO defined", "sl4": "Real-time backup for critical configs; warm standby; restore tested annually under simulated incident conditions" },
+      "mitreAttackIcs": ["T0809", "T0826"]
+    },
+    {
+      "id": "BR-R2", "name": "OT cyber incident recovery procedure",
+      "description": "Document and test OT recovery procedures specific to cyber incidents — including how to safely restore control systems to a known-good state while the plant is running, and how to coordinate with operations engineering.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-7.4", "NACSA Act 854 s18", "NACSA Act 854 s26"] },
+      "technical": { "summary": "Cyber incident recovery procedure covers: isolated restoration environment, integrity verification before reconnection to OT network, synchronisation with plant state, step-by-step restoration with operations sign-off.", "actions": ["Develop OT cyber incident recovery procedure covering: 1) Isolate affected system 2) Verify integrity of backup 3) Restore from verified backup in isolated environment 4) Test functionality before reconnecting 5) Coordinate with operations on plant state 6) Reconnect with enhanced monitoring 7) Verify normal operation", "Include operations engineering in recovery procedure (they control the physical process)", "Define Recovery Time Objective (RTO) per OT system based on operational criticality", "Test recovery procedure annually — tabletop minimum; full recovery test preferred", "Include NACSA s26 notification requirements in recovery procedure timeline"] },
+      "governance": { "summary": "Recovery procedure approved by OT manager and operations manager. Annual test. Post-incident update.", "actions": ["Annual recovery test with documented results", "Post-incident review updates procedure", "RTO targets reviewed against operational risk annually"] },
+      "evidenceItems": ["OT cyber incident recovery procedure", "RTO targets per system", "Annual recovery test records", "Operations engineering sign-off on recovery procedure"],
+      "nacsaMapping": ["s18", "s26"],
+      "slMapping": { "sl2": "Recovery procedure documented; annual test", "sl3": "Tested procedure with operations engineering; RTO defined and tested", "sl4": "Hot/warm standby for critical systems; recovery tested under simulated cyber attack conditions" }
+    }
+  ]
+}

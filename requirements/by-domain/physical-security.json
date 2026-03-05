@@ -1,0 +1,29 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "physical-security",
+  "name": "Physical Security",
+  "description": "Physical access controls for OT environments. Physical security is the foundation of OT security — all network controls can be bypassed if an attacker has physical access to a PLC cabinet or engineering workstation. Field sites (remote RTUs, unmanned substations, pipeline valve stations) are particularly vulnerable.",
+  "requirements": [
+    {
+      "id": "PS-R1", "name": "Physical access control to OT assets",
+      "description": "OT systems must be physically secured with access controls appropriate to the criticality of the assets. SIS controllers require the highest level of physical security.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.1 (physical dimension)", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Layered physical security: facility perimeter, OT area access, control room access, individual cabinet access. Each layer adds friction for unauthorised access.", "actions": ["Control room: card access control (individual access cards — not a door code shared by all)", "PLC/DCS cabinet rooms: locked cabinets, limited key access", "SIS cabinet room: additional access control beyond DCS room; access log mandatory", "Field sites (RTUs, unmanned substations): perimeter fencing, cabinet locks, tamper detection", "Visitor escort policy in all OT areas", "CCTV in control rooms, cabinet rooms, and facility entry points", "Physical access log for SIS area maintained manually"] },
+      "governance": { "summary": "Physical access rights reviewed quarterly. Access removed immediately when personnel leave or change role.", "actions": ["Quarterly physical access review", "Immediate removal on personnel departure", "Annual physical security audit"] },
+      "evidenceItems": ["Physical access control system configuration", "Access log records", "CCTV coverage documentation", "Physical security audit records"],
+      "nacsaMapping": ["s18"],
+      "slMapping": { "sl1": "Locked room; key-based access", "sl2": "Card access control; visitor escort; CCTV", "sl3": "Perimeter + room + cabinet layered access; access logs; automatic alert on after-hours access", "sl4": "SIS room requires dual-person access; physical tamper detection on SIS cabinets; biometric option" },
+      "mitreAttackIcs": []
+    },
+    {
+      "id": "PS-R2", "name": "Field site physical security",
+      "description": "Remote OT field sites (substations, pump stations, RTU sites, pipeline valve stations) are typically unmanned and present unique physical security challenges. These sites are often targeted for initial access to larger OT networks.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.1", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Remote sites require physical tamper detection, secure enclosures, and detection of unauthorised entry linked to central monitoring.", "actions": ["Perimeter fencing for remote sites where feasible", "Tamper-evident seals or tamper detection sensors on RTU/field device cabinets", "Camera/motion detection at unmanned sites with alert to control room or security centre", "Cellular modem cabinets locked separately from process control equipment", "Physical inspection of remote sites on scheduled rotation (frequency based on criticality)", "Intrusion alarm linked to SCADA operator workstation or security monitoring centre"] },
+      "governance": { "summary": "Field site physical security standard with inspection schedule. Tamper events escalated to OT security team.", "actions": ["Regular site inspection schedule based on criticality", "Tamper event log maintained", "Annual physical security audit of remote sites"] },
+      "evidenceItems": ["Remote site security standards documentation", "Site inspection records", "Tamper event log", "Camera/alarm system coverage documentation"],
+      "nacsaMapping": ["s18"],
+      "slMapping": { "sl2": "Cabinet locks; scheduled inspections", "sl3": "Tamper detection; camera/alarm; inspection schedule; tamper event alerting", "sl4": "Continuous tamper monitoring with immediate alert; armed response for highest-criticality remote sites" }
+    }
+  ]
+}

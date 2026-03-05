@@ -1,0 +1,66 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "safety-system-security",
+  "name": "Safety System Security",
+  "description": "Security requirements specific to Safety Instrumented Systems (SIS), Emergency Shutdown Systems (ESD), and Fire and Gas (F&G) systems. This domain sits at the intersection of IEC 61511 (Functional Safety) and IEC 62443 (OT Security). The TRITON/TRISIS attack (2017) demonstrated that targeting safety systems is a viable adversary objective — requiring dedicated security treatment beyond standard OT security.",
+  "keyPrinciple": "Safety systems must maintain their safety function under all conditions — including cyberattack. Security must not compromise safety, and the absence of security must not compromise the safety function.",
+  "standards": ["IEC 62443 (SL 4 for SIS)", "IEC 61511 (Functional Safety — SIL requirements)", "IEC 61508 (Functional Safety — generic)"],
+  "requirements": [
+    {
+      "id": "SS-R1", "name": "SIS network isolation",
+      "description": "Safety Instrumented Systems must be physically and logically isolated from all other networks — including DCS, HMI, and IT networks. No network connectivity to SIS is permitted at SL 4. Outbound data (status, diagnostics) flows via data diode only.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1 (SL 4)", "IEC 61511-1 cl. 11.2.12 (security of SIS)", "NACSA Act 854 s18"], "summary": "IEC 61511 requires that the security of a SIS does not adversely affect its safety function. IEC 62443 SL 4 is the baseline for SIS zone security. Full network isolation is the only defensible position given TRITON-class attack capabilities.", "owner": "Safety Systems Engineer / OT Security Engineer" },
+      "technical": { "summary": "Physical isolation: no network cables between SIS and DCS/HMI networks. Data diode for outbound SIS status data. Hardware key switch required to place SIS in programming mode.", "actions": ["Verify physical isolation — trace all network cables from SIS controllers", "Remove any cross-connections between SIS and DCS networks", "Install data diode for outbound safety status to monitoring system", "Enable hardware key switch on all SIS controllers (Triconex key switch, Honeywell SM key switch)", "Establish two-person rule for all SIS maintenance activities", "Air-gap SIS engineering workstations from general OT network"] },
+      "governance": { "summary": "SIS modification requires formal Management of Change (MOC) with safety review, SIL verification, and dual-authorization.", "actions": ["MOC required for all SIS changes", "SIL revalidation after significant changes", "Annual physical inspection of SIS network isolation", "SIS modification log maintained and audited"] },
+      "evidenceItems": ["SIS network isolation verification record (cable trace)", "Data diode installation documentation", "Key switch enablement records per SIS controller", "MOC records for all SIS changes", "Two-person sign-off logs for SIS work"],
+      "nacsaMapping": ["s18", "s21"],
+      "slMapping": { "sl4": "Physical air gap; data diode only for outbound; no remote access; key switch enforced" },
+      "mitreAttackIcs": ["T0838", "T0839", "T0829", "T0881"],
+      "incident": "TRITON/TRISIS (2017): Attackers at a Saudi Arabian petrochemical plant compromised Schneider Triconex SIS controllers (Tricon 3008 cards) after gaining access through an engineering workstation. The attack attempted to modify safety logic to allow unsafe process conditions. It was discovered accidentally when the SIS caused a spurious shutdown — likely due to a bug in the attack code. Had it succeeded, the result could have been an explosion killing dozens of workers."
+    },
+    {
+      "id": "SS-R2", "name": "SIS engineering workstation controls",
+      "description": "Engineering workstations used for SIS programming must be dedicated to that purpose, physically secured, and never connected to any network during or after SIS programming activities.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.1 (SL 4)", "IEC 62443-3-3 SR-2.1 (SL 4)", "IEC 61511-1 cl. 11.2.12"], "summary": "The engineering workstation is the primary attack vector for SIS compromise (Triconex attacked via EWS running TriStation protocol). Strict EWS controls are therefore a primary SIS security control.", "owner": "Safety Systems Engineer" },
+      "technical": { "summary": "Dedicated SIS engineering workstation: no general network connectivity, no email, no internet, USB restricted. SIS programming only performed with workstation physically present at SIS controller.", "actions": ["Dedicate one workstation exclusively to SIS engineering — do not use for any other purpose", "Remove network interface cards or physically disable network ports", "Restrict USB to approved media only — scan all media before use", "Maintain workstation in locked cabinet when not in use", "Log all uses of workstation in physical logbook (who, when, what work performed)"] },
+      "governance": { "summary": "SIS EWS access is a controlled activity requiring management approval and dual-sign-off.", "actions": ["Physical access log for SIS EWS cabinet", "Management approval required for each access", "Post-maintenance verification that SIS program integrity is unchanged"] },
+      "evidenceItems": ["SIS EWS access log", "Media scan records", "Physical inspection records", "SIS program checksum verification records"],
+      "nacsaMapping": ["s18"],
+      "slMapping": { "sl3": "Dedicated EWS with restricted network access", "sl4": "Fully isolated EWS with no network connectivity; physical log of all access" },
+      "mitreAttackIcs": ["T0818", "T0838", "T0864"]
+    },
+    {
+      "id": "SS-R3", "name": "SIS program integrity verification",
+      "description": "Safety system programs (safety logic, function blocks, configuration) must be verified for integrity before and after any maintenance activity. Cryptographic checksums must be compared against approved reference values.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-3.4 (SL 4)", "IEC 61511-1 cl. 12 (verification and validation)"], "summary": "IEC 61511 requires formal verification of SIS program integrity as part of the safety lifecycle. IEC 62443 SR-3.4 at SL 4 requires cryptographic verification of software integrity. Together, these create a strong requirement for SIS program hash verification.", "owner": "Safety Systems Engineer / OT Security Engineer" },
+      "technical": { "summary": "Calculate cryptographic hash (SHA-256 minimum) of SIS program before any maintenance. Recalculate after maintenance and compare. Store reference hashes in tamper-evident secure storage.", "actions": ["Record program checksums/hashes at each SIS after commissioning", "Verify checksums before and after each maintenance activity", "Store reference checksums in physically secure, access-controlled location", "Alert on any discrepancy between expected and actual checksums", "Use vendor-provided integrity verification tools where available (Triconex TriStation has version checking)"] },
+      "governance": { "summary": "SIS program change control includes integrity verification as a required step.", "actions": ["Integrity verification is mandatory before SIS restart after maintenance", "Failed integrity check triggers immediate escalation and investigation", "Annual program integrity audit independent of maintenance activities"] },
+      "evidenceItems": ["SIS program checksum register (commissioning baseline)", "Pre/post-maintenance checksum comparison records", "Integrity verification procedure documentation"],
+      "nacsaMapping": ["s18", "s21"],
+      "slMapping": { "sl3": "Periodic integrity checking — after maintenance", "sl4": "Pre and post-maintenance cryptographic verification; annual independent audit" },
+      "mitreAttackIcs": ["T0838", "T0837", "T0873"]
+    },
+    {
+      "id": "SS-R4", "name": "Safety system security testing",
+      "description": "Security testing of safety systems must be conducted separately from functional safety testing and must not compromise the SIL rating or functional integrity of the safety function. Security vulnerabilities must be assessed without active testing on live safety systems.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-3.3 (SL 4)", "IEC 61511-1 cl. 11.2.12", "NACSA Act 854 s21(1)"], "summary": "Active security testing (penetration testing) of live SIS is generally prohibited — it risks triggering spurious shutdowns or unintended process changes. Security assessment must use passive methods.", "owner": "OT Security Assessor / Safety Systems Engineer" },
+      "technical": { "summary": "Use passive security assessment methods for live SIS: configuration review, passive network monitoring, vendor security advisory review, documentation audit. Active testing only on offline or replica systems.", "actions": ["Conduct SIS security assessment annually using passive methods (configuration review, documentation audit, passive network analysis)", "Review all vendor security advisories for SIS components (Triconex, Honeywell SM, Yokogawa ProSafe)", "Active penetration testing only on decommissioned or replica SIS hardware in controlled lab environment", "Test incident response procedures including scenarios involving suspected SIS compromise", "Validate that data diode cannot be bypassed by any configuration change"] },
+      "governance": { "summary": "SIS security assessment findings reviewed by safety and security teams jointly. Remediation requires functional safety impact assessment before implementation.", "actions": ["Annual SIS security assessment report", "Any remediation validated for SIL impact before implementation", "Joint safety-security review board for SIS security decisions"] },
+      "evidenceItems": ["Annual SIS security assessment report", "Vendor security advisory review records", "Functional safety impact assessment for any security remediation"],
+      "nacsaMapping": ["s21", "s23"],
+      "slMapping": { "sl3": "Annual passive assessment; vendor advisory monitoring", "sl4": "Annual passive assessment + independent assessment; active testing on replica hardware only" },
+      "mitreAttackIcs": ["T0838", "T0829"]
+    },
+    {
+      "id": "SS-R5", "name": "SIS incident response procedures",
+      "description": "Procedures must exist for responding to suspected cybersecurity incidents involving safety systems — including the decision to maintain, trip, or isolate the SIS, and how to investigate while maintaining process safety.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-7.4", "NACSA Act 854 s26", "IEC 61511-1 cl. 11.2.12"], "summary": "NACSA Act 854 s26 requires notification within 6 hours of a significant cyber security incident. SIS incidents are per se significant-impact events. The incident response procedure must address the unique challenge of investigating a SIS incident without triggering a safety function or shutting down the process inappropriately.", "owner": "Safety Systems Engineer / OT Incident Response Lead" },
+      "technical": { "summary": "Pre-defined playbook for SIS cybersecurity incidents: immediate isolation steps, safe state determination, forensic collection without disturbing SIS state, NACSA notification timeline.", "actions": ["Develop SIS cyber incident playbook covering: isolation, safe state assessment, forensic collection, restoration", "Define who has authority to order SIS trip vs maintain in event of suspected compromise", "Establish communication protocol between cybersecurity team and process safety team during SIS incident", "Test playbook via tabletop exercise annually", "Ensure NACSA s26 notification is triggered immediately on suspicion of SIS compromise"] },
+      "governance": { "summary": "SIS cyber incident is a major event requiring executive notification and NACSA reporting. Post-incident review mandatory.", "actions": ["Executive escalation path defined for SIS cyber incidents", "NACSA s26 notification within 6 hours of detection", "Post-incident review within 30 days", "Annual playbook test"] },
+      "evidenceItems": ["SIS cyber incident playbook", "Tabletop exercise records", "NACSA incident notification templates", "Post-incident review reports"],
+      "nacsaMapping": ["s26", "s18"],
+      "slMapping": { "sl3": "Incident playbook exists; basic tabletop exercise", "sl4": "Fully tested playbook; annual tabletop with process safety team; NACSA notification SLA defined" },
+      "mitreAttackIcs": ["T0829", "T0880"]
+    }
+  ]
+}

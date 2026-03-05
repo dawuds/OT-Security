@@ -1,0 +1,87 @@
+{
+  "$schema": "ot-security-v1",
+  "concept": "Foundational Requirements (FR)",
+  "standard": "IEC 62443-3-3",
+  "sourceType": "paraphrased-from-standard",
+  "verificationNote": "Paraphrased from IEC 62443-3-3:2013. Obtain normative text from iec.ch.",
+  "description": "The 7 Foundational Requirements (FRs) organise the 51 System Requirements (SRs) into coherent security domains. Each FR addresses a distinct aspect of IACS security. All SRs under an FR inherit its overall objective.",
+  "foundationalRequirements": [
+    {
+      "id": "FR1",
+      "abbreviation": "IAC",
+      "name": "Identification and Authentication Control",
+      "description": "All entities — human users, software processes, and devices — that attempt to access the IACS must be identified and authenticated before access is granted. This FR covers the full spectrum from basic password authentication (SL 1) through to hardware-based multi-factor authentication (SL 4).",
+      "rationale": "IACS environments are routinely targeted through credential theft and unauthorised access. Legacy OT systems often run with shared accounts or no authentication. This FR establishes the identity foundation from which all access control flows.",
+      "srCount": 13,
+      "srRange": "SR 1.1 to SR 1.13",
+      "otContext": "Many PLCs and RTUs ship with default credentials or no authentication capability at the device level. The FR must be applied at the zone boundary (jump server, firewall, network access control) as a compensating control where the device itself cannot enforce authentication.",
+      "nacsa": ["s18", "s21", "s22"]
+    },
+    {
+      "id": "FR2",
+      "abbreviation": "UC",
+      "name": "Use Control",
+      "description": "Authenticated entities must be limited to only the functions and resources they are authorised to use. This FR covers authorisation enforcement, session management, audit logging, and non-repudiation.",
+      "rationale": "Authentication alone is insufficient — a valid user with excessive privileges can cause as much damage as an intruder. Least privilege and session controls are critical in OT where a single misconfigured command can trigger physical consequences.",
+      "srCount": 12,
+      "srRange": "SR 2.1 to SR 2.12",
+      "otContext": "OT systems frequently grant operator-level access for all authenticated users because fine-grained RBAC was not considered during system design. Implementing use controls on legacy SCADA requires careful coordination with the vendor and operational teams to avoid disrupting legitimate process control functions.",
+      "nacsa": ["s18", "s22"]
+    },
+    {
+      "id": "FR3",
+      "abbreviation": "SI",
+      "name": "System Integrity",
+      "description": "The IACS must protect the integrity of its communications, software, and data. This includes protection against malicious code, input validation, integrity verification of software and configuration, and protection of audit information.",
+      "rationale": "OT system compromise frequently involves manipulation of process values, setpoints, or firmware — not just data theft. Integrity failures in OT have direct physical consequences: incorrect sensor readings, unauthorised valve positions, compromised safety logic.",
+      "srCount": 9,
+      "srRange": "SR 3.1 to SR 3.9",
+      "otContext": "Traditional antivirus is largely impractical in OT (real-time OS constraints, vendor certification restrictions, fear of disruption). Application whitelisting, firmware integrity verification, and change detection are the primary integrity controls in OT environments.",
+      "nacsa": ["s18", "s21", "s22"]
+    },
+    {
+      "id": "FR4",
+      "abbreviation": "DC",
+      "name": "Data Confidentiality",
+      "description": "The IACS must protect sensitive information — including configuration data, process values, and authentication credentials — from unauthorised disclosure, both at rest and in transit.",
+      "rationale": "In OT, confidentiality is secondary to availability and integrity — but process data, network topology, and PLC configurations are high-value targets for adversary reconnaissance. Leaked network diagrams and process configurations can dramatically accelerate an attack.",
+      "srCount": 3,
+      "srRange": "SR 4.1 to SR 4.3",
+      "otContext": "OT protocols (Modbus, DNP3 classic, older EtherNet/IP) typically have no native encryption. Encryption must be applied at the conduit level (VPN, TLS wrapper) rather than the protocol level. Some OT environments use encrypted variants (DNP3 Secure Authentication, IEC 62351 for power systems).",
+      "nacsa": ["s18", "s22"]
+    },
+    {
+      "id": "FR5",
+      "abbreviation": "RDF",
+      "name": "Restricted Data Flow",
+      "description": "Data flow between zones must be restricted to only what is required for legitimate operational purposes. This FR covers network segmentation, zone boundary protection, application-layer filtering, and partitioning of functions.",
+      "rationale": "Unrestricted data flow between IT and OT networks is the primary attack vector in OT incidents — Colonial Pipeline, Norsk Hydro, and others all involved lateral movement from IT into OT. Zone boundaries are the fundamental defence-in-depth architecture.",
+      "srCount": 4,
+      "srRange": "SR 5.1 to SR 5.4",
+      "otContext": "The Industrial DMZ (IDMZ) pattern — a buffer zone between IT Level 4 and OT Level 3 — is the standard implementation. Data diodes and unidirectional gateways provide hardware-enforced one-way flow for highest-criticality conduits.",
+      "nacsa": ["s18", "s21", "s22"]
+    },
+    {
+      "id": "FR6",
+      "abbreviation": "TRE",
+      "name": "Timely Response to Events",
+      "description": "The IACS must provide the capability to detect, report, and respond to security events in a timely manner. This includes audit log generation, log accessibility, and continuous monitoring.",
+      "rationale": "OT security incidents frequently go undetected for extended periods because OT environments lack the logging and monitoring infrastructure common in IT. The TRITON attack on a Saudi Arabian petrochemical plant remained undetected for nearly a year. Timely event response can prevent minor incidents from becoming catastrophic failures.",
+      "srCount": 2,
+      "srRange": "SR 6.1 to SR 6.2",
+      "otContext": "OT monitoring must be passive and non-disruptive — active scanning can crash PLCs or cause unexpected process behaviour. Passive network monitoring (Claroty, Dragos, Nozomi, Microsoft Defender for IoT) is the standard approach. Log forwarding to a SOC/SIEM must not introduce latency into real-time control loops.",
+      "nacsa": ["s26", "s18"]
+    },
+    {
+      "id": "FR7",
+      "abbreviation": "RA",
+      "name": "Resource Availability",
+      "description": "The IACS must ensure the availability of resources (computing, network, storage) necessary to maintain safe and reliable operation, including protection against denial-of-service attacks, backup and recovery capability, and emergency power.",
+      "rationale": "Availability is the primary security objective in OT — often prioritised over confidentiality and integrity. An unavailable power plant or water treatment system has immediate public safety consequences. Ransomware targeting OT (LockerGoga, EKANS/SNAKE) exploits this by threatening availability to maximise extortion leverage.",
+      "srCount": 8,
+      "srRange": "SR 7.1 to SR 7.8",
+      "otContext": "OT recovery procedures must account for the physical reconstitution of process state — not just restoring data. A SCADA system recovery plan must include procedures for safely returning process control to normal operation after a cyber incident, including coordination with operations and safety teams.",
+      "nacsa": ["s18", "s21", "s22", "s26"]
+    }
+  ]
+}

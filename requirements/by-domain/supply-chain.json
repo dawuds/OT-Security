@@ -1,0 +1,47 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "supply-chain",
+  "name": "Supply Chain Security",
+  "description": "OT supply chain security addresses risks from vendors, system integrators, software suppliers, and component manufacturers. The OT supply chain is long, opaque, and international — PLCs contain components from dozens of sub-suppliers. Stuxnet spread via infected Siemens engineering software. TRITON targeted a Schneider safety controller. Supply chain attacks are a top-tier OT threat.",
+  "requirements": [
+    {
+      "id": "SC-R1", "name": "Vendor security assessment and contractual requirements",
+      "description": "All OT vendors, system integrators, and service providers must be assessed for cybersecurity capability and must contractually commit to minimum security standards.",
+      "legal": { "basis": ["IEC 62443-2-4", "NACSA Act 854 s18", "NACSA Act 854 s21"] },
+      "technical": { "summary": "Vendor security questionnaire, reference check, and contractual security obligations for all vendors with OT system access.", "actions": ["Develop OT vendor security questionnaire (covering: PSIRT process, patch release timeline, vulnerability disclosure, secure development practices, remote access security, employee background checks)", "Assess all existing critical vendors with questionnaire", "Include security requirements in OT vendor and integrator contracts: patch commitment, vulnerability disclosure SLA, remote access standards, incident notification obligation", "Require vendors to notify of security incidents affecting supplied products within 72 hours", "Annual vendor security performance review for strategic OT vendors"] },
+      "governance": { "summary": "Vendor assessment results maintained in approved vendor register. High-risk vendors escalated to OT management for decision.", "actions": ["Approved OT vendor register with security assessment status", "High-risk vendor requires OT manager approval to continue use", "Annual reassessment for critical vendors"] },
+      "evidenceItems": ["OT vendor security questionnaire template", "Completed questionnaires per vendor", "Approved vendor register", "OT contract security requirements clause", "Annual vendor review records"],
+      "slMapping": { "sl2": "Security questionnaire for critical vendors; contractual requirements", "sl3": "Formal vendor security assessment; annual review; right-to-audit clauses", "sl4": "Independent vendor security audit; hardware/software bill of materials (SBOM); component traceability" },
+      "mitreAttackIcs": ["T0862", "T0864"]
+    },
+    {
+      "id": "SC-R2", "name": "Software and firmware supply chain integrity",
+      "description": "Verify the integrity and authenticity of OT software, firmware, and patches obtained from vendors before installing on OT systems. Detect and prevent the installation of counterfeit, modified, or trojanised software.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-3.4", "IEC 62443-4-1", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Verify cryptographic signatures or hashes of all software before installation. Obtain software only from verified vendor sources. Scan all software in isolated environment before introduction to OT.", "actions": ["Obtain all OT software updates from official vendor download portals only (not mirrors, not third parties)", "Verify cryptographic signature or SHA hash before installation (Siemens, Rockwell publish hashes for all software releases)", "Scan all new software in isolated sandbox (VM disconnected from OT and corporate networks) before introduction", "Never accept software from USB drives provided by field engineers unless scanned on OT kiosk first", "Request Software Bill of Materials (SBOM) from new OT product vendors — understand component-level supply chain exposure"] },
+      "governance": { "summary": "Software procurement flows through defined channel. Software integrity check is mandatory commissioning step.", "actions": ["Software verification is included in OT commissioning checklist", "Log all software installed on OT systems with source and hash verification", "Alert on installation of unverified software"] },
+      "evidenceItems": ["Software verification records (source + hash)", "Sandbox scan results for new software", "OT software inventory with version and hash baseline"],
+      "slMapping": { "sl1": "Obtain software from vendor; limited verification", "sl2": "Hash verification before installation; official vendor source only", "sl3": "Sandbox scan + hash verification; SBOM requested for critical products", "sl4": "Independent code review for safety system software; hardware attestation" },
+      "mitreAttackIcs": ["T0862", "T0873", "T0837"]
+    },
+    {
+      "id": "SC-R3", "name": "Physical supply chain controls for OT hardware",
+      "description": "OT hardware (PLCs, RTUs, network devices, safety controllers) must be procured through authorised channels and inspected on arrival to detect hardware tampering or counterfeit components.",
+      "legal": { "basis": ["IEC 62443-4-2", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Authorised distributor only for critical OT hardware. Tamper-evident seals inspection on delivery. Serial number verification against vendor records.", "actions": ["Procure all critical OT hardware through vendor-authorised distributors — not grey market or unauthorised resellers", "Inspect tamper-evident seals on critical hardware deliveries (PLCs, safety controllers, network devices)", "Verify serial numbers against vendor record for SIS and critical PLC hardware", "Establish secure staging area for new OT hardware before deployment", "Report suspected counterfeit hardware to vendor and NACSA"] },
+      "evidenceItems": ["Authorised distributor procurement records", "Hardware delivery inspection records", "Serial number verification records"],
+      "slMapping": { "sl2": "Authorised distributor; basic delivery inspection", "sl3": "Tamper seal inspection; serial verification for critical hardware", "sl4": "Hardware attestation; X-ray/inspection for safety system hardware; vendor chain of custody documentation" },
+      "mitreAttackIcs": ["T0862"]
+    },
+    {
+      "id": "SC-R4", "name": "Transient device management",
+      "description": "Laptops, USB drives, tablets, and other transient devices brought into OT environments by personnel and vendors must be managed to prevent malware introduction. Stuxnet demonstrated that this vector is actively exploited.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-2.3", "IEC 62443-3-3 SR-3.2", "NACSA Act 854 s18"] },
+      "technical": { "summary": "All transient devices scanned before introduction to OT. Dedicated OT media scanning kiosk at facility entry point. No personal devices in OT areas without OT manager approval.", "actions": ["Deploy OT media scanning kiosk at facility entry (Honeywell Secure Media Exchange, or dedicated isolated scanning PC)", "All USB media scanned before use on any OT system", "Vendor laptops scanned on arrival and issued a temporary OT-guest device profile if possible", "No personal mobile phones in highest-security OT areas (control room, SIS cabinet room)", "OT-owned and hardened laptops provided to vendors rather than permitting vendor laptops where possible"] },
+      "governance": { "summary": "Transient device policy enforced at facility entry. Exceptions require OT manager approval with enhanced monitoring.", "actions": ["Transient device log maintained at facility entry", "Regular policy awareness training for OT staff and contractors", "Annual policy review"] },
+      "evidenceItems": ["OT media scanning kiosk deployment documentation", "Transient device scan logs", "Transient device policy", "Exception records with compensating controls"],
+      "slMapping": { "sl2": "Scanning kiosk for media; restricted USB", "sl3": "Kiosk mandatory; vendor laptops scanned or replaced; no personal devices in control areas", "sl4": "No transient devices in safety system areas; hardware-enforced USB disable on SIS workstations" },
+      "mitreAttackIcs": ["T0864", "T0862", "T0873"]
+    }
+  ]
+}

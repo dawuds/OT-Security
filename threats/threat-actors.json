@@ -1,0 +1,94 @@
+{
+  "$schema": "ot-security-v1",
+  "description": "OT threat actor profiles relevant to Malaysian NCII sectors. Includes nation-state groups with demonstrated OT capability and criminal groups targeting OT environments.",
+  "sourceType": "paraphrased-from-public-sources",
+  "verificationNote": "Threat actor profiles based on publicly available threat intelligence reports from Dragos, Mandiant, CrowdStrike, CISA advisories, and US DOJ indictments.",
+  "threatActors": [
+    {
+      "id": "TA-001", "name": "Sandworm", "alternateNames": ["Voodoo Bear", "TeleBots", "GRU Unit 74455"],
+      "attribution": "Russia — GRU (Main Intelligence Directorate) Military Unit 74455",
+      "actorType": "Nation-state",
+      "capability": "SL 4 — state-of-the-art ICS capability",
+      "sectors": ["Energy", "Government", "Manufacturing"],
+      "primaryObjective": "Disruption of critical infrastructure for geopolitical effect",
+      "demonstratedCapability": ["Ukraine power grid attacks 2015/2016 (Industroyer)", "NotPetya global destructive attack 2017", "VPNFilter router malware", "Ukraine power grid attack 2022 (Industroyer2)"],
+      "primaryTechniques": ["T0817", "T0834", "T0813", "T0809"],
+      "relevanceToMalaysia": "Low direct threat — primarily targets Ukraine and Western allies. Relevant as capability benchmark for other actors and for understanding what SL 3/4 OT attacks look like. Malaysian NCII operators in energy sector should understand Industroyer-class attack patterns for detection rule development.",
+      "iec62443SLReference": 4
+    },
+    {
+      "id": "TA-002", "name": "XENOTIME", "alternateNames": ["TRITON operators"],
+      "attribution": "Russia — Central Scientific Research Institute of Chemistry and Mechanics (TsNIIKhM), per US DOJ",
+      "actorType": "Nation-state",
+      "capability": "SL 4 — unique safety system targeting capability",
+      "sectors": ["Oil & Gas", "Energy"],
+      "primaryObjective": "Mass casualty / critical infrastructure destruction",
+      "demonstratedCapability": ["TRITON/TRISIS attack on Schneider Triconex SIS (2017)", "Demonstrated reconnaissance of US and Australian water/electric/oil infrastructure"],
+      "primaryTechniques": ["T0838", "T0818", "T0829"],
+      "relevanceToMalaysia": "Relevant to Malaysian petrochemical sector (Petronas, refining facilities). Any Malaysian operator running Triconex or other Schneider SIS should review Triconex-specific hardening guides and ensure SIS network isolation.",
+      "iec62443SLReference": 4
+    },
+    {
+      "id": "TA-003", "name": "VOLTZITE / APT40", "alternateNames": ["Leviathan", "Kryptonite Panda"],
+      "attribution": "China — Ministry of State Security (MSS), Hainan Province",
+      "actorType": "Nation-state",
+      "capability": "SL 3 — sophisticated OT reconnaissance and access",
+      "sectors": ["Maritime", "Defence", "Energy", "Government", "Telecommunications"],
+      "primaryObjective": "Strategic intelligence collection; pre-positioning for potential destructive operations",
+      "demonstratedCapability": ["Targeting of utilities and critical infrastructure in US Pacific and ASEAN region", "OT network reconnaissance and long-term persistent access"],
+      "primaryTechniques": ["T0840", "T0801", "T0882", "T0865"],
+      "relevanceToMalaysia": "High relevance — Malaysia is within ASEAN region targeted by APT40/VOLTZITE. Malaysian maritime, energy, and government OT environments are likely within scope of Chinese intelligence collection interest. NACSA-designated NCII entities in energy, maritime, and government sectors should consider this threat in their SL-T assignment.",
+      "iec62443SLReference": 3
+    },
+    {
+      "id": "TA-004", "name": "KAMACITE / APT28-affiliated",
+      "attribution": "Russia — GRU-linked, associated with Sandworm staging operations",
+      "actorType": "Nation-state",
+      "capability": "SL 3",
+      "sectors": ["Energy", "Manufacturing"],
+      "primaryObjective": "Initial access and persistence in energy sector OT environments for Sandworm handoff",
+      "demonstratedCapability": ["Credential collection campaigns against energy sector", "Spearphishing targeting OT personnel"],
+      "primaryTechniques": ["T0865", "T0859", "T0866"],
+      "relevanceToMalaysia": "Low-medium — primarily targeting European and North American energy. Technique profile is relevant for defence planning.",
+      "iec62443SLReference": 3
+    },
+    {
+      "id": "TA-005", "name": "Ransomware Groups (OT-targeting)",
+      "alternateNames": ["EKANS/SNAKE", "Cl0p", "LockBit", "BlackCat/ALPHV (OT variants)"],
+      "attribution": "Financially motivated criminal groups — primarily Eastern Europe",
+      "actorType": "Criminal",
+      "capability": "SL 2 — IT-first with OT impact through IT/OT connectivity",
+      "sectors": ["Manufacturing", "Energy", "Oil & Gas", "Transport"],
+      "primaryObjective": "Financial extortion via ransomware — leverage OT criticality to maximise ransom demand",
+      "demonstratedCapability": ["Colonial Pipeline (DarkSide, 2021)", "Norsk Hydro (LockerGoga, 2019)", "Oldsmar water plant (2021)", "Multiple manufacturing OT compromises"],
+      "specificOtCapability": "EKANS/SNAKE malware specifically terminates OT-related Windows services (SCADA, historian, GE Digital, Honeywell, OSIsoft PI) before encryption to maximise OT disruption and ransom leverage",
+      "primaryTechniques": ["T0822", "T0820", "T0826", "T0881"],
+      "relevanceToMalaysia": "High — Malaysian manufacturing, energy, and transport sectors are within active targeting scope of financially motivated ransomware groups. The IT/OT convergence common in Malaysian industrial facilities creates the lateral movement path these groups exploit.",
+      "iec62443SLReference": 2
+    },
+    {
+      "id": "TA-006", "name": "CHERNOVITE / APT (Industroyer2 capability)",
+      "attribution": "Russia-linked — Sandworm sub-group",
+      "actorType": "Nation-state",
+      "capability": "SL 4",
+      "sectors": ["Energy — specifically power grid"],
+      "primaryObjective": "Destructive attacks on power grid infrastructure",
+      "demonstratedCapability": ["Industroyer2 (Ukraine, 2022) — updated Industroyer malware targeting IEC 104 RTUs"],
+      "primaryTechniques": ["T0834", "T0813", "T0814"],
+      "relevanceToMalaysia": "Low direct threat. Techniques relevant for TNB and energy sector SCADA monitoring rule development.",
+      "iec62443SLReference": 4
+    },
+    {
+      "id": "TA-007", "name": "Opportunistic Attackers — Internet-Exposed OT",
+      "attribution": "Unknown / varied — global opportunistic threat actors",
+      "actorType": "Criminal / opportunistic",
+      "capability": "SL 1",
+      "sectors": ["All — any internet-exposed OT system"],
+      "primaryObjective": "Opportunistic access, ransomware, defacement, or hacktivism",
+      "demonstratedCapability": ["Shodan-driven exploitation of default credentials on internet-exposed SCADA/HMI", "Opportunistic ransomware affecting OT environments via IT pivot", "Script kiddie defacement of water treatment HMI displays (multiple incidents globally)"],
+      "primaryTechniques": ["T0812", "T0819", "T0859"],
+      "relevanceToMalaysia": "Very High — multiple Malaysian industrial facilities have internet-exposed OT interfaces discoverable via Shodan. Any OT system with a public IP and weak/default credentials is an active target. This is the most likely threat for the majority of Malaysian OT operators who are not NCII-designated.",
+      "iec62443SLReference": 1
+    }
+  ]
+}

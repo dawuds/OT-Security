@@ -1,0 +1,163 @@
+{
+  "$schema": "ot-security-v1",
+  "concept": "Zones and Conduits",
+  "standard": "IEC 62443",
+  "sourceType": "paraphrased-from-standard",
+  "description": "Zones and conduits are the fundamental organizing principle of IEC 62443 security architecture. A Zone is a logical grouping of assets with equivalent security level requirements. A Conduit is a communication path connecting zones — the security policy at each conduit controls what data can flow between the zones it connects.",
+  "zoneDefinition": {
+    "concept": "Zone",
+    "definition": "A logical or physical grouping of assets (physical, logical, cyber, human) that share common security requirements based on criticality, consequence of compromise, and operational function. All assets within a zone are subject to the same security level target (SL-T) and the same set of security policies.",
+    "zoningPrinciples": [
+      "Assets with the same criticality and function belong in the same zone",
+      "Assets that need to communicate frequently should be in the same zone to minimize conduit overhead",
+      "Safety systems (SIS) must be in their own isolated zone — never shared with process control systems",
+      "Engineering workstations and operator HMIs should be in separate zones (different trust levels)",
+      "Vendor remote access should terminate in a dedicated zone (jump zone) — never directly in control zones",
+      "Zone boundaries should align with network segments where possible (VLAN, physical separation)"
+    ]
+  },
+  "conduitDefinition": {
+    "concept": "Conduit",
+    "definition": "A logical grouping of communication channels between two or more zones that shares common security characteristics. Conduits are the data pathways that cross zone boundaries — every inter-zone communication flows through a conduit. The security controls applied to a conduit determine what can flow between zones and how it is protected.",
+    "conduitPrinciples": [
+      "All inter-zone communications must pass through a defined conduit",
+      "Conduits must enforce the security policy of the lower of the two zone SL targets",
+      "Deny-all with explicit permit is the required conduit policy",
+      "Conduits must be documented with permitted protocols, source/destination addresses, and business justification",
+      "High-risk conduits (IT-to-OT) should use unidirectional gateways or data diodes"
+    ]
+  },
+  "referenceZones": [
+    {
+      "id": "ZONE-SIS",
+      "name": "Safety Instrumented System Zone",
+      "slTarget": 4,
+      "description": "Contains all Safety Instrumented System controllers and related hardware. Must be physically and network-isolated from all other zones. No incoming connections permitted — data flows outward only via data diode or unidirectional gateway to monitoring systems.",
+      "typicalAssets": ["Triconex Tricon/Trident", "Honeywell Safety Manager", "Yokogawa ProSafe-RS", "Hima HIMatrix", "SIS engineering workstation (offline)"],
+      "keyControls": ["Physical air gap from DCS network", "Data diode for outbound safety data to monitoring", "Physical access control (locked cabinet, personnel logging)", "No remote access under any circumstances", "Separate engineering network physically isolated"],
+      "nacsaRelevance": "SIS protecting designated NCII processes are the highest-criticality assets within scope of NACSA Act 854 s18."
+    },
+    {
+      "id": "ZONE-DCS",
+      "name": "Distributed Control System / Basic Control Zone",
+      "slTarget": 3,
+      "description": "Contains primary process controllers (DCS, PLCs) for critical process control functions. Communicates with Level 2 supervisory zone via controlled conduit. No internet connectivity. No IT network connectivity.",
+      "typicalAssets": ["DCS controllers", "Critical PLCs", "Remote I/O panels", "Field junction boxes with network connectivity"],
+      "keyControls": ["No direct connection to IT network", "Firewall at conduit to HMI zone", "Change management for all controller modifications", "Firmware integrity verification", "Physical access control"],
+      "nacsaRelevance": "DCS zone assets are core NCII assets for energy, water, and manufacturing sectors."
+    },
+    {
+      "id": "ZONE-HMI",
+      "name": "HMI and Supervisory Zone",
+      "slTarget": 2,
+      "description": "Contains operator HMIs, SCADA servers, and operator workstations. Operators interact with the process through systems in this zone. Engineering workstations should be in a separate zone.",
+      "typicalAssets": ["Operator HMIs", "SCADA server", "Alarm management server", "Operator workstations"],
+      "keyControls": ["Application whitelisting", "No internet access", "Patch management with OT-vendor approval", "Network separation from engineering zone", "Session lock enforcement"],
+      "nacsaRelevance": "SCADA data from HMI zone is primary evidence for NACSA s23 audits."
+    },
+    {
+      "id": "ZONE-EWS",
+      "name": "Engineering Workstation Zone",
+      "slTarget": 3,
+      "description": "Contains engineering workstations used for PLC programming, DCS configuration, and HMI development. Requires elevated SL because access to this zone provides direct ability to modify controller logic.",
+      "typicalAssets": ["PLC programming workstations (STEP 7, TIA Portal, Studio 5000)", "DCS engineering stations", "Safety system engineering workstations"],
+      "keyControls": ["Strict access control — engineering personnel only", "Jump server required for remote access", "All access sessions logged and recorded", "Engineering workstations never used for email or browsing", "USB restricted to approved and scanned media only", "Privileged access management (PAM)"],
+      "nacsaRelevance": "Engineering workstation compromise provides direct capability to modify NCII control logic — highest-value target after SIS."
+    },
+    {
+      "id": "ZONE-HIST",
+      "name": "Historian / Level 3 Zone",
+      "slTarget": 2,
+      "description": "Contains historian servers, batch management, and MES systems. This zone aggregates data from multiple Level 2 zones and provides data to the IDMZ for IT consumption.",
+      "typicalAssets": ["OSIsoft PI / AVEVA PI historian", "Batch management server", "MES server", "Advanced process control server"],
+      "keyControls": ["Separate VLAN from HMI zone", "OPC-UA preferred over OPC-DA for historian connectivity", "Database hardening", "Access restricted to operations and IT integration services"],
+      "nacsaRelevance": "Historian data supports NACSA s21 risk assessment evidence and operational analytics."
+    },
+    {
+      "id": "ZONE-IDMZ",
+      "name": "Industrial DMZ Zone",
+      "slTarget": 3,
+      "description": "Buffer zone between OT (Levels 0-3) and IT (Levels 4-5). All data exchange between OT and IT must pass through IDMZ services. No direct OT-to-IT connectivity permitted. IDMZ hosts controlled data exchange services.",
+      "typicalAssets": ["Data diode / unidirectional gateway", "Jump server / bastion host", "PI mirror server", "Patch server", "OT monitoring platform sensors", "Remote access gateway"],
+      "keyControls": ["Deny-all at both IDMZ boundaries with explicit permits only", "All traffic flows documented and reviewed quarterly", "Jump server sessions logged and recorded", "IDMZ systems patched and hardened", "No direct IT email or internet access from IDMZ"],
+      "nacsaRelevance": "IDMZ is the primary enforcer of NACSA s18 data security measures and the key control point for supply chain and vendor access."
+    },
+    {
+      "id": "ZONE-REMOTE",
+      "name": "Remote Access Zone",
+      "slTarget": 3,
+      "description": "Dedicated zone for all vendor and third-party remote access. Vendor sessions terminate here and are proxied to OT zones through managed jump services — vendors never get direct OT network access.",
+      "typicalAssets": ["VPN concentrator (OT-dedicated)", "Vendor jump server", "Session recording appliance", "Time-limited credential vault"],
+      "keyControls": ["MFA required for all remote access", "Session recording — 100% of sessions", "Maximum session duration with forced re-authentication", "Vendor access requires per-session approval", "No split tunnelling — all traffic through corporate network"],
+      "nacsaRelevance": "Remote vendor access is the most common initial access vector in OT incidents. Robust remote access zone controls directly support NACSA s18 risk mitigation."
+    }
+  ],
+  "referenceConduits": [
+    {
+      "id": "CONDUIT-SIS-MONITOR",
+      "name": "SIS to Monitoring (unidirectional)",
+      "fromZone": "ZONE-SIS",
+      "toZone": "ZONE-DCS",
+      "direction": "unidirectional-out",
+      "mechanism": "Data diode / unidirectional gateway",
+      "permittedFlows": ["Safety system status data (read-only, outbound)", "SIS alarm data (outbound)"],
+      "prohibitedFlows": ["Any inbound traffic to SIS zone", "Any write commands to SIS"],
+      "slRequired": 4
+    },
+    {
+      "id": "CONDUIT-DCS-HMI",
+      "name": "DCS to HMI",
+      "fromZone": "ZONE-DCS",
+      "toZone": "ZONE-HMI",
+      "direction": "bidirectional",
+      "mechanism": "OT-aware firewall with allowlist",
+      "permittedFlows": ["OPC-UA (signed)", "Modbus TCP (read/write for control)", "EtherNet/IP"],
+      "prohibitedFlows": ["SMB file sharing", "HTTP/HTTPS browsing", "RDP from HMI zone to DCS zone"],
+      "slRequired": 3
+    },
+    {
+      "id": "CONDUIT-HMI-EWS",
+      "name": "HMI Zone to Engineering Zone",
+      "fromZone": "ZONE-HMI",
+      "toZone": "ZONE-EWS",
+      "direction": "bidirectional-restricted",
+      "mechanism": "Firewall with application-layer inspection",
+      "permittedFlows": ["Engineering protocol traffic only (STEP 7, TIA Portal, Studio 5000 ports)", "OPC-UA for tag browsing"],
+      "prohibitedFlows": ["General IT protocols", "Internet traffic", "Email"],
+      "slRequired": 3
+    },
+    {
+      "id": "CONDUIT-HMI-HIST",
+      "name": "HMI/SCADA to Historian",
+      "fromZone": "ZONE-HMI",
+      "toZone": "ZONE-HIST",
+      "direction": "bidirectional",
+      "mechanism": "Firewall",
+      "permittedFlows": ["OPC-DA/UA for historian data collection", "PI SDK for AVEVA PI", "SQL queries from MES (restricted)"],
+      "prohibitedFlows": ["General internet traffic", "RDP from historian to HMI zone"],
+      "slRequired": 2
+    },
+    {
+      "id": "CONDUIT-HIST-IDMZ",
+      "name": "Historian to IDMZ (data replication)",
+      "fromZone": "ZONE-HIST",
+      "toZone": "ZONE-IDMZ",
+      "direction": "unidirectional-out-preferred",
+      "mechanism": "Data diode (preferred) or firewall with strict outbound-only rules",
+      "permittedFlows": ["PI-to-PI historian replication (outbound only)", "Time-series data to IDMZ mirror"],
+      "prohibitedFlows": ["Any inbound data modification commands from IDMZ to historian"],
+      "slRequired": 3
+    },
+    {
+      "id": "CONDUIT-IDMZ-IT",
+      "name": "IDMZ to IT Network",
+      "fromZone": "ZONE-IDMZ",
+      "toZone": "IT Network (Level 4)",
+      "direction": "bidirectional-restricted",
+      "mechanism": "Firewall — separate from OT-side firewall (two-firewall IDMZ design)",
+      "permittedFlows": ["Historian mirror data to IT analytics", "Patch downloads to IDMZ patch server", "Log forwarding to SIEM", "Authorised remote access sessions (inbound, via jump server only)"],
+      "prohibitedFlows": ["Direct connectivity to OT zones", "Inbound connections bypassing jump server", "General internet browsing from IDMZ"],
+      "slRequired": 3
+    }
+  ]
+}

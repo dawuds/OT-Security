@@ -1,0 +1,81 @@
+{
+  "$schema": "ot-security-v1",
+  "description": "OT security sectors covered in this repository — aligned with NACSA Act 854 NCII sectors that contain significant OT/ICS environments. Each sector has distinct OT characteristics, primary standards, and regulatory overlaps.",
+  "totalSectors": 6,
+  "nacsaAlignment": "NACSA Act 854 Schedule defines 11 NCII sectors. Six of these have significant OT environments and are covered in detail here. All six are designated NCII sectors — their operators carry s17-s26 Act 854 obligations.",
+  "sectors": [
+    {
+      "id": "energy",
+      "name": "Energy",
+      "nacsaSectorNumber": 4,
+      "nacsaSectorLead": "Energy Commission (Suruhanjaya Tenaga)",
+      "description": "Power generation (thermal, hydro, solar, combined cycle), transmission, and distribution. Includes TNB (Tenaga Nasional Berhad) generation, transmission, and distribution assets; Sarawak Energy; independent power producers (IPP). The highest-criticality OT sector in Malaysia — grid collapse affects all other NCII sectors.",
+      "otEnvironments": ["Generation plant DCS/control systems", "Substation automation (IEC 61850)", "SCADA for transmission grid (EMS/SCADA)", "Distribution management system (DMS)", "AMI (Advanced Metering Infrastructure)", "Protection and control relay systems"],
+      "primaryStandards": ["IEC 62443", "IEC 61850 (substation automation)", "IEC 60870 (telecontrol protocols)", "IEC 61968/61970 (power system information models)", "NERC CIP (reference, not Malaysian mandate)"],
+      "nacsaCopReference": "cop-energy.json (indicative — not yet gazetted)",
+      "keyOtRisks": ["Substation relay manipulation", "EMS/SCADA compromise causing cascading outage", "Protection system tampering allowing equipment damage", "AMI network as pivot into distribution OT"],
+      "targetSLByZone": { "Generation DCS": "SL 3", "Transmission SCADA (EMS)": "SL 3", "Substation automation": "SL 3", "Distribution DCS": "SL 2", "AMI head-end": "SL 2" }
+    },
+    {
+      "id": "water",
+      "name": "Water and Sewerage",
+      "nacsaSectorNumber": 8,
+      "nacsaSectorLead": "National Water Services Commission (SPAN)",
+      "description": "Water treatment, pumping, and distribution infrastructure. Key operators: Air Selangor (Pengurusan Air Selangor), Syarikat Air Johor (SAJ), Perbadanan Air Melaka (PAIM), Lembaga Air Perak. OT directly controls chemical dosing, filtration, pumping — sabotage could contaminate public water supply.",
+      "otEnvironments": ["Water treatment plant PLC/SCADA (chemical dosing, filtration)", "Pumping station control", "Reservoir level and flow control", "Distribution pressure management", "SCADA for distribution network", "Sewerage treatment plant control"],
+      "primaryStandards": ["IEC 62443", "AWWA (American Water Works Association) cybersecurity guidance", "NIST SP 800-82 Rev 3"],
+      "nacsaCopReference": "cop-water-sewerage.json (indicative — not yet gazetted)",
+      "keyOtRisks": ["Chemical dosing system manipulation (overdose/underdose causing public health emergency)", "Pump failure causing loss of supply", "False sensor readings masking contamination", "Ransomware causing loss of operational visibility (Oldsmar water plant 2021 reference)"],
+      "targetSLByZone": { "Chemical dosing control": "SL 3-4", "Pumping station control": "SL 2-3", "Distribution SCADA": "SL 2", "Sewerage treatment": "SL 2" },
+      "nacsaNote": "Water sector OT attacks can cause mass casualty events (chemical overdose). Any water treatment plant designated as NCII should achieve SL 3 minimum for chemical dosing control zones."
+    },
+    {
+      "id": "oil-gas",
+      "name": "Oil, Gas and Petrochemical",
+      "nacsaSectorNumber": 5,
+      "nacsaSectorLead": "PETRONAS (Petroliam Nasional Berhad)",
+      "description": "Upstream oil and gas production, midstream pipeline transmission, downstream refining and petrochemical processing. Petronas, Carigali, and their contractors and joint-venture partners. Safety is paramount — the TRITON attack targeted a Saudi Arabian petrochemical plant, representing the most dangerous known OT attack to date.",
+      "otEnvironments": ["Upstream: wellhead control, production separator control, gas compression", "Midstream: pipeline SCADA, compressor station control, pig tracking", "Downstream: refinery DCS, petrochemical plant DCS", "Safety Instrumented Systems (SIS/F&G) throughout", "Emergency Shutdown Systems (ESD)"],
+      "primaryStandards": ["IEC 62443", "IEC 61511 (functional safety — SIL certification)", "API Standard 1164 (pipeline SCADA security)", "IEC 62351 (power system security)", "NIST SP 800-82 Rev 3"],
+      "nacsaCopReference": "Covered under energy and critical infrastructure CoPs",
+      "keyOtRisks": ["SIS/ESD compromise enabling runaway reaction or explosion (TRITON-class attack)", "Pipeline SCADA manipulation causing over-pressure or product contamination", "Fire and gas system compromise masking real emergencies", "Ransomware causing uncontrolled production shutdown"],
+      "targetSLByZone": { "Safety Instrumented Systems": "SL 4", "Emergency Shutdown Systems": "SL 4", "Fire and Gas systems": "SL 3-4", "Refinery DCS": "SL 3", "Pipeline SCADA": "SL 3", "Wellhead control": "SL 2-3" }
+    },
+    {
+      "id": "transport",
+      "name": "Transport",
+      "nacsaSectorNumber": 9,
+      "nacsaSectorLead": "Ministry of Transport Malaysia",
+      "description": "Rail, aviation, port, and road transport infrastructure. OT controls include: Prasarana (LRT/MRT/BRT/Monorail) signalling and train control; KTM Berhad intercity rail; MAHB (Malaysia Airports Holdings) airport systems; Port Klang Authority and Westports vessel traffic management; PLUS Expressways traffic management.",
+      "otEnvironments": ["Rail: train control system (TCS), automatic train operation (ATO), signalling (ETCS/CBTC)", "Rail: traction power SCADA, CCTV/access control integration", "Aviation: instrument landing systems (ILS), ground movement control, baggage handling", "Ports: vessel traffic services (VTS), crane control, gate automation", "Roads: traffic management centres (TMC), variable message signs, CCTV"],
+      "primaryStandards": ["IEC 62443", "IEC 62280 (railway communication security)", "NIST SP 800-82 Rev 3", "ICAO cybersecurity guidance (aviation)", "IACS guidelines (ports)"],
+      "nacsaCopReference": "cop-transport.json (indicative — not yet gazetted)",
+      "keyOtRisks": ["Train collision from signalling system compromise", "Runway incursion from aviation OT compromise", "Vessel traffic service disruption causing port collision", "Traffic signal manipulation causing gridlock or accidents"],
+      "targetSLByZone": { "Train control / signalling": "SL 3-4", "Traction power control": "SL 3", "Aviation safety systems": "SL 3-4", "Port VTS": "SL 3", "Traffic management": "SL 2-3" }
+    },
+    {
+      "id": "manufacturing",
+      "name": "Manufacturing",
+      "nacsaSectorNumber": "Not explicit NCII sector — subset of Trade, Industry and Economy sector",
+      "nacsaSectorLead": "MITI (Ministry of International Trade and Industry)",
+      "description": "Advanced manufacturing, semiconductor fabrication, food and beverage production, pharmaceutical manufacturing. Malaysia's semiconductor and electronics manufacturing sector (Penang, Kulim Hi-Tech Park) and food processing are increasingly OT-intensive. Industry 4.0 adoption increases IIoT exposure.",
+      "otEnvironments": ["Semiconductor fab: process control for CVD, etch, lithography, CMP", "Electronics assembly: SMT line control, test and measurement automation", "Food and beverage: pasteurisation control, packaging line, cold chain monitoring", "Pharmaceutical: batch manufacturing control (21 CFR Part 11 compliance)", "Automotive assembly: robot control, paint shop environmental control"],
+      "primaryStandards": ["IEC 62443", "ISA-95 (manufacturing operations management)", "NIST SP 800-82 Rev 3", "FDA 21 CFR Part 11 (pharmaceutical)", "GAMP 5 (pharmaceutical — computer system validation)"],
+      "nacsaCopReference": "No specific NACSA CoP — general IEC 62443 framework applies",
+      "keyOtRisks": ["Production disruption (ransomware — primary risk; EKANS/SNAKE targets manufacturing)", "Product quality sabotage (pharmaceutical or food batch manipulation)", "Intellectual property theft (semiconductor process recipes)", "Safety system compromise in chemical-using manufacturing"],
+      "targetSLByZone": { "Process control (safety-critical)": "SL 3", "Production line control": "SL 2", "Quality control automation": "SL 2", "Batch manufacturing (pharma/food)": "SL 2-3" }
+    },
+    {
+      "id": "building-automation",
+      "name": "Building Automation",
+      "nacsaSectorNumber": "Subset of Government and ICT sectors for government buildings",
+      "nacsaSectorLead": "JKR (Jabatan Kerja Raya) for government buildings",
+      "description": "Building Management Systems (BMS) and Building Automation Systems (BAS) for government buildings, data centres, hospitals, airports, and commercial high-rises. Increasingly connected to corporate IT networks for energy management, making them an often-overlooked OT attack surface.",
+      "otEnvironments": ["HVAC control (Honeywell, Siemens, Johnson Controls)", "Access control and CCTV integration", "Fire alarm and suppression systems", "Elevator and escalator control", "Power management (UPS, generators, electrical distribution)", "Data centre environmental monitoring"],
+      "primaryStandards": ["IEC 62443", "BACnet/IP (ASHRAE 135)", "LON (LonTalk)", "KNX", "NIST SP 800-82 Rev 3"],
+      "nacsaCopReference": "No specific NACSA CoP — government buildings may fall under Government sector obligations",
+      "keyOtRisks": ["Data centre cooling failure from BMS compromise (critical IT availability impact)", "Hospital HVAC compromise affecting sterile environments", "Physical access control bypass via BAS exploit", "Fire suppression disabling from BMS attack"],
+      "targetSLByZone": { "Data centre BMS (critical)": "SL 2-3", "Hospital HVAC/clean room": "SL 2-3", "Fire alarm/suppression": "SL 2", "General commercial BMS": "SL 1-2" }
+    }
+  ]
+}

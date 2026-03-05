@@ -1,0 +1,35 @@
+{
+  "$schema": "ot-security-v1",
+  "framework": "MITRE ATT&CK for ICS",
+  "fullTitle": "MITRE ATT&CK for Industrial Control Systems",
+  "publisher": "MITRE Corporation",
+  "sourceType": "paraphrased-from-framework",
+  "publiclyAvailable": true,
+  "publicURL": "https://attack.mitre.org/matrices/ics/",
+  "version": "v15 (2024)",
+  "lastUpdated": "2026-03-05",
+  "description": "MITRE ATT&CK for ICS is a knowledge base of adversary tactics and techniques specifically targeting Industrial Control Systems. Unlike the Enterprise ATT&CK matrix, ICS ATT&CK covers techniques that manipulate, disrupt, or destroy industrial processes rather than just IT systems. It is derived from real-world incidents including Stuxnet, Industroyer/Crashoverride, TRITON/TRISIS, and Sandworm operations.",
+  "useInThisRepo": "Each ATT&CK for ICS technique referenced in IEC 62443 SRs and control library shows which techniques the control mitigates. The Threats view allows navigating from a known attack technique to the controls that defend against it — the 'red team lens' of the repository.",
+  "tacticCount": 12,
+  "techniqueCount": 83,
+  "tactics": [
+    { "id": "TA0108", "name": "Initial Access", "description": "Techniques to gain initial foothold in an OT environment" },
+    { "id": "TA0104", "name": "Execution", "description": "Techniques to run adversary-controlled code on OT systems" },
+    { "id": "TA0110", "name": "Persistence", "description": "Techniques to maintain access to OT systems across restarts" },
+    { "id": "TA0111", "name": "Privilege Escalation", "description": "Techniques to gain higher-level permissions in OT systems" },
+    { "id": "TA0103", "name": "Evasion", "description": "Techniques to avoid detection in OT environments" },
+    { "id": "TA0102", "name": "Discovery", "description": "Techniques to learn about OT environment topology and assets" },
+    { "id": "TA0109", "name": "Lateral Movement", "description": "Techniques to move from initial access point into OT environment" },
+    { "id": "TA0100", "name": "Collection", "description": "Techniques to gather OT process data and configurations" },
+    { "id": "TA0101", "name": "Command and Control", "description": "Techniques to communicate with compromised OT systems" },
+    { "id": "TA0107", "name": "Inhibit Response Function", "description": "Techniques to prevent safety and protection functions from responding to failures" },
+    { "id": "TA0106", "name": "Impair Process Control", "description": "Techniques to manipulate, disable, or damage physical processes" },
+    { "id": "TA0105", "name": "Impact", "description": "Techniques to disrupt, damage, or destroy OT systems and physical processes" }
+  ],
+  "keyIncidentMappings": [
+    { "incident": "Stuxnet (2010)", "primaryTactics": ["Execution", "Evasion", "Impair Process Control"], "primaryTechniques": ["T0873", "T0857", "T0836"] },
+    { "incident": "Industroyer/Crashoverride (2016)", "primaryTactics": ["Inhibit Response Function", "Impact"], "primaryTechniques": ["T0814", "T0815", "T0831"] },
+    { "incident": "TRITON/TRISIS (2017)", "primaryTactics": ["Inhibit Response Function", "Impair Process Control"], "primaryTechniques": ["T0838", "T0839", "T0881"] },
+    { "incident": "Colonial Pipeline (2021)", "primaryTactics": ["Initial Access", "Lateral Movement", "Impact"], "primaryTechniques": ["T0866", "T0817", "T0816"] }
+  ]
+}

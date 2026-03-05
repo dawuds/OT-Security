@@ -1,0 +1,38 @@
+{
+  "$schema": "ot-security-v1",
+  "description": "Evidence items for OT security audit — mapped to IEC 62443-3-3 SRs, domain requirements, and NACSA Act 854 obligations. Used by auditors conducting s23 assessments and by OT security teams preparing for audit.",
+  "auditorNote": "For NACSA s23 audits: the auditor should be NACSA-licensed with OT security expertise (GICSP or equivalent). Evidence should demonstrate both policy (documents exist) and operational effectiveness (controls are working). Passive evidence (logs, monitoring outputs) is more reliable than documentation alone.",
+  "evidenceByDomain": {
+    "network-segmentation": {
+      "description": "Evidence that OT network zones are defined, enforced, and monitored.",
+      "evidenceItems": [
+        { "id": "E-NS-01", "name": "Network topology diagram with zones and conduits", "whatGoodLooksLike": ["Current diagram dated within 6 months", "All zones labelled with SL-T", "All conduits with permitted traffic flows", "IDMZ clearly shown breaking IT-OT path"], "commonGaps": ["Diagram outdated — doesn't reflect current topology", "IDMZ not implemented despite being shown in diagram", "Unknown devices not represented"], "howToVerify": "Compare diagram to live network using passive monitoring platform asset discovery" },
+        { "id": "E-NS-02", "name": "IDMZ firewall rulesets (both firewalls)", "whatGoodLooksLike": ["Deny-all with explicit permit", "No direct IT-to-OT Layer 3 routes", "All permits have documented business justification", "Last reviewed within 6 months"], "commonGaps": ["Overly permissive rules ('any-any')", "Stale rules for decommissioned services", "No documented justification for permits"], "howToVerify": "Review firewall configuration files; test that blocked traffic is actually blocked" },
+        { "id": "E-NS-03", "name": "OT protocol-aware firewall DPI configuration", "whatGoodLooksLike": ["DPI rules for each OT protocol in use", "Function code filtering (e.g., Modbus write blocked where only read expected)", "Policy violation log showing DPI is active"], "commonGaps": ["Standard port-based firewall (no DPI)", "DPI licensed but not configured for OT protocols"], "howToVerify": "Review DPI rule configuration; send test traffic with unexpected function codes and verify block" }
+      ]
+    },
+    "safety-system": {
+      "description": "Evidence that Safety Instrumented Systems are physically isolated and their integrity is maintained.",
+      "evidenceItems": [
+        { "id": "E-SS-01", "name": "SIS network isolation verification record", "whatGoodLooksLike": ["Physical cable trace confirming no network cables between SIS and DCS/IT", "Signed off by safety engineer and OT security engineer", "Dated within 12 months"], "commonGaps": ["Verification never performed — assumed isolated", "Physical access panel connection not traced", "Data diode bypassed during maintenance and not restored"], "howToVerify": "Physical inspection — trace every cable from SIS controller back-panel" },
+        { "id": "E-SS-02", "name": "SIS program checksum register with pre/post maintenance comparisons", "whatGoodLooksLike": ["Baseline hashes documented at commissioning or last verified state", "Pre-maintenance hash matches baseline", "Post-maintenance hash matches expectation for approved change", "Two-person sign-off on each comparison"], "commonGaps": ["No baseline established", "Checksums checked by single person", "Hash comparison not performed after maintenance"], "howToVerify": "Review checksum register; select one controller and verify current hash against register" },
+        { "id": "E-SS-03", "name": "SIS key switch configuration records", "whatGoodLooksLike": ["All Triconex/Honeywell SM/ProSafe-RS controllers in Run mode (not Program mode) during normal operation", "Key held by named individual — not hanging in cabinet", "Log of key switch mode changes"], "commonGaps": ["Key switch left in Program mode permanently", "Key hanging in cabinet lock", "No awareness that key switch is a security control"], "howToVerify": "Physical inspection of all SIS controller key switches; verify key holder identity" }
+      ]
+    },
+    "incident-response": {
+      "description": "Evidence that the organisation can detect, classify, and respond to OT security incidents — including NACSA s26 notification.",
+      "evidenceItems": [
+        { "id": "E-IR-01", "name": "OT monitoring platform deployment and alert records", "whatGoodLooksLike": ["Sensor coverage map showing all OT network segments covered", "Alert log showing active detection", "Evidence of alert review and triage within defined SLA", "NACSA-relevant alert types configured"], "commonGaps": ["Monitoring deployed but alerts not reviewed", "Coverage gaps in remote sites", "No OT-specific detection rules — only generic IT rules"], "howToVerify": "Review sensor coverage map; request sample alert review records for last 30 days" },
+        { "id": "E-IR-02", "name": "NACSA notification procedure and tabletop exercise records", "whatGoodLooksLike": ["Written procedure with incident classification matrix", "NACSA contact details current", "Tabletop exercise record showing team classified incidents within 6-hour window", "Notification decision authority clearly defined"], "commonGaps": ["Procedure exists but never tested", "NACSA contact details outdated", "Team unaware of 6-hour notification requirement"], "howToVerify": "Review procedure; confirm NACSA contact details; review most recent tabletop exercise records" },
+        { "id": "E-IR-03", "name": "OT Incident Response Plan with OT-specific runbooks", "whatGoodLooksLike": ["OT IRP separate from IT IRP or as dedicated OT appendix", "System-specific runbooks for key OT scenarios", "Operations engineering involvement documented", "Annual review and update"], "commonGaps": ["IT IRP used as-is for OT — no OT-specific procedures", "Operations engineering not involved in OT IR", "IRP never tested or updated"], "howToVerify": "Review IRP; check last update date; confirm operations management has reviewed OT sections" }
+      ]
+    },
+    "asset-management": {
+      "description": "Evidence that OT assets are inventoried, classified, and configuration-managed.",
+      "evidenceItems": [
+        { "id": "E-AM-01", "name": "OT asset register completeness evidence", "whatGoodLooksLike": ["All zones represented", "Minimum required fields populated (make/model, firmware, IP, zone, criticality)", "Last updated date within 30 days", "Passive discovery results cross-checked against register — no significant gaps"], "commonGaps": ["Significant gaps vs passive discovery", "Firmware versions missing", "Remote site assets not included"], "howToVerify": "Compare register against OT monitoring platform asset list; select 10 random assets and verify register accuracy" },
+        { "id": "E-AM-02", "name": "OT change management records", "whatGoodLooksLike": ["Change requests for all known changes in period", "Post-change verification records", "Emergency change records with retrospective review", "No gaps between change log and configuration monitoring alerts"], "commonGaps": ["Undocumented changes discovered by configuration monitoring", "Post-change verification skipped", "No emergency change process — all changes go through normal process or bypass entirely"], "howToVerify": "Cross-reference change log with configuration monitoring deviation log; unreconciled deviations indicate gaps" }
+      ]
+    }
+  }
+}

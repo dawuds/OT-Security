@@ -1,0 +1,41 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "configuration-management",
+  "name": "Configuration Management",
+  "description": "OT configuration management ensures that changes to OT system configurations are authorised, tested, and tracked. Configuration drift — unauthorised changes accumulating over time — is a common finding in OT security assessments and can mask malicious changes.",
+  "requirements": [
+    {
+      "id": "CM-R1", "name": "OT baseline configuration and hardening",
+      "description": "Establish and maintain a security baseline configuration for each OT system type. Baseline follows vendor hardening guides and removes unnecessary services, default credentials, and unused features.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-7.6", "IEC 62443-3-3 SR-7.7", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Vendor hardening guides form the basis of OT baseline configurations. Common hardening actions: disable telnet, change default passwords, disable unused ports, remove unnecessary Windows services.", "actions": ["Obtain vendor hardening guides for all major OT components (Siemens, Rockwell, Honeywell, ABB publish hardening guides)", "Create baseline configuration checklist per OT system type (HMI, engineering workstation, SCADA server, historian)", "Apply hardening to all new OT systems before commissioning", "Assess existing OT systems against hardening baseline — identify and remediate gaps on risk-prioritised schedule", "Use ICS-CERT/CISA hardening guides as supplementary reference for common platforms (Windows-based OT systems)"] },
+      "governance": { "summary": "Baseline configurations reviewed annually and updated when vendor guidance changes.", "actions": ["Annual baseline review", "Baseline update triggers reassessment of deployed systems", "Hardening compliance report produced annually"] },
+      "evidenceItems": ["Baseline configuration documents per system type", "Hardening assessment records per OT asset", "Annual hardening compliance report"],
+      "nacsaMapping": ["s18"],
+      "slMapping": { "sl1": "Some hardening applied; vendor defaults changed", "sl2": "Documented baseline per system type; hardening applied to new systems; existing systems assessed", "sl3": "Automated configuration compliance checking; deviation alerts; hardening applied to all in-scope systems", "sl4": "Cryptographically verified configurations; immutable config for safety systems; hardware secure boot" },
+      "mitreAttackIcs": ["T0895"]
+    },
+    {
+      "id": "CM-R2", "name": "Change management for OT",
+      "description": "All changes to OT system configurations, programs, and network settings must follow a formal change management process with technical review, operational approval, and rollback planning.",
+      "legal": { "basis": ["IEC 62443-2-1 cl. 4.3.4", "IEC 62443-3-3 SR-7.6", "NACSA Act 854 s18"] },
+      "technical": { "summary": "OT change management process: change request, technical review (OT engineer), operational approval (operations manager), scheduled maintenance window, rollback plan, post-change verification.", "actions": ["All OT configuration changes (PLC programs, HMI changes, network device config, firewall rules) require formal change request", "Emergency change process defined for safety-critical situations — approval still required but expedited", "Rollback plan documented for every change before change window begins", "Post-change functional verification performed and recorded", "Change log maintained linking change request to implementation record"] },
+      "governance": { "summary": "Change management owned by OT engineering. OT manager approves significant changes. Safety team involved for any change to safety-related systems.", "actions": ["Monthly change review meeting", "Emergency change retrospective review within 5 days", "Annual change process effectiveness review"] },
+      "evidenceItems": ["Change management procedure", "Change request records", "Post-change verification records", "Emergency change records and retrospectives"],
+      "nacsaMapping": ["s18"],
+      "slMapping": { "sl1": "Some change tracking", "sl2": "Formal change management; rollback plan; post-change verification", "sl3": "Automated change detection; drift alerts; all changes in version-controlled repository", "sl4": "Dual-authorisation for safety system changes; safety impact assessment required; formal SIL re-verification" },
+      "mitreAttackIcs": ["T0895"]
+    },
+    {
+      "id": "CM-R3", "name": "Configuration monitoring and drift detection",
+      "description": "Detect unauthorised or undocumented changes to OT system configurations in near-real-time — distinguishing between authorised (through change management) and unauthorised changes.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-7.6", "IEC 62443-3-3 SR-3.4", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Compare current OT configurations against approved baseline. Alert on deviations. Distinguish authorised changes (linked to approved change request) from unauthorised drift.", "actions": ["Use OT monitoring platform (Dragos, Claroty, Nozomi) to detect PLC program changes via passive observation", "Deploy file integrity monitoring (Tripwire, AIDE) on OT Windows-based systems", "Configure alerts for configuration changes not linked to approved change requests", "Reconcile configuration monitoring alerts with change management log weekly", "Any unreconciled configuration change treated as a potential security incident"] },
+      "governance": { "summary": "Configuration monitoring alerts reviewed daily. Unreconciled changes escalated to OT security team.", "actions": ["Daily alert review", "Weekly reconciliation report", "Unreconciled changes trigger security investigation"] },
+      "evidenceItems": ["Configuration monitoring alert log", "Weekly reconciliation reports", "Security investigation records for unreconciled changes"],
+      "nacsaMapping": ["s18"],
+      "slMapping": { "sl2": "File integrity monitoring on OT workstations; manual reconciliation", "sl3": "Automated configuration change detection; passive PLC program change detection; real-time alerts", "sl4": "Cryptographic configuration verification; any deviation triggers immediate incident response" },
+      "mitreAttackIcs": ["T0895", "T0838"]
+    }
+  ]
+}

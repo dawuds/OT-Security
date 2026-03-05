@@ -1,0 +1,49 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "network-segmentation",
+  "name": "Network Segmentation and Zone Architecture",
+  "iec62443FRs": ["FR5"],
+  "primarySRs": ["SR-5.1", "SR-5.2", "SR-5.3", "SR-5.4"],
+  "requirements": [
+    {
+      "id": "NS-R1", "name": "Zone definition and documentation",
+      "description": "Define and document all security zones within the OT environment. Each zone must have: a defined boundary, a named set of assets, an assigned SL-T, and a stated rationale for the zone grouping.",
+      "legal": { "basis": ["IEC 62443-3-2 cl. 4", "NACSA Act 854 s21(1)", "IEC 62443-3-3 SR-5.1"], "summary": "Zone definition is a prerequisite for the system-level security risk assessment required by IEC 62443-3-2. NACSA s21(1) mandates risk assessment — zone-based risk assessment is the IEC 62443-compliant method.", "owner": "OT Security Engineer / System Integrator" },
+      "technical": { "summary": "Create and maintain a network topology diagram showing all zones, zone boundaries, conduits, and inter-zone data flows.", "actions": ["Document all zones with asset lists", "Assign SL-T to each zone based on consequence analysis", "Map all inter-zone communications to conduits", "Review and update zone model after any architectural change"] },
+      "governance": { "summary": "Zone model must be reviewed by OT security team, approved by OT manager, and included in the NACSA s21 risk assessment package.", "actions": ["Annual review and revalidation of zone model", "Update triggered by any architecture change", "Include in NACSA s23 audit artefact package"] },
+      "evidenceItems": ["Network topology diagram with zones and conduits marked", "Zone register (name, assets, SL-T, rationale)", "Change history for zone model"],
+      "slMapping": { "sl1": "Zones defined and documented — even if enforcement is limited", "sl2": "Zones technically enforced with firewall/VLAN at every boundary", "sl3": "Zones enforced with OT-aware firewall with DPI and IDS at boundaries", "sl4": "Hardware-enforced boundaries for highest-criticality zones (data diodes, air gaps)" },
+      "mitreAttackIcs": ["T0817", "T0886"]
+    },
+    {
+      "id": "NS-R2", "name": "Industrial DMZ implementation",
+      "description": "Implement an Industrial DMZ (IDMZ) between OT Level 3 and IT Level 4. All data exchange between OT and IT must pass through IDMZ services. No direct IT-to-OT Layer 3 routing permitted.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-5.2", "NIST SP 800-82 Rev 3 Section 4", "NACSA Act 854 s18"], "summary": "The IDMZ is the primary architectural control implementing SR-5.1 (network segmentation) and NACSA s18 security measures for entities with both IT and OT environments.", "owner": "OT Security Architect / IT Security Team" },
+      "technical": { "summary": "Deploy two-firewall IDMZ design: OT-side firewall (deny all, permit specific OT protocols outbound only) and IT-side firewall (deny all, permit specific IT service access to IDMZ services only).", "actions": ["Deploy two separate firewalls (OT-side and IT-side)", "Define all IDMZ services (historian mirror, patch server, jump server, remote access gateway)", "Implement deny-all with explicit permit at both firewalls", "Deploy data diode for highest-criticality OT-to-IT data flows (historian replication)", "Document all permitted traffic flows with business justification"] },
+      "governance": { "summary": "IDMZ design approved by OT and IT security leadership. Traffic flows reviewed quarterly. Changes require change management approval.", "actions": ["Quarterly firewall rule review", "Annual IDMZ architecture review", "All IDMZ changes through formal change management"] },
+      "evidenceItems": ["IDMZ architecture diagram", "Firewall ruleset documentation (OT-side and IT-side)", "Traffic flow register with business justifications", "Quarterly firewall rule review records"],
+      "slMapping": { "sl1": "Some separation — at minimum, OT on separate VLAN from corporate IT", "sl2": "Full IDMZ with firewall on both sides; all IT-OT traffic through IDMZ services", "sl3": "IDMZ with OT-aware firewalls and DPI; data diode for historian replication", "sl4": "Data diode mandatory for all OT-to-IT flows; no inbound connectivity from IT to OT" },
+      "mitreAttackIcs": ["T0817", "T0820", "T0865"]
+    },
+    {
+      "id": "NS-R3", "name": "OT protocol-aware firewall filtering",
+      "description": "Firewalls at OT zone boundaries must perform deep packet inspection (DPI) of OT protocols — not just TCP/UDP port filtering. Permit only valid, expected OT protocol messages. Block malformed or unexpected protocol commands.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.2", "NIST SP 800-82 Rev 3 Section 6.1"], "summary": "Standard port-based firewalls are insufficient for OT — a valid Modbus TCP connection on port 502 can contain any function code, including malicious write commands. OT-aware DPI validates protocol content, not just connection establishment.", "owner": "OT Network Security Engineer" },
+      "technical": { "summary": "Deploy OT-aware firewalls (Fortinet FortiGate with OT profile, Tofino Xenon, Cisco Firepower with OT signatures, Palo Alto with OT app-IDs) at all inter-zone conduits.", "actions": ["Identify all OT protocols in use per zone (Modbus, DNP3, EtherNet/IP, PROFINET, IEC 104)", "Configure DPI rules to permit only expected function codes and message types", "Block unexpected protocol function codes (e.g., block Modbus Write if only reads are expected)", "Enable logging of all policy violations"] },
+      "governance": { "summary": "DPI rulesets reviewed when protocol usage changes. Vendor-assisted rule development for site-specific OT protocol profiles.", "actions": ["Document protocol usage per conduit", "Review DPI rules after any process or control system change"] },
+      "evidenceItems": ["Firewall DPI rule documentation", "OT protocol profile per conduit", "Policy violation logs"],
+      "slMapping": { "sl1": "Standard stateful firewall (no OT protocol awareness)", "sl2": "OT-aware DPI for major protocols (Modbus, EtherNet/IP)", "sl3": "OT-aware DPI for all protocols in use; IDS integration; permit-specific-function-codes only", "sl4": "Hardware-enforced unidirectional flow for highest-risk conduits; DPI on all bidirectional conduits" },
+      "mitreAttackIcs": ["T0808", "T0834", "T0855"]
+    },
+    {
+      "id": "NS-R4", "name": "Wireless network segmentation",
+      "description": "Wireless OT networks (WiFi, WirelessHART, ISA100, private LTE for OT) must be logically isolated from corporate WiFi and subject to equivalent zone security controls.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.6", "IEC 62443-3-3 SR-5.1"], "summary": "Wireless OT networks extend the zone boundary into the radio frequency domain. Unauthorised WiFi access points in OT areas bypass physical zone boundaries.", "owner": "OT Network Security Engineer" },
+      "technical": { "summary": "Deploy separate SSIDs for OT WiFi with WPA3 Enterprise authentication. Wireless sensors (WirelessHART, ISA100) on dedicated VLAN not connected to general OT network. Survey for rogue access points regularly.", "actions": ["Separate OT WiFi SSID from corporate WiFi — separate VLAN and separate controller where possible", "WPA3 Enterprise (RADIUS authentication) for OT WiFi", "WirelessHART networks on dedicated VLAN — do not route to other OT VLANs without firewall", "Monthly wireless survey for rogue access points in OT areas"] },
+      "governance": { "summary": "No personal devices on OT WiFi. All OT wireless devices in asset register.", "actions": ["Wireless device inventory maintained", "Periodic spectrum surveys documented"] },
+      "evidenceItems": ["Wireless network architecture diagram", "WiFi authentication configuration", "Rogue AP survey records"],
+      "slMapping": { "sl1": "OT WiFi separate from corporate WiFi", "sl2": "WPA3 authentication; separate VLAN; no internet access", "sl3": "RADIUS auth; wireless IDS; automatic rogue AP detection", "sl4": "Continuous wireless spectrum monitoring; no wireless on safety systems" },
+      "mitreAttackIcs": ["T0860"]
+    }
+  ]
+}

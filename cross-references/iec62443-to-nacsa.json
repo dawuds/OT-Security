@@ -1,0 +1,75 @@
+{
+  "$schema": "ot-security-v1",
+  "title": "IEC 62443 to NACSA Act 854 Cross-Reference",
+  "description": "Maps IEC 62443-3-3 System Requirements and domain requirements to NACSA Act 854 obligations. For Malaysian NCII-designated OT operators: IEC 62443 compliance at the SL indicated substantially satisfies the corresponding NACSA Act 854 obligation. This mapping is indicative — verify with qualified legal and OT security counsel.",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "This mapping is a reasoned interpretation of how IEC 62443 SRs align with NACSA Act 854 obligations. It has not been validated by NACSA or endorsed as the official compliance pathway. Consult qualified legal and OT security advisors for compliance decisions.",
+  "nacsaActReference": "Cyber Security Act 2024 (Act 854), Federal Gazette P.U.(B) 283/2024",
+  "nacsaRepoReference": "See github.com/dawuds/nacsa for full Act 854 provisions, requirements, evidence items, and sector-specific obligations.",
+  "mappings": [
+    {
+      "nacsaSection": "s17",
+      "nacsaTitle": "Designation of NCII entity and NCII sector lead",
+      "nacsaObligation": "Accept designation, acknowledge in writing, understand scope of NCII designation",
+      "iec62443Alignment": "Prerequisite to IEC 62443 implementation — designation defines the asset scope for zone definition and SL targeting",
+      "relevantSRs": [],
+      "relevantDomains": ["asset-inventory"],
+      "notes": "Zone definition (IEC 62443-3-2) and asset inventory (SR-7.8) directly implement the identification of NCII assets within scope of the designation."
+    },
+    {
+      "nacsaSection": "s18",
+      "nacsaTitle": "Duties of NCII entity",
+      "nacsaObligation": "Implement and maintain cybersecurity measures; comply with CE directives; maintain measures under s21-26",
+      "iec62443Alignment": "IEC 62443-3-3 SL 2 compliance across all 51 SRs substantially satisfies the s18 duty to implement security measures for most NCII OT operators. SL 3 required for high-criticality NCII assets.",
+      "relevantSRs": ["SR-1.1 through SR-7.8 (all)"],
+      "relevantDomains": ["all"],
+      "notes": "s18 is the catch-all obligation. IEC 62443 SL 2 is the recommended baseline for NCII OT environments. SL-T should be set higher (SL 3) for critical process control zones and SL 4 for SIS."
+    },
+    {
+      "nacsaSection": "s21",
+      "nacsaTitle": "Cyber security risk assessment",
+      "nacsaObligation": "Cause risk assessment to be conducted; submit findings to sector lead",
+      "iec62443Alignment": "IEC 62443-3-2 (Security Risk Assessment for System Design) is the OT-specific methodology for fulfilling s21. The zone-based consequence analysis and SL-T targeting process is the IEC 62443 risk assessment.",
+      "relevantSRs": ["SR-7.8 (asset inventory is prerequisite)", "SR-3.3 (verification)"],
+      "relevantDomains": ["asset-inventory", "network-segmentation"],
+      "notes": "For NCII-designated OT operators, the IEC 62443-3-2 risk assessment methodology directly fulfils s21(1). The risk assessment must cover all designated NCII assets and assign SL-T per zone. Findings submitted to NACSA sector lead as required by s21.",
+      "frequency": "At least annually; and after significant changes to OT environment per risk-assessment-and-audit regulations"
+    },
+    {
+      "nacsaSection": "s22",
+      "nacsaTitle": "Code of practice",
+      "nacsaObligation": "Comply with CE-approved codes of practice for the relevant NCII sector",
+      "iec62443Alignment": "IEC 62443 SL 2 compliance provides the technical implementation of code of practice requirements. Sector-specific codes (energy, water, transport) will align with IEC 62443 as the implementation standard.",
+      "relevantSRs": ["All SRs"],
+      "relevantDomains": ["all"],
+      "nacсacopMapping": { "energy": "cop-energy.json (indicative)", "water": "cop-water-sewerage.json (indicative)", "transport": "cop-transport.json (indicative)" },
+      "notes": "Codes of practice under Act 854 have not yet been gazetted as of 2026-03. Indicative codes in the nacsa repo suggest IEC 62443 alignment. Monitor NACSA for gazette publications of codes."
+    },
+    {
+      "nacsaSection": "s23",
+      "nacsaTitle": "Cyber security audit",
+      "nacsaObligation": "Cause audit to be conducted by NACSA-licensed auditor; submit audit report",
+      "iec62443Alignment": "An IEC 62443-3-3 SL assessment conducted by a qualified OT security assessor (GICSP, GRID, or equivalent) can serve as the technical component of the s23 audit. The auditor must be NACSA-licensed.",
+      "relevantSRs": ["All 51 SRs as audit scope"],
+      "relevantDomains": ["all"],
+      "notes": "For OT-environment audits: the NACSA-licensed auditor should use IEC 62443-3-3 as the assessment framework. Evidence items in this repository's evidence/ directory map to IEC 62443 audit evidence.",
+      "frequency": "Biennially per risk-assessment-and-audit regulations"
+    },
+    {
+      "nacsaSection": "s26",
+      "nacsaTitle": "Notification of cyber security incident",
+      "nacsaObligation": "Notify NACSA within 6 hours of significant-impact incident; 72-hour follow-up; 30-day final report; 7-year record keeping",
+      "iec62443Alignment": "SR-6.1 and SR-6.2 (continuous monitoring, audit log accessibility) enable the detection and investigation capability required to make a timely notification decision. SR-2.9 and SR-3.9 (log retention, log protection) support the 7-year record keeping requirement.",
+      "relevantSRs": ["SR-6.1", "SR-6.2", "SR-2.8", "SR-2.9", "SR-3.9"],
+      "relevantDomains": ["incident-response", "monitoring-logging"],
+      "notes": "The 6-hour notification window under s26 creates a hard operational deadline. Without deployed OT monitoring (IR-R1) and a tested incident classification procedure (IR-R2), NCII-designated OT operators cannot reliably meet this deadline for network-based attacks.",
+      "referenceNotificationRegulation": "Cyber Security (Notification of Cyber Security Incident) Regulations 2024, P.U.(A) 220/2024"
+    }
+  ],
+  "slToNacsaMapping": {
+    "sl1": "Does not meet NACSA s18 obligations for designated NCII entities. Acceptable only for non-NCII OT environments.",
+    "sl2": "Baseline for NACSA compliance for most NCII-designated OT sectors. Satisfies s18 for medium-criticality NCII assets.",
+    "sl3": "Required for high-criticality NCII assets (primary generation, critical water, major transport hubs). Strongly recommended for all NCII OT environments.",
+    "sl4": "Required for Safety Instrumented Systems regardless of NCII designation status. Required for highest-criticality NCII OT assets."
+  }
+}

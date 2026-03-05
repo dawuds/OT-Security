@@ -1,0 +1,48 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "identity-access",
+  "name": "Identity and Access Management",
+  "description": "Requirements for managing who can access OT systems, how they authenticate, and what they can do. OT IAM must balance security with operational accessibility — an operator who cannot access the HMI during an emergency poses a safety risk. Design for security under normal conditions and graceful degradation under emergency conditions.",
+  "requirements": [
+    {
+      "id": "IAM-R1", "name": "Individual user accounts — elimination of shared accounts",
+      "description": "Every person accessing OT systems must use an individual named account. Shared accounts ('operator', 'engineer', 'admin') must be eliminated from all OT systems within scope of the IEC 62443 assessment.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.1", "IEC 62443-3-3 SR-1.4", "IEC 62443-3-3 SR-2.12", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Individual accounts on HMI, SCADA, historian, engineering workstations. For PLCs and RTUs that cannot support individual accounts: individual accounts enforced at the jump server / PAM tool level — the gateway authenticates the individual even if the PLC only sees a shared service account.", "actions": ["Inventory all shared accounts on OT systems", "Create individual accounts for all OT users on HMI/SCADA/engineering tools", "Implement PAM tool to control access to PLC programming interfaces (individual authentication at PAM, proxied to PLC shared account)", "Disable or remove shared accounts after individual accounts operational", "Document exceptions with compensating controls for systems that technically cannot support individual accounts"] },
+      "governance": { "summary": "Account creation/deletion requires OT manager approval. Annual account access review.", "actions": ["OT account management procedure", "Annual access review — remove leavers and role-changers", "Joiners/movers/leavers process includes OT system accounts"] },
+      "evidenceItems": ["OT user account register", "Shared account elimination evidence (before/after)", "PAM configuration for PLC/RTU access", "Annual access review records"],
+      "slMapping": { "sl1": "Shared accounts documented; individual preferred", "sl2": "Individual accounts on all OT workstations/servers; PAM for embedded devices", "sl3": "No shared accounts anywhere; full individual accountability; PAM for all privileged access", "sl4": "Hardware-bound identities for safety system access; biometric authentication for safety-critical functions" },
+      "mitreAttackIcs": ["T0859"]
+    },
+    {
+      "id": "IAM-R2", "name": "Role-based access control (RBAC) for OT",
+      "description": "Define OT access roles aligned with operational functions and implement RBAC across all OT systems. Roles must reflect least-privilege — operators get process visibility and control within their area; engineers get programming access; administrators get full access only when needed.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-2.1", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Define OT roles: Operator (read + limited write for process area), Engineer (PLC programming + configuration), SCADA Admin (system configuration), Historian Admin (data management), Security Admin (security configuration only). Implement in SCADA/HMI and AD where integrated.", "actions": ["Define OT role taxonomy (Operator, Engineer, SCADA Admin, Security Admin, Vendor)", "Map each role to specific access rights per OT system", "Implement RBAC in SCADA/DCS/HMI user management", "Restrict engineering access to Engineering Workstation Zone — not from HMI workstations", "Vendor accounts: most restricted role by default; elevated only for specific maintenance tasks"] },
+      "governance": { "summary": "Role definitions reviewed annually. Role assignment requires OT manager approval. Privileged roles (Engineer, Admin) reviewed quarterly.", "actions": ["Role definition document reviewed annually", "Quarterly review of Engineer and Admin role assignments", "Role assignment change records maintained"] },
+      "evidenceItems": ["OT RBAC role definitions", "User-role assignment records", "Quarterly privileged role review records"],
+      "slMapping": { "sl1": "Basic role separation (operator vs admin)", "sl2": "Defined RBAC with least privilege; role review process", "sl3": "Fine-grained RBAC; separation of duties for high-impact actions; PAM for privilege escalation", "sl4": "JIT privilege elevation; dual-authorisation for safety-critical commands" },
+      "mitreAttackIcs": ["T0817", "T0859"]
+    },
+    {
+      "id": "IAM-R3", "name": "Privileged access management for OT",
+      "description": "Privileged accounts (engineering, admin, vendor) in OT must be managed through a Privileged Access Management (PAM) solution that provides credential vaulting, session recording, and just-in-time access provisioning.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.3", "IEC 62443-3-3 SR-2.12", "NACSA Act 854 s18"] },
+      "technical": { "summary": "PAM tool (CyberArk, BeyondTrust, Delinea) in IDMZ vaults credentials for OT privileged accounts. Engineers request session through PAM — never know the actual password. All sessions recorded.", "actions": ["Deploy PAM tool for all OT privileged accounts", "Vault all OT admin credentials (PLC programming accounts, SCADA admin accounts, historian admin, network device admin)", "Configure session recording for all privileged OT sessions", "Implement credential rotation after each privileged session (PLC service accounts)", "Configure PAM to proxy connections to OT targets — privileged user never has direct network access to OT"] },
+      "governance": { "summary": "PAM access requests require OT manager approval for sensitive operations. Emergency break-glass access documented and audited.", "actions": ["PAM access request procedure defined", "Break-glass emergency access procedure with mandatory post-use review", "Monthly PAM usage audit report"] },
+      "evidenceItems": ["PAM deployment architecture", "Vaulted credential register (account names — not passwords)", "Session recording access policy", "Monthly PAM audit reports"],
+      "slMapping": { "sl2": "Privileged accounts inventoried; password management policy", "sl3": "PAM solution deployed with credential vaulting and session recording", "sl4": "JIT credentials; break-glass with immediate alert; dual-approval for safety system access" },
+      "mitreAttackIcs": ["T0859", "T0822"]
+    },
+    {
+      "id": "IAM-R4", "name": "Default credential elimination",
+      "description": "All OT devices must have default vendor credentials changed before deployment or before network connectivity is established. This is the single highest-impact, lowest-cost security action in OT.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.5", "NACSA Act 854 s18"] },
+      "technical": { "summary": "Change all default credentials at commissioning before network connection. Document changed credentials in PAM vault. Include in commissioning checklist.", "actions": ["Create OT commissioning checklist including: change all default credentials, disable unused services, verify network configuration", "Change default credentials on every OT device before connecting to OT network", "Store new credentials only in PAM vault (never in spreadsheet, sticky notes, or email)", "Verify default credentials are changed on all existing OT assets — active audit", "For devices that cannot have credentials changed (some legacy PLCs): document, segment, and compensate"] },
+      "governance": { "summary": "Default credential change is a mandatory commissioning step. Non-compliance requires OT manager waiver with compensating controls.", "actions": ["Include default credential check in OT asset commissioning sign-off", "Annual audit of OT assets for default credentials (using passive monitoring or config review)"] },
+      "evidenceItems": ["Commissioning checklist with default credential change sign-off", "Annual default credential audit results", "Exception register with compensating controls"],
+      "slMapping": { "sl1": "Default credentials changed on accessible devices", "sl2": "Default credentials changed on all devices before network connection; commissioning checklist enforced", "sl3": "Annual verification audit; compensating controls for any exceptions", "sl4": "Automated detection of default credentials via OT monitoring platform" },
+      "mitreAttackIcs": ["T0812", "T0859"]
+    }
+  ]
+}

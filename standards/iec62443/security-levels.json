@@ -1,0 +1,105 @@
+{
+  "$schema": "ot-security-v1",
+  "concept": "Security Levels (SL)",
+  "standard": "IEC 62443",
+  "reference": "IEC 62443-1-1 cl. 3.2.89; IEC 62443-3-2; IEC 62443-3-3",
+  "sourceType": "paraphrased-from-standard",
+  "verificationNote": "Paraphrased from IEC 62443. Obtain normative text from iec.ch.",
+  "description": "Security Levels define the degree of protection required for a zone or conduit against a defined threat category. Three variants exist: SL-T (Target — what you need), SL-A (Achieved — what you have), SL-C (Capability — what a product can provide). Asset owners set SL-T per zone during risk assessment; implementation must achieve SL-A >= SL-T.",
+  "levels": [
+    {
+      "sl": 1,
+      "label": "Basic",
+      "shortDescription": "Protection against unintentional or casual violation",
+      "threatProfile": "Casual or coincidental attacker — opportunistic malware, inadvertent user error, generic ransomware without OT-specific capability",
+      "attackerCharacteristics": {
+        "motivation": "Opportunistic",
+        "resources": "None beyond standard consumer tools",
+        "knowledge": "No OT-specific knowledge required",
+        "exampleActors": ["Opportunistic ransomware (pre-programmed, not targeted)", "Disgruntled employee with basic IT access", "Contractor with legitimate but misused access"]
+      },
+      "typicalApplicability": [
+        "Isolated non-critical monitoring systems",
+        "Environmental sensors with no process control",
+        "Office-adjacent OT systems with no safety impact",
+        "Non-NCII designated OT environments"
+      ],
+      "malaysiaContext": "Minimum baseline for any OT environment. Non-NCII-designated OT operators in Malaysia should achieve at least SL 1.",
+      "controlCharacteristics": "Password authentication, basic network separation, documented procedures, standard AV where applicable"
+    },
+    {
+      "sl": 2,
+      "label": "Enhanced",
+      "shortDescription": "Protection against intentional violation using simple means with low resources and generic skills",
+      "threatProfile": "Motivated attacker with generic skills — targeted cybercriminal, hacktivist, or insider with operational intent but limited OT expertise",
+      "attackerCharacteristics": {
+        "motivation": "Intentional — financial gain, disruption, reputational damage",
+        "resources": "Low to medium — commercial off-the-shelf (COTS) attack tools",
+        "knowledge": "General IT attack skills; some awareness of OT/SCADA but no deep protocol expertise",
+        "exampleActors": ["Targeted ransomware group (e.g., Cl0p, LockBit pivoting from IT to OT)", "Hacktivist groups", "Disgruntled insider with operational IT access"]
+      },
+      "typicalApplicability": [
+        "Most industrial control systems",
+        "Water treatment SCADA",
+        "Building automation systems",
+        "Standard manufacturing PLCs",
+        "Non-safety-critical energy distribution"
+      ],
+      "malaysiaContext": "Baseline for NCII-designated OT operators under Act 854. s18 security measures, s21 risk assessment, and s23 audit requirements are substantially met at SL 2 for most sectors. Recommended minimum for all NACSA-designated NCII entities with OT environments.",
+      "controlCharacteristics": "MFA, role-based access control, network segmentation, patch management programme, security monitoring, incident response plan, supply chain security baseline"
+    },
+    {
+      "sl": 3,
+      "label": "Advanced",
+      "shortDescription": "Protection against intentional violation using sophisticated means with moderate resources and IACS-specific skills",
+      "threatProfile": "Skilled attacker with OT expertise — advanced criminal group or early-stage state-sponsored actor with IACS-specific capability",
+      "attackerCharacteristics": {
+        "motivation": "Intentional — disruption of critical services, data exfiltration, intelligence gathering",
+        "resources": "Medium to high — custom tools, dedicated OT research capability",
+        "knowledge": "Deep OT protocol knowledge (Modbus, DNP3, IEC 60870, PROFINET, EtherNet/IP), multi-stage attack planning",
+        "exampleActors": ["Industroyer/Crashoverride operators (targeted Ukraine power grid)", "Advanced cybercriminal groups with OT capability", "State-sponsored reconnaissance actors"]
+      },
+      "typicalApplicability": [
+        "Critical national infrastructure OT",
+        "NCII-designated energy (generation, transmission)",
+        "Major water distribution for large population centres",
+        "Oil and gas pipeline control",
+        "National telecommunications backbone OT"
+      ],
+      "malaysiaContext": "Required for Tier 1 NCII-designated entities — primary power generation and transmission assets (TNB, Petronas majors), national water infrastructure (Air Selangor, SAJ), major port/airport control systems. NACSA sector leads should mandate SL 3 for their highest-criticality NCII assets.",
+      "controlCharacteristics": "Hardware-based MFA, deep packet inspection for OT protocols, security operations centre (SOC) with OT visibility, red team exercises, unidirectional gateways for highest-risk conduits, vendor access management, security by design in procurement"
+    },
+    {
+      "sl": 4,
+      "label": "Critical",
+      "shortDescription": "Protection against intentional violation using state-of-the-art means with extended resources and exceptional IACS skills",
+      "threatProfile": "Nation-state actor with unlimited resources, zero-day capability, and demonstrated ability to target safety systems",
+      "attackerCharacteristics": {
+        "motivation": "Strategic national interest — mass casualty, critical service collapse, geopolitical leverage",
+        "resources": "Essentially unlimited — years of investment, dedicated OT research teams",
+        "knowledge": "Full OT stack expertise including safety system internals, hardware implants, custom firmware modification",
+        "exampleActors": ["TRITON/TRISIS operators (targeted Schneider Triconex SIS at Saudi Aramco)", "Stuxnet operators (targeted Siemens S7 centrifuge PLCs)", "Sandworm (GRU Unit 74455 — Ukrainian power grid, NotPetya)"]
+      },
+      "typicalApplicability": [
+        "Safety Instrumented Systems (SIS) at any criticality level",
+        "Nuclear instrumentation and control",
+        "National grid energy management systems (EMS)",
+        "Strategic oil and gas safety systems",
+        "Defence-related industrial control"
+      ],
+      "malaysiaContext": "Applicable to safety systems regardless of sector. Any Malaysian industrial operator running a Safety Instrumented System (SIS) — Triconex, Hima, Yokogawa ProSafe, ABB High Integrity — should target SL 4 for those systems regardless of their broader NCII designation status, given that SIS compromise can cause mass casualty events.",
+      "controlCharacteristics": "Air-gapped safety systems, hardware security modules, integrity-verified firmware, continuous safety system monitoring, independent safety network (not connected to DCS or historian), physical tamper detection, formal security review of all maintenance activities"
+    }
+  ],
+  "slTargetingProcess": {
+    "description": "Zone-by-zone SL targeting is performed during the security risk assessment (IEC 62443-3-2). The process involves:",
+    "steps": [
+      { "step": 1, "action": "Define zone boundaries based on function, criticality and consequence of compromise" },
+      { "step": 2, "action": "Identify threat actors relevant to the sector and geopolitical context" },
+      { "step": 3, "action": "Assess consequence of successful attack per zone (safety, operational, financial, reputational, environmental)" },
+      { "step": 4, "action": "Set SL-T per zone — typically: SL 2 for operational zones, SL 3 for critical operational zones, SL 4 for safety systems" },
+      { "step": 5, "action": "Assess current SL-A (achieved) per zone by measuring against SR requirements" },
+      { "step": 6, "action": "Gap = SL-T minus SL-A — drives the remediation roadmap" }
+    ]
+  }
+}

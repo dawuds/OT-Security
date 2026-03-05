@@ -1,0 +1,28 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "monitoring-logging",
+  "name": "Monitoring and Logging",
+  "description": "Comprehensive logging and monitoring requirements for OT environments. Covers audit log generation per OT component, centralised log collection, SIEM integration, and the specific OT monitoring considerations (passive-only, no active probing, OT protocol-aware analysis).",
+  "requirements": [
+    {
+      "id": "ML-R1", "name": "OT log sources and collection",
+      "description": "Identify all OT log sources and implement centralised log collection. OT log sources include: Windows event logs from HMI/EWS, SCADA application logs, historian change logs, OT network device logs, firewall logs, and OT monitoring platform alerts.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-2.8", "IEC 62443-3-3 SR-2.9", "NACSA Act 854 s18", "NACSA Act 854 s26"] },
+      "technical": { "summary": "Centralised syslog collection from all OT network devices and Windows-based OT systems. OT monitoring platform events forwarded to SIEM.", "actions": ["Deploy centralised syslog server in IDMZ (not in OT zone — write-only from OT perspective)", "Configure syslog forwarding from: OT firewalls, OT switches, HMI workstations, SCADA servers, historian server, engineering workstations", "Forward OT monitoring platform alerts to SIEM", "Retain logs minimum 90 days locally; 1 year in central SIEM; 7 years for incident-related logs (NACSA s26)", "Define minimum log events per source: authentication events, configuration changes, service starts/stops, security software events"] },
+      "governance": { "summary": "Log collection coverage reviewed quarterly. Gaps documented as risk items.", "actions": ["Quarterly log coverage assessment", "Log retention compliance monitored", "Log infrastructure availability monitored — loss of logging is a security event"] },
+      "evidenceItems": ["Log source register with collection status", "Centralised log server configuration", "Log retention policy", "Quarterly log coverage report"],
+      "nacsaMapping": ["s18", "s26"],
+      "slMapping": { "sl1": "Local logs on individual systems", "sl2": "Centralised syslog; 90-day minimum retention; authentication and change events captured", "sl3": "Centralised SIEM with OT platform integration; real-time correlation; 1-year retention", "sl4": "Immutable log storage; forensic-quality log preservation; 7-year retention for incident logs" }
+    },
+    {
+      "id": "ML-R2", "name": "SIEM integration and OT correlation rules",
+      "description": "Integrate OT log sources with the Security Information and Event Management (SIEM) platform and implement OT-specific correlation rules that detect OT attack patterns.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-6.2", "NACSA Act 854 s18"] },
+      "technical": { "summary": "SIEM includes OT-specific detection rules: unusual engineering connections, off-hours PLC programming access, new device appearing on OT network, authentication failures on SCADA, large data transfers from OT to IT.", "actions": ["Onboard all OT log sources to SIEM with appropriate parsers for OT log formats", "Implement OT-specific detection rules: new device on OT network, off-hours engineering access, PLC program read/write outside change window, unusual data volumes from historian to IT side, authentication failures on OT systems, SCADA service restarts", "Correlate OT events with IT events (e.g., compromise on IT + unusual OT access = potential lateral movement)", "Tune detection rules against OT operational patterns to reduce false positives (OT SIEM needs OT expertise to tune effectively)", "Define response playbooks for each OT alert type"] },
+      "governance": { "summary": "SIEM OT correlation rules reviewed quarterly by OT security and SOC teams.", "actions": ["Quarterly rule review and tuning", "Monthly detection effectiveness report", "Rule updates when new OT threat intelligence received"] },
+      "evidenceItems": ["OT SIEM correlation rule documentation", "Alert tuning records", "Monthly detection report", "Playbook per alert type"],
+      "nacsaMapping": ["s18", "s26"],
+      "slMapping": { "sl2": "Basic SIEM with OT log sources; manual review", "sl3": "OT-specific correlation rules; automated alerting; SOC with OT expertise", "sl4": "Dedicated OT threat detection platform; AI/ML behavioural analysis; 24/7 OT SOC" }
+    }
+  ]
+}

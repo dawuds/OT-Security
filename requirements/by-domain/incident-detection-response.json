@@ -1,0 +1,58 @@
+{
+  "$schema": "ot-security-v1",
+  "domain": "incident-response",
+  "name": "Incident Detection and Response",
+  "description": "Requirements for detecting, classifying, responding to, and reporting OT security incidents. Includes NACSA Act 854 notification obligations for NCII-designated entities. The 6-hour notification requirement under s26 creates a hard operational deadline that requires pre-existing detection and classification capability.",
+  "nacsaNotificationSummary": {
+    "trigger": "Any cyber security incident that has or may have a significant impact on designated NCII systems",
+    "significantImpact": "Disruption to NCII services exceeding thresholds defined in P.U.(A) 220/2024 (Notification Regulations) — for most sectors, this means service disruption exceeding 4 hours or affecting a defined number of customers",
+    "timeline": { "initialNotification": "6 hours from becoming aware of significant-impact incident", "followUp": "Every 72 hours until NACSA confirms case closure", "finalReport": "30 days from full incident resolution", "recordKeeping": "7 years for all incidents (significant and non-significant)" },
+    "basis": "NACSA Act 854 s26; Cyber Security (Notification of Cyber Security Incident) Regulations 2024 (P.U.(A) 220/2024)"
+  },
+  "requirements": [
+    {
+      "id": "IR-R1", "name": "OT security monitoring platform",
+      "description": "Deploy a passive OT network monitoring platform that provides continuous visibility into OT network traffic, asset communication patterns, and security events without disrupting real-time control functions.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-6.2", "NACSA Act 854 s18", "NACSA Act 854 s26"], "summary": "Continuous monitoring is required at SL 3. Without OT monitoring, detecting incidents within the 6-hour window required by NACSA s26 is infeasible for network-based attacks.", "owner": "OT Security Operations" },
+      "technical": { "summary": "Deploy passive OT monitoring sensors on core OT network segments. Platform provides: asset inventory, protocol analysis, anomaly detection, threat detection with OT-specific signatures.", "actions": ["Deploy passive sensors on SPAN/TAP at: DCS zone, HMI zone, IDMZ, engineering zone boundaries", "Configure asset baseline — expected devices, protocols, communication patterns", "Integrate with SIEM/SOC for alert triage and correlation", "Configure OT-specific detection rules (unusual Modbus writes, new engineering connections, protocol anomalies)", "Tune detection to OT operational patterns to reduce false positives"], "vendorOptions": ["Dragos Platform", "Claroty Continuous Threat Detection", "Nozomi Networks Guardian", "Microsoft Defender for IoT", "Armis OT"] },
+      "governance": { "summary": "OT monitoring platform alerts reviewed by OT security team or managed SOC with OT expertise. Alert review process defined with escalation paths.", "actions": ["Alert triage procedure defined with SLA", "Escalation path from analyst to OT security engineer to management", "Monthly detection effectiveness review"] },
+      "evidenceItems": ["OT monitoring platform deployment architecture", "Sensor placement diagram", "Asset baseline documentation", "Alert review logs", "Detection rule documentation"],
+      "nacsaMapping": ["s18", "s26"],
+      "slMapping": { "sl1": "Manual log review periodically", "sl2": "Centralised log collection with automated alerting for defined events", "sl3": "Passive OT monitoring platform with 24/7 alert coverage and OT SOC", "sl4": "Dedicated OT security monitoring centre; real-time safety system anomaly detection" },
+      "mitreAttackIcs": []
+    },
+    {
+      "id": "IR-R2", "name": "OT incident classification and NACSA notification decision",
+      "description": "A documented procedure must exist for classifying OT security events and determining whether they meet the NACSA s26 significant-impact threshold — within the 6-hour notification window.",
+      "legal": { "basis": ["NACSA Act 854 s26", "P.U.(A) 220/2024 reg. 3-6"], "summary": "s26(1) requires notification within 6 hours of becoming aware of a significant-impact incident. 'Becoming aware' includes reasonable grounds to suspect — not confirmed attribution. The decision to notify must be made quickly, under uncertainty, without waiting for full investigation.", "owner": "OT Security Lead / Incident Response Lead" },
+      "technical": { "summary": "Pre-defined incident classification matrix mapping alert types to significance determinations. Decision tree for NACSA notification with designated decision-maker.", "actions": ["Develop incident classification matrix (alert type → significance determination)", "Define designated person(s) with authority to make NACSA notification decision", "Pre-populate NACSA notification template for rapid completion under pressure", "Test classification procedure in tabletop exercises using realistic OT alert scenarios", "Maintain NACSA contact details and submission process in incident runbook"] },
+      "governance": { "summary": "Notification decision is a time-critical management decision requiring clear authority and pre-tested procedure. Notification is mandatory — failure to notify is a criminal offence.", "actions": ["Clear authority for notification decision defined in incident response policy", "NACSA contact and submission process documented and tested", "Notification decision documented with rationale (notified or not notified, and why)", "Legal/compliance review of classification matrix"] },
+      "evidenceItems": ["Incident classification matrix", "NACSA notification procedure", "NACSA contact record", "Tabletop exercise records including classification decisions", "Past NACSA notifications (if any)"],
+      "nacsaMapping": ["s26"],
+      "slMapping": { "sl1": "Basic incident reporting procedure exists", "sl2": "Documented incident classification with NACSA notification procedure", "sl3": "Tested notification procedure with tabletop evidence; sub-6h notification SLA demonstrated in exercises", "sl4": "Automated alert triage support; duty officer system for 24/7 notification capability" },
+      "mitreAttackIcs": []
+    },
+    {
+      "id": "IR-R3", "name": "OT incident response plan",
+      "description": "A documented OT-specific incident response plan addressing the unique characteristics of OT incidents: physical process impact, 24/7 operational continuity, limited forensic tools, vendor dependency, and regulatory notification requirements.",
+      "legal": { "basis": ["IEC 62443-2-1 cl. 4.3.6", "NACSA Act 854 s18", "NACSA Act 854 s26"], "summary": "IEC 62443-2-1 requires an OT security incident response programme. NACSA s18 requires security measures proportionate to risk — incident response is a core risk mitigation measure.", "owner": "OT Security Lead / Operations Manager" },
+      "technical": { "summary": "OT IRP includes: detection, containment (without causing process upset), evidence collection, recovery, NACSA notification. Separate runbooks per OT system type.", "actions": ["Develop OT-specific IRP separate from (or as appendix to) IT IRP", "Include runbooks for: malware on OT workstation, unauthorised PLC change, OT network anomaly, ransomware in OT environment, vendor remote access incident", "Define containment options that do not cause process upsets (e.g., isolate HMI zone without disconnecting PLC from field)", "Document evidence collection for OT (historian data, network captures from IDMZ, PLC program export)", "Annual IRP test (tabletop minimum; full exercise preferred)"] },
+      "governance": { "summary": "OT IRP owned by OT operations manager with OT security engineer as technical lead. Annual review and post-incident update.", "actions": ["Annual IRP review and update", "Post-incident review updates IRP within 30 days", "Executive briefing on IRP scope and capability annually"] },
+      "evidenceItems": ["OT Incident Response Plan document", "OT system-specific runbooks", "Annual tabletop/exercise records", "Post-incident review reports", "IRP training records for OT staff"],
+      "nacsaMapping": ["s18", "s26"],
+      "slMapping": { "sl1": "Basic incident procedure exists", "sl2": "Documented OT IRP reviewed annually", "sl3": "OT IRP with system-specific runbooks; annual tabletop exercise; dedicated OT IR capability", "sl4": "Full tested IRP; 24/7 response capability; dedicated OT forensics toolkit" },
+      "mitreAttackIcs": []
+    },
+    {
+      "id": "IR-R4", "name": "Forensic evidence preservation in OT",
+      "description": "Preserve forensic evidence during OT incidents without disrupting process operations or causing loss of evidence due to system restarts, overwriting of logs, or loss of volatile data.",
+      "legal": { "basis": ["IEC 62443-3-3 SR-3.9", "NACSA Act 854 s26 (30-day final report requires investigation findings)"], "summary": "The 30-day final incident report required by NACSA s26 requires documented investigation findings. Forensic evidence from the OT environment (historian records, network captures, log files) supports this report and may be required for regulatory review.", "owner": "OT Security Engineer / Incident Responder" },
+      "technical": { "summary": "Pre-position forensic collection capability: network capture at IDMZ, historian data export procedure, log backup procedure. Establish chain of custody for OT evidence.", "actions": ["Pre-configure network capture capability at IDMZ (wireshark/tcpdump on monitoring system)", "Document historian data export procedure (which tags, which timeframe, export format)", "Identify all log sources per OT component with location and export method", "Establish chain of custody procedure for OT forensic evidence", "Maintain OT forensic toolkit (laptop with OT protocol analysers: Wireshark with OT dissectors, pymodbus, DNP3 analyser)"] },
+      "governance": { "summary": "Evidence preservation decision must be made within the first hour of incident recognition — before restarts or log overwriting occur.", "actions": ["Evidence preservation is step 1 in all OT incident runbooks", "Evidence integrity maintained through chain of custody documentation", "Legal hold notification to relevant personnel when NACSA investigation is anticipated"] },
+      "evidenceItems": ["OT forensic toolkit inventory", "Chain of custody procedure", "Evidence preservation checklist per system type", "Network capture configuration documentation"],
+      "nacsaMapping": ["s26"],
+      "slMapping": { "sl2": "Log backup procedure; historian data export documented", "sl3": "Pre-configured forensic collection; chain of custody procedure", "sl4": "Dedicated OT forensics capability; immutable evidence storage; expert OT forensic analyst" },
+      "mitreAttackIcs": ["T0872"]
+    }
+  ]
+}
