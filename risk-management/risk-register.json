@@ -39,6 +39,7 @@
       "description": "Attacker or insider modifies PLC/RTU program logic to alter process behaviour without triggering operator alarms. Can cause equipment damage, product contamination, or unsafe process states.",
       "category": "Process Integrity",
       "safetyImpact": true,
+      "safetyOverrideApplied": true,
       "iec62443Ref": ["SR-3.4", "SR-7.6", "SR-2.1"],
       "likelihood": 3,
       "impact": 4,
@@ -96,6 +97,7 @@
       "description": "Attacker with OT network access exploits unauthenticated legacy protocols (Modbus TCP, DNP3, OPC Classic) to read process data, modify setpoints, or issue commands to field devices. No credentials required -- only network access.",
       "category": "Legacy Systems",
       "safetyImpact": true,
+      "safetyOverrideApplied": true,
       "iec62443Ref": ["SR-3.1", "SR-4.3", "SR-5.1"],
       "likelihood": 3,
       "impact": 4,
@@ -255,11 +257,11 @@
       "existingControls": ["Wireless protocol encryption enabled", "Wireless network segregated from control network", "Physical security around wireless access points"],
       "residualLikelihood": 1,
       "residualImpact": 3,
-      "residualRisk": "Medium",
-      "treatment": "Mitigate",
-      "treatmentPlan": "Enforce wireless protocol encryption and authentication. Deploy wireless intrusion detection. Validate wireless sensor data against wired redundant sensors for safety-critical measurements.",
+      "residualRisk": "Low",
+      "treatment": "Accept",
+      "treatmentPlan": "Risk accepted: residual score is 3 (Low). Wireless sensor networks are monitoring-only and not used for safety-critical control. Existing controls (encryption, network segregation, physical security) reduce likelihood to 1. Wired redundant sensors cover all safety-critical measurements. Reviewed annually to confirm risk posture remains acceptable.",
       "owner": "OT Network Security Engineer",
-      "reviewDate": "Quarterly"
+      "reviewDate": "Annually"
     },
     {
       "id": "OTR-014",
@@ -370,8 +372,8 @@
       "residualLikelihood": 1,
       "residualImpact": 5,
       "residualRisk": "Critical",
-      "treatment": "Mitigate",
-      "treatmentPlan": "Implement site-level isolation capability (ability to disconnect individual sites from central SCADA). Deploy per-site intrusion detection. Ensure each site can operate in standalone mode during central system compromise. Annual cross-site cascade exercise.",
+      "treatment": "Avoid",
+      "treatmentPlan": "Eliminate risk by prohibiting shared SCADA architecture across sites. Each site must operate an independent, self-contained SCADA system with no real-time control dependencies on a central system. Data aggregation for reporting purposes only permitted via one-way data diode from each site to central historian. This architectural mandate eliminates the cascade vector entirely.",
       "owner": "OT Security Manager / Operations Manager",
       "reviewDate": "Quarterly"
     },
@@ -389,8 +391,8 @@
       "residualLikelihood": 2,
       "residualImpact": 3,
       "residualRisk": "Medium",
-      "treatment": "Mitigate",
-      "treatmentPlan": "Complete SL gap remediation per roadmap. Conduct internal pre-audit assessment 3 months before NACSA audit. Prioritise high-impact SRs (SR-5.1, SR-1.1, SR-3.4) for early closure. Maintain evidence portfolio for all implemented controls.",
+      "treatment": "Transfer",
+      "treatmentPlan": "Transfer compliance risk through: (1) engage NACSA-licensed external auditor for annual pre-assessment and gap remediation advisory, (2) procure cyber insurance policy covering regulatory penalties and enforcement costs, (3) contract managed OT security service provider for continuous compliance monitoring and evidence collection. Internal team maintains remediation roadmap execution; external partners absorb audit preparation and regulatory exposure risk.",
       "owner": "OT Security Manager / GRC Lead",
       "reviewDate": "Monthly"
     }

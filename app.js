@@ -120,14 +120,17 @@ function cardClick(view, sub) {
 
 // ─── OVERVIEW ─────────────────────────────────────────────────────────────────
 async function renderOverview() {
-  const [reqs, controls, incidents, actors, sectors] = await Promise.all([
+  const [reqs, controls, incidents, actors, sectors, srData] = await Promise.all([
     load('requirements/index.json'),
     load('controls/library.json'),
     load('threats/known-incidents.json'),
     load('threats/threat-actors.json'),
     load('sectors/index.json'),
+    load('standards/iec62443/system-requirements.json'),
   ]);
 
+  const allSRs = srData.systemRequirements || srData.requirements || [];
+  const srCount = allSRs.length;
   const domainCount = reqs.domains ? reqs.domains.length : 12;
   const controlCount = Array.isArray(controls) ? controls.length : 0;
   const incidentCount = incidents.incidents ? incidents.incidents.length : 0;
@@ -135,7 +138,7 @@ async function renderOverview() {
   const sectorCount = sectors.sectors ? sectors.sectors.length : 0;
 
   const quickLinks = [
-    { icon: '📋', label: 'IEC 62443 System Requirements', view: 'standards', sub: 'iec-sr', desc: '51 SRs with SL 1-4 descriptions and NACSA mappings' },
+    { icon: '📋', label: 'IEC 62443 System Requirements', view: 'standards', sub: 'iec-sr', desc: `${srCount} SRs with SL 1-4 descriptions and NACSA mappings` },
     { icon: '🏗️', label: 'Purdue Model Architecture', view: 'architecture', sub: 'purdue', desc: 'Levels 0–5 with asset types, protocols, and security controls' },
     { icon: '🔒', label: 'Network Segmentation Requirements', view: 'requirements', sub: 'network-segmentation', desc: 'IDMZ, zone enforcement, OT protocol-aware firewall' },
     { icon: '⚡', label: 'Safety System Security', view: 'requirements', sub: 'safety-system-security', desc: 'SIS isolation, program integrity, TRITON lessons' },
@@ -160,7 +163,7 @@ async function renderOverview() {
     <div class="page-sub">IEC 62443 · NIST SP 800-82 · MITRE ATT&amp;CK for ICS · NACSA Act 854 (Malaysia)</div>
 
     <div class="stats-banner">
-      <div class="stat-card"><div class="stat-number">51</div><div class="stat-label">IEC 62443 SRs</div></div>
+      <div class="stat-card"><div class="stat-number">${srCount}</div><div class="stat-label">IEC 62443 SRs</div></div>
       <div class="stat-card"><div class="stat-number">${domainCount}</div><div class="stat-label">Security Domains</div></div>
       <div class="stat-card"><div class="stat-number">${controlCount}</div><div class="stat-label">Controls</div></div>
       <div class="stat-card"><div class="stat-number">${incidentCount}</div><div class="stat-label">Incidents</div></div>
@@ -210,11 +213,13 @@ async function renderOverview() {
 
 // ─── STANDARDS ────────────────────────────────────────────────────────────────
 async function renderStandards(sub) {
+  const srData = await load('standards/iec62443/system-requirements.json');
+  const srTotal = (srData.systemRequirements || srData.requirements || []).length;
   const tabs = [
     { id: 'iec-overview', label: 'IEC 62443 Overview' },
     { id: 'iec-sl',       label: 'Security Levels' },
     { id: 'iec-fr',       label: 'Foundational Requirements' },
-    { id: 'iec-sr',       label: 'System Requirements (51 SRs)' },
+    { id: 'iec-sr',       label: `System Requirements (${srTotal} SRs)` },
     { id: 'nist',         label: 'NIST SP 800-82' },
     { id: 'mitre',        label: 'MITRE ATT&CK for ICS' },
   ];
@@ -1421,7 +1426,7 @@ async function renderFramework(sub) {
 
   let content = '';
   if (active === 'matrix')  content = await renderFrameworkMatrix();
-  else if (active === 'flow')   content = renderFrameworkFlow();
+  else if (active === 'flow')   content = await renderFrameworkFlow();
   else if (active === 'mitre')  content = await renderFrameworkMitre();
 
   setMain(`
@@ -1434,15 +1439,17 @@ async function renderFramework(sub) {
 }
 
 async function renderFrameworkMatrix() {
-  const [frData, nacsaData, nistData] = await Promise.all([
+  const [frData, nacsaData, nistData, srData] = await Promise.all([
     load('standards/iec62443/foundational-requirements.json'),
     load('cross-references/iec62443-to-nacsa.json'),
     load('cross-references/iec62443-to-nist-csf.json'),
+    load('standards/iec62443/system-requirements.json'),
   ]);
 
   const frs = frData.foundationalRequirements || [];
   const nacsaMappings = nacsaData.mappings || [];
   const nistMappings = nistData.mappings || [];
+  const srTotal = (srData.systemRequirements || srData.requirements || []).length;
 
   // Build a quick lookup: NACSA section → which FRs are relevant
   const frToNacsa = {};
@@ -1492,8 +1499,8 @@ async function renderFrameworkMatrix() {
     <div class="two-col">
       <div class="card">
         <div class="card-title">IEC 62443 Scope</div>
-        <div class="card-desc">7 Foundational Requirements (FRs), 51 System Requirements (SRs). SRs are the measurable, testable technical requirements used in IEC 62443-3-2 zone assessments and IEC 62443-3-3 system specification.</div>
-        <div class="card-tags"><span class="tag">7 FRs</span><span class="tag">51 SRs</span><span class="tag">4 Security Levels</span></div>
+        <div class="card-desc">7 Foundational Requirements (FRs), ${srTotal} System Requirements (SRs). SRs are the measurable, testable technical requirements used in IEC 62443-3-2 zone assessments and IEC 62443-3-3 system specification.</div>
+        <div class="card-tags"><span class="tag">7 FRs</span><span class="tag">${srTotal} SRs</span><span class="tag">4 Security Levels</span></div>
       </div>
       <div class="card">
         <div class="card-title">NACSA Act 854 Scope</div>
@@ -1503,9 +1510,11 @@ async function renderFrameworkMatrix() {
     </div>`;
 }
 
-function renderFrameworkFlow() {
+async function renderFrameworkFlow() {
+  const srData = await load('standards/iec62443/system-requirements.json');
+  const srTotal = (srData.systemRequirements || srData.requirements || []).length;
   const nodes = [
-    { id: 'iec', label: 'IEC 62443', sub: '7 FRs · 51 SRs · 4 Security Levels', view: 'standards', vsub: 'iec-overview', color: 'var(--sl3)' },
+    { id: 'iec', label: 'IEC 62443', sub: `7 FRs · ${srTotal} SRs · 4 Security Levels`, view: 'standards', vsub: 'iec-overview', color: 'var(--sl3)' },
     { id: 'nacsa', label: 'NACSA Act 854', sub: 's17-s26 obligations · NCII-designated entities', view: 'cross-ref', vsub: 'nacsa', color: 'var(--accent)' },
     { id: 'csf', label: 'NIST CSF 2.0', sub: '6 Functions · 22 Categories · 106 Subcategories', view: 'cross-ref', vsub: 'nist', color: 'var(--success)' },
     { id: 'nist80082', label: 'NIST SP 800-82 Rev 3', sub: 'OT security guidance · Publicly available', view: 'standards', vsub: 'nist', color: 'var(--sl2)' },
@@ -1521,7 +1530,7 @@ function renderFrameworkFlow() {
 
   const relationships = [
     { from: 'IEC 62443', to: 'NACSA Act 854', rel: 'IEC 62443 SL 2 is the implementation standard for NACSA s18 security measures and s21 risk assessment methodology (IEC 62443-3-2).' },
-    { from: 'IEC 62443', to: 'NIST CSF 2.0', rel: '51 SRs map to CSF 2.0 Protect/Detect subcategories. CSF provides governance context; IEC 62443 provides OT-specific technical requirements.' },
+    { from: 'IEC 62443', to: 'NIST CSF 2.0', rel: `${srTotal} SRs map to CSF 2.0 Protect/Detect subcategories. CSF provides governance context; IEC 62443 provides OT-specific technical requirements.` },
     { from: 'IEC 62443', to: 'NIST SP 800-82', rel: 'NIST 800-82 provides OT security guidance complementary to IEC 62443. 800-82 covers legacy OT without SL targeting; IEC 62443 provides the SL framework.' },
     { from: 'MITRE ATT&CK ICS', to: 'IEC 62443', rel: 'Each MITRE ICS technique maps to the IEC 62443 SRs that prevent or detect it. SR-5.1/5.2 (segmentation) counters most lateral movement techniques.' },
     { from: 'IEC 61511', to: 'IEC 62443', rel: 'IEC 61511 governs SIS functional safety (SIL). IEC 62443 adds security (SL 4 required for SIS). Both standards must be satisfied simultaneously for safety system security.' },

@@ -20,13 +20,85 @@ A structured, open-access knowledge base for Operational Technology (OT) cyberse
 |---|---|
 | **Standards** | IEC 62443 series overview, all 51 SRs with SL 1-4 descriptions, NIST SP 800-82, MITRE ATT&CK for ICS |
 | **Architecture** | Purdue model, zones and conduits, IDMZ pattern, asset types |
-| **Requirements** | 12 security domains with detailed requirements, SL mapping, NACSA obligations |
+| **Requirements** | 13 security domains with detailed requirements, SL mapping, NACSA obligations |
 | **Controls** | Control library with maturity levels and NACSA/NIST CSF mappings |
 | **Evidence** | Audit evidence items per domain — what auditors look for, common gaps, how to verify |
 | **Threats** | Threat actor profiles, known incidents (Stuxnet, TRITON, Ukraine, Colonial Pipeline) mapped to preventive controls |
 | **Risk Management** | OT/ICS risk methodology, 5x5 safety-weighted matrix, 20-risk register, assessment checklist, treatment options |
 | **Sectors** | Energy, water, oil & gas, transport, manufacturing, building automation — with NACSA NCII obligations |
 | **Cross-References** | IEC 62443 ↔ NACSA Act 854, NIST CSF 2.0, NIST SP 800-82, sector ↔ NACSA codes of practice |
+
+---
+
+## Repository Structure
+
+```
+OT-Security/
+├── index.html                          # Single-page application entry point
+├── app.js                              # Application logic and rendering
+├── style.css                           # Styles and CSS variables
+├── validate.js                         # Data validation script (11 checks)
+├── architecture/
+│   ├── asset-types.json                # OT asset type definitions
+│   ├── purdue-model.json               # Purdue model levels 0-5
+│   └── zones-conduits.json             # Zone and conduit definitions
+├── artifacts/
+│   └── inventory.json                  # 28 audit artifacts with controlSlugs
+├── controls/
+│   ├── domains.json                    # 13 security domains
+│   └── library.json                    # 17 controls with maturity levels
+├── cross-references/
+│   ├── iec62443-to-nacsa.json          # IEC 62443 ↔ NACSA Act 854
+│   ├── iec62443-to-nist80082.json      # IEC 62443 ↔ NIST SP 800-82
+│   ├── iec62443-to-nist-csf.json       # IEC 62443 ↔ NIST CSF 2.0
+│   ├── mitre-to-controls.json          # MITRE ATT&CK ICS ↔ controls
+│   └── sector-to-nacsa-cop.json        # Sectors ↔ NACSA codes of practice
+├── evidence/
+│   └── index.json                      # Evidence items per domain (48 items)
+├── requirements/
+│   ├── index.json                      # Domain index (13 domains)
+│   └── by-domain/                      # Per-domain requirement files
+│       ├── asset-inventory.json
+│       ├── backup-recovery.json
+│       ├── configuration-management.json
+│       ├── data-protection.json
+│       ├── identity-access-management.json
+│       ├── incident-detection-response.json
+│       ├── monitoring-logging.json
+│       ├── network-segmentation.json
+│       ├── patch-vulnerability-management.json
+│       ├── physical-security.json
+│       ├── remote-access.json
+│       ├── safety-system-security.json
+│       └── supply-chain.json
+├── risk-management/
+│   ├── checklist.json                  # Assessment checklist
+│   ├── methodology.json               # Risk methodology
+│   ├── risk-matrix.json               # 5x5 safety-weighted matrix
+│   ├── risk-register.json             # 20 OT/ICS risks
+│   └── treatment-options.json         # Treatment strategies
+├── sectors/
+│   ├── index.json                      # 6 OT-focused NACSA NCII sectors
+│   └── requirements/                   # Sector-specific requirements
+│       ├── energy.json
+│       ├── oil-gas.json
+│       ├── transport.json
+│       └── water.json
+├── standards/
+│   ├── iec62443/
+│   │   ├── index.json                  # IEC 62443 series overview
+│   │   ├── foundational-requirements.json  # 7 FRs
+│   │   ├── security-levels.json        # SL 1-4 definitions
+│   │   └── system-requirements.json    # 51 SRs with SL descriptions
+│   ├── mitre-attack-ics/
+│   │   ├── index.json                  # MITRE ATT&CK for ICS overview
+│   │   └── techniques.json             # ICS techniques
+│   └── nist-800-82/
+│       └── index.json                  # NIST SP 800-82 Rev 3 overview
+└── threats/
+    ├── known-incidents.json            # Stuxnet, TRITON, Ukraine, etc.
+    └── threat-actors.json              # OT threat actor profiles
+```
 
 ---
 

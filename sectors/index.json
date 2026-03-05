@@ -1,5 +1,6 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
   "description": "OT security sectors covered in this repository \u2014 aligned with NACSA Act 854 NCII sectors that contain significant OT/ICS environments. Each sector has distinct OT characteristics, primary standards, and regulatory overlaps.",
   "totalSectors": 6,
   "nacsaAlignment": "NACSA Act 854 Schedule defines 11 NCII sectors. Six of these have significant OT environments and are covered in detail here. All six are designated NCII sectors \u2014 their operators carry s17-s26 Act 854 obligations.",

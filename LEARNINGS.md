@@ -132,7 +132,7 @@ The Audit Package data layer is **fully wired** in this repo. UI rendering in ap
 - `app.js`: Audit Package UI implemented in `renderControlDetail()` with accordion-based artifact cards and evidence checklist. Accordion CSS and click handler added.
 
 **Remaining work:**
-- `data-protection` domain has no evidence section in `evidence/index.json` — add evidence items for E-DP-01 through E-DP-03
+- ~~`data-protection` domain has no evidence section in `evidence/index.json`~~ — completed (3 evidence items: E-DP-01, E-DP-02, E-DP-03)
 ### Reference Implementation
 
 See `dawuds/pdpa-my` repo — `app.js` `renderControlDetail()` and `style.css` Audit Package section. Pattern is designed for copy-adapt across all compliance repos.
@@ -197,8 +197,8 @@ Before publishing any new content in this repo:
 ## Outstanding Work
 
 See `TODO.md` for the full tracked task list. Key remaining items:
-1. NIST SP 800-82 → IEC 62443 cross-reference file (iec62443-to-nist80082.json)
-2. Expand thin requirement domains (monitoring-logging, physical-security, backup-recovery)
-3. Sector-specific requirement files (energy, water, oil-gas)
-4. Artifacts inventory population
+1. ~~NIST SP 800-82 → IEC 62443 cross-reference file (iec62443-to-nist80082.json)~~ — completed
+2. ~~Expand thin requirement domains (monitoring-logging, physical-security, backup-recovery)~~ — completed
+3. ~~Sector-specific requirement files (energy, water, oil-gas)~~ — completed
+4. ~~Artifacts inventory population~~ — completed (28 artifacts with controlSlugs)
 5. ~~Validation script (validate.js)~~ — implemented (356 lines, 11 checks)

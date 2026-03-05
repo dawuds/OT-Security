@@ -32,6 +32,7 @@ body {
   --radius: 8px;
   --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+  --bg-offset: #f8f9fa;
   --mono: 'JetBrains Mono', monospace;
 }
 
@@ -414,3 +415,21 @@ tr:hover td { background: #FAFBFD; }
 .evidence-gap { font-size: 0.8125rem; margin-bottom: 0.5rem; }
 .evidence-gap ul { margin-left: 1.25rem; margin-top: 0.25rem; }
 .evidence-gap li { color: var(--danger); margin-bottom: 0.15rem; }
+
+/* ===== RISK ITEM ===== */
+.risk-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+.risk-item:hover { box-shadow: var(--shadow-md); }
+
+/* ===== PRINT ===== */
+@media print {
+  header { position: static; }
+  .search-container, nav { display: none; }
+  .tab-panel { display: block !important; }
+  .risk-card, .control-card { break-inside: avoid; }
+}
