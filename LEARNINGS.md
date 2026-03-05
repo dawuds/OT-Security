@@ -119,9 +119,23 @@ Section-based joins (via provision maps) explode on broad provisions. In the PDP
 - **Evidence sub-accordions collapsed by default:** "What Good Looks Like" and "Common Gaps" are verbose — show on demand.
 - **Checkbox-styled artifact contents:** Makes artifact cards feel like an auditor's checklist.
 
+### Current State (OT-Security)
+
+The Audit Package pattern is **documented but not yet implemented** in this repo:
+
+- `artifacts/inventory.json`: 28 artifacts exist but use `sections[]` (SR IDs) — **`controlSlugs[]` not yet added**
+- `evidence/index.json`: 48 evidence items across 12 domains — **`artifactSlugs[]` not yet added**
+- `controls/library.json`: 17 controls across 11 domains — structure ready but 2 domains missing (backup-recovery, configuration-management)
+- `app.js`: No Audit Package rendering code yet
+
+**Known issues to fix before implementing:**
+- **Critical domain ID mismatch:** Three different naming schemes across requirements (`network-segmentation`), controls (`zone-architecture`), and evidence (`network-segmentation`). Only `data-protection` matches across all three. Must standardize on requirements/index.json IDs as canonical source.
+- Controls missing for `backup-recovery` and `configuration-management` domains
+- `controls/domains.json` lists 11 domains but `requirements/index.json` has 13
+
 ### Reference Implementation
 
-See `dawuds/pdpa-my` repo — `app.js` lines 664-870 (`renderControlDetail()`) and `style.css` Audit Package section. Pattern is designed for copy-adapt across all compliance repos.
+See `dawuds/pdpa-my` repo — `app.js` `renderControlDetail()` and `style.css` Audit Package section. Pattern is designed for copy-adapt across all compliance repos.
 
 ---
 
