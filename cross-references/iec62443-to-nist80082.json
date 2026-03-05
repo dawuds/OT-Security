@@ -1,0 +1,308 @@
+{
+  "$schema": "ot-security-v1",
+  "title": "IEC 62443-3-3 to NIST SP 800-82 Rev 3 Cross-Reference",
+  "description": "Maps IEC 62443-3-3 System Requirements (SRs) to the corresponding guidance sections in NIST SP 800-82 Rev 3 (Guide to Operational Technology Security, 2023). Both are OT security references — IEC 62443 is normative for compliance; NIST SP 800-82 Rev 3 provides implementation guidance and references NIST SP 800-53 Rev 5 controls applicable to OT. Malaysian NCII operators may use this mapping to understand how IEC 62443 SL compliance aligns with NIST OT guidance.",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "NIST SP 800-82 Rev 3 is a public domain document (May 2023) from the U.S. National Institute of Standards and Technology. Section references are based on the public document structure. This mapping is a reasoned interpretation. Verify against the current NIST SP 800-82 Rev 3 document at nvlpubs.nist.gov before use in formal assessments.",
+  "nistDocument": "NIST SP 800-82 Rev 3 — Guide to Operational Technology (OT) Security, May 2023",
+  "nist80082RepoReference": "Available at nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-82r3.pdf",
+  "iec62443Reference": "IEC 62443-3-3:2013 — Industrial communication networks — Network and system security — System security requirements and security levels",
+  "mappingApproach": "IEC 62443-3-3 defines 51 SRs across 7 Foundational Requirements (FR1-FR7). NIST SP 800-82 Rev 3 Section 5 organises countermeasures by NIST SP 800-53 Rev 5 control family, with OT-specific tailoring guidance. This cross-reference maps each IEC 62443 FR and its key SRs to the corresponding NIST SP 800-82 Rev 3 section and NIST SP 800-53 Rev 5 control family.",
+  "mappings": [
+    {
+      "iec62443FR": "FR1",
+      "frTitle": "Identification and Authentication Control",
+      "frDescription": "All users, software processes, and devices must be uniquely identified and authenticated before accessing the IACS.",
+      "nist80082Chapter": "Section 5 — OT Security Countermeasures",
+      "nist80082ControlFamilies": ["IA — Identification and Authentication", "AC — Access Control"],
+      "nist80082OTGuidance": "NIST SP 800-82 Rev 3 discusses OT-specific IA considerations including: challenges with legacy device authentication, use of compensating controls where strong authentication cannot be implemented natively on field devices, and the role of PAM solutions in bridging OT authentication gaps.",
+      "srs": [
+        {
+          "iec62443SR": "SR-1.1",
+          "srName": "Human user identification and authentication",
+          "nist80082Sections": ["IA-2 Identification and Authentication (Organisational Users)", "IA-5 Authenticator Management"],
+          "nist80082OTNote": "NIST 800-82 recognises that legacy OT systems may not support individual accounts. Compensating control: individual authentication enforced at jump server/PAM layer; shared service accounts used for device connectivity only.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-1.2",
+          "srName": "Software process and device identification and authentication",
+          "nist80082Sections": ["IA-3 Device Identification and Authentication", "IA-9 Service Identification and Authentication"],
+          "nist80082OTNote": "Device certificates for OT components where supported. For legacy devices without certificate capability: MAC-based network access control as compensating control.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-1.3",
+          "srName": "Account management",
+          "nist80082Sections": ["AC-2 Account Management"],
+          "nist80082OTNote": "Account lifecycle management in OT requires coordination with HR. OT accounts often persist after personnel departures — quarterly OT account access reviews are the NIST 800-82 recommended practice.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-1.5",
+          "srName": "Authenticator management",
+          "nist80082Sections": ["IA-5 Authenticator Management"],
+          "nist80082OTNote": "Default credential elimination is explicitly called out in NIST 800-82 as the highest-impact low-cost OT security action. Password complexity requirements must be balanced against OT operator usability constraints.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-1.13",
+          "srName": "Access via untrusted networks",
+          "nist80082Sections": ["AC-17 Remote Access", "IA-2 MFA for Remote Access"],
+          "nist80082OTNote": "NIST 800-82 recommends: all remote access via jump server or VPN with MFA; session recording for all remote OT access; time-limited sessions; vendor remote access via dedicated gateway with approval workflow.",
+          "similarity": "High"
+        }
+      ]
+    },
+    {
+      "iec62443FR": "FR2",
+      "frTitle": "Use Control",
+      "frDescription": "All permissions and authorisations necessary to perform required OT functions are enforced for users, software processes, and devices on the IACS.",
+      "nist80082Chapter": "Section 5 — OT Security Countermeasures",
+      "nist80082ControlFamilies": ["AC — Access Control", "AU — Audit and Accountability"],
+      "nist80082OTGuidance": "NIST 800-82 emphasises that OT RBAC must be designed with operations engineering — security teams alone cannot define appropriate OT roles. Least privilege in OT context means: operators get display + control for their area only; engineers get programming access only when needed; vendors get temporary minimal access.",
+      "srs": [
+        {
+          "iec62443SR": "SR-2.1",
+          "srName": "Authorisation enforcement",
+          "nist80082Sections": ["AC-3 Access Enforcement", "AC-6 Least Privilege"],
+          "nist80082OTNote": "NIST 800-82 OT-specific guidance: separation of OT operator and OT administrator roles is fundamental. Dual-authorisation controls recommended for safety-critical commands (e.g., SIS bypass actions).",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-2.3",
+          "srName": "Use control for portable and mobile devices",
+          "nist80082Sections": ["MP-7 Media Use", "SC-41 Port and I/O Device Access"],
+          "nist80082OTNote": "NIST 800-82 specifically addresses removable media as a primary OT attack vector (Stuxnet). Recommends: whitelist-only USB policy, malware scanning kiosk before OT introduction, prohibition on non-organisation devices in OT areas.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-2.6",
+          "srName": "Remote session termination",
+          "nist80082Sections": ["AC-12 Session Termination"],
+          "nist80082OTNote": "Remote sessions in OT must be terminated after task completion — not left persistent. PAM session recording provides evidence of termination and activity.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-2.8",
+          "srName": "Auditable events",
+          "nist80082Sections": ["AU-2 Audit Events", "AU-12 Audit Record Generation"],
+          "nist80082OTNote": "OT-specific auditable events include: PLC program upload/download, DCS configuration changes, engineering tool connections, SCADA database modifications. Standard IT audit events (user login/logout, privilege use) also apply.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-2.9",
+          "srName": "Audit storage capacity",
+          "nist80082Sections": ["AU-4 Audit Log Storage Capacity", "AU-9 Protection of Audit Information"],
+          "nist80082OTNote": "NACSA s26 (7-year retention) exceeds NIST 800-82 recommended retention. OT log storage must be sized for 7-year retention for Malaysian NCII-designated operators. Write-once storage prevents log tampering.",
+          "similarity": "High"
+        }
+      ]
+    },
+    {
+      "iec62443FR": "FR3",
+      "frTitle": "System Integrity",
+      "frDescription": "The integrity of the IACS and its data is protected against unauthorised manipulation.",
+      "nist80082Chapter": "Section 5 — OT Security Countermeasures",
+      "nist80082ControlFamilies": ["SI — System and Information Integrity", "CM — Configuration Management", "SA — System and Services Acquisition", "SR — Supply Chain Risk Management"],
+      "nist80082OTGuidance": "NIST 800-82 addresses OT-specific integrity concerns: PLC/firmware integrity verification, the challenge of patching legacy OT systems without vendor support, compensating controls where patches cannot be applied, and supply chain integrity for OT components.",
+      "srs": [
+        {
+          "iec62443SR": "SR-3.2",
+          "srName": "Malicious code protection",
+          "nist80082Sections": ["SI-3 Malicious Code Protection", "SI-7 Software, Firmware, and Information Integrity"],
+          "nist80082OTNote": "OT-specific: application whitelisting on OT Windows systems (application control prevents execution of malicious code even when signatures are not available). Traditional AV has high false-positive risk on OT systems — application control preferred.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-3.3",
+          "srName": "Security functionality verification",
+          "nist80082Sections": ["CA-2 Control Assessments", "CA-7 Continuous Monitoring"],
+          "nist80082OTNote": "Security functionality verification in OT requires non-intrusive methods. Passive OT network monitoring (Claroty/Dragos/Nozomi) provides continuous verification without active scanning that could disrupt OT communications.",
+          "similarity": "Medium"
+        },
+        {
+          "iec62443SR": "SR-3.4",
+          "srName": "Software and information integrity",
+          "nist80082Sections": ["SI-7 Software, Firmware, and Information Integrity"],
+          "nist80082OTNote": "PLC program checksum register: document expected checksum for each PLC program version. Compare against current checksum periodically and after any maintenance event. This is a fundamental OT integrity control that many sites lack.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-3.9",
+          "srName": "Protection of audit information",
+          "nist80082Sections": ["AU-9 Protection of Audit Information"],
+          "nist80082OTNote": "OT audit logs used in NACSA s26 incident reporting must be integrity-protected. Write-once log storage prevents post-incident log tampering.",
+          "similarity": "High"
+        }
+      ]
+    },
+    {
+      "iec62443FR": "FR4",
+      "frTitle": "Data Confidentiality",
+      "frDescription": "Information on communication channels and in data repositories is protected against unauthorised disclosure.",
+      "nist80082Chapter": "Section 5 — OT Security Countermeasures",
+      "nist80082ControlFamilies": ["SC — System and Communications Protection", "MP — Media Protection"],
+      "nist80082OTGuidance": "NIST 800-82 recognises the tension between OT confidentiality and OT availability — encryption must not introduce latency that disrupts real-time control. Encryption is recommended for: management interfaces, remote access channels, historian-to-IT transfers, and data at rest on OT servers. Real-time control bus encryption requires careful performance testing.",
+      "srs": [
+        {
+          "iec62443SR": "SR-4.1",
+          "srName": "Information confidentiality",
+          "nist80082Sections": ["SC-8 Transmission Confidentiality and Integrity", "MP-5 Media Transport"],
+          "nist80082OTNote": "Encryption priority for OT: 1) Remote access channels (always encrypted), 2) IDMZ historian transfers, 3) Management interfaces (HTTPS/SSH). Real-time field bus traffic encryption: evaluate latency impact before implementing.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-4.2",
+          "srName": "Information persistence",
+          "nist80082Sections": ["MP-6 Media Sanitization"],
+          "nist80082OTNote": "OT media containing process data, configurations, or programs must be securely disposed of. Hard drives from decommissioned OT systems may contain safety-critical configurations — degaussing or physical destruction required.",
+          "similarity": "Medium"
+        },
+        {
+          "iec62443SR": "SR-4.3",
+          "srName": "Use of cryptography",
+          "nist80082Sections": ["SC-13 Cryptographic Protection", "SC-17 Public Key Infrastructure Certificates"],
+          "nist80082OTNote": "OT cryptography constraints: many field devices use weak or proprietary cryptography. NIST 800-82 recommends using vendor-supported encryption where available; compensating controls (physical isolation, VPN at perimeter) where field device encryption is not available.",
+          "similarity": "High"
+        }
+      ]
+    },
+    {
+      "iec62443FR": "FR5",
+      "frTitle": "Restricted Data Flow",
+      "frDescription": "Data flows between different zones and conduits within the IACS are restricted to only those required for the functioning of the IACS.",
+      "nist80082Chapter": "Section 4 — OT System Architecture and Section 5 Countermeasures",
+      "nist80082ControlFamilies": ["SC — System and Communications Protection", "AC — Access Control (network)"],
+      "nist80082OTGuidance": "NIST 800-82 provides detailed OT network architecture guidance: Purdue model implementation, IDMZ design, unidirectional gateways for highest-criticality zones, and firewall rule management for OT. Chapter 4 covers OT architecture patterns in detail.",
+      "srs": [
+        {
+          "iec62443SR": "SR-5.1",
+          "srName": "Network segmentation",
+          "nist80082Sections": ["SC-7 Boundary Protection", "CA-3 Information Exchange"],
+          "nist80082OTNote": "NIST 800-82 recommends the IDMZ (Industrial DMZ) as the standard OT/IT boundary architecture. No direct connections between IT and OT networks — all data exchange via IDMZ-hosted services (historians, file transfer servers).",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-5.2",
+          "srName": "Zone boundary protection",
+          "nist80082Sections": ["SC-7 Boundary Protection", "SC-7(4) External Telecommunications Services"],
+          "nist80082OTNote": "Dedicated OT firewalls at zone boundaries (not shared with IT). OT firewall rule set based on documented process communication requirements — whitelist approach. All traffic not explicitly permitted is denied.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-5.3",
+          "srName": "General purpose person-to-person communication restrictions",
+          "nist80082Sections": ["SC-7 Boundary Protection"],
+          "nist80082OTNote": "Email and general internet access must not be available from OT workstations. HMI/EWS/SCADA systems must not have browser access to internet or IT email. Segregation enforced at firewall.",
+          "similarity": "Medium"
+        },
+        {
+          "iec62443SR": "SR-5.4",
+          "srName": "Application partitioning",
+          "nist80082Sections": ["SC-3 Security Function Isolation", "AC-4 Information Flow Enforcement"],
+          "nist80082OTNote": "OT application segmentation: SCADA historian should not run on the same server as SCADA server application. Safety system applications must run on dedicated hardware isolated from non-safety systems.",
+          "similarity": "Medium"
+        }
+      ]
+    },
+    {
+      "iec62443FR": "FR6",
+      "frTitle": "Timely Response to Events",
+      "frDescription": "Respond to security violations and incidents appropriately.",
+      "nist80082Chapter": "Section 5 — OT Security Countermeasures",
+      "nist80082ControlFamilies": ["IR — Incident Response", "AU — Audit and Accountability"],
+      "nist80082OTGuidance": "NIST 800-82 OT incident response considerations: OT incident response must not blindly apply IT playbooks — isolating a compromised PLC without coordinating with operations can cause safety incidents. Operations engineering must be involved in all OT incident containment decisions. NACSA s26 (6-hour notification) creates a hard deadline that requires a pre-practised response procedure.",
+      "srs": [
+        {
+          "iec62443SR": "SR-6.1",
+          "srName": "Audit log accessibility",
+          "nist80082Sections": ["AU-6 Audit Record Review, Analysis, and Reporting", "AU-7 Audit Record Reduction and Report Generation"],
+          "nist80082OTNote": "NIST 800-82 recommends centralised SIEM for OT audit logs. Log correlation across OT and IT enables detection of cross-boundary attacks. OT SIEM requires OT-specific parsers and detection rules.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-6.2",
+          "srName": "Continuous monitoring",
+          "nist80082Sections": ["CA-7 Continuous Monitoring", "IR-4 Incident Handling", "SI-4 Information System Monitoring"],
+          "nist80082OTNote": "Passive OT network monitoring (Claroty/Dragos/Nozomi or open-source equivalent) provides continuous visibility without active scanning risk. NIST 800-82 recommends establishing OT network baselines and alerting on deviations.",
+          "similarity": "High"
+        }
+      ]
+    },
+    {
+      "iec62443FR": "FR7",
+      "frTitle": "Resource Availability",
+      "frDescription": "The IACS maintains availability of all resources required for normal operation. Denial of service is prevented.",
+      "nist80082Chapter": "Section 5 — OT Security Countermeasures",
+      "nist80082ControlFamilies": ["CP — Contingency Planning", "CM — Configuration Management", "SA — System and Services Acquisition"],
+      "nist80082OTGuidance": "NIST 800-82 recognises availability as the primary OT security priority in most operational contexts — OT must keep running even under degraded conditions. Availability controls: backup/recovery, patch management without operational disruption, change management, and denial of service protection for OT communication protocols.",
+      "srs": [
+        {
+          "iec62443SR": "SR-7.1",
+          "srName": "Denial of service protection",
+          "nist80082Sections": ["SC-5 Denial of Service Protection", "SC-6 Resource Availability"],
+          "nist80082OTNote": "OT DoS is most commonly caused by IT scanning tools accidentally introduced to OT networks. NIST 800-82: never use active scanning tools (Nessus, etc.) on OT networks without vendor pre-approval. OT protocol rate limiting on firewalls.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-7.3",
+          "srName": "Control system backup",
+          "nist80082Sections": ["CP-9 System Backup", "CP-10 System Recovery and Reconstitution"],
+          "nist80082OTNote": "NIST 800-82 OT backup specifics: backup must include all recovery artefacts (PLC programs, DCS configs, HMI screens, network configs). Offline backup copy essential — ransomware will target any backup reachable from network. RTO must include process reconstitution time, not just system restore time.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-7.4",
+          "srName": "Control system recovery and reconstitution",
+          "nist80082Sections": ["CP-10 System Recovery and Reconstitution", "CP-2 Contingency Plan"],
+          "nist80082OTNote": "OT recovery uniquely requires plant reconstitution: system restored and re-synchronised with physical plant state before returning to automated control. Operations engineering must lead plant reconstitution — IT cannot do this alone.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-7.6",
+          "srName": "Network and security configuration settings",
+          "nist80082Sections": ["CM-6 Configuration Settings", "CM-7 Least Functionality"],
+          "nist80082OTNote": "OT baseline configurations: document expected state for every OT system (enabled services, listening ports, scheduled tasks, user accounts, firewall rules). Deviation from baseline is a security event. NIST 800-82: OT configuration management must be integrated with the change management process.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-7.7",
+          "srName": "Least functionality",
+          "nist80082Sections": ["CM-7 Least Functionality", "SA-9 External System Services"],
+          "nist80082OTNote": "OT system hardening: disable all unnecessary services (Windows services, network protocols, running processes) on OT workstations and servers. OT hardening guides available from US-CERT ICS-CERT and from OT vendors. Hardening is a commissioning step, not a post-deployment activity.",
+          "similarity": "High"
+        },
+        {
+          "iec62443SR": "SR-7.8",
+          "srName": "Control system component inventory",
+          "nist80082Sections": ["CM-8 System Component Inventory", "PM-5 System Inventory"],
+          "nist80082OTNote": "Passive OT network discovery (Claroty/Nozomi/Dragos) automates OT asset inventory for connected assets. Manual inventory required for air-gapped and field devices. Inventory must include: make, model, firmware version, IP/MAC, zone, owner, criticality, and patch status.",
+          "similarity": "High"
+        }
+      ]
+    }
+  ],
+  "keyDifferences": [
+    {
+      "dimension": "Normative authority",
+      "iec62443": "IEC 62443 is an international standard — compliance is verifiable against defined Security Levels. It is the expected NACSA Act 854 s20 standard for OT NCII in Malaysia.",
+      "nist80082": "NIST SP 800-82 is guidance, not a compliance standard. It does not define measurable security levels. It is a reference document for OT security practitioners."
+    },
+    {
+      "dimension": "Security level model",
+      "iec62443": "Defines SL 1-4 with specific control requirements per level — provides a structured maturity pathway and measurable compliance target.",
+      "nist80082": "Does not define security levels. References NIST SP 800-53 control baselines (Low/Moderate/High) which do not map directly to IEC 62443 SLs."
+    },
+    {
+      "dimension": "OT specificity",
+      "iec62443": "Purpose-built for Industrial Automation and Control Systems. All 51 SRs are OT-specific.",
+      "nist80082": "Adapts IT security controls for OT context. Provides extensive OT-specific tailoring guidance for SP 800-53 controls."
+    },
+    {
+      "dimension": "Geographic adoption",
+      "iec62443": "Primary standard for OT security in Malaysia, EU (NIS2), Singapore (OT Cybersecurity Masterplan), and most international industrial sectors.",
+      "nist80082": "Primary reference in U.S. federal OT environments. Widely used as reference globally but not a compliance requirement outside U.S. federal context."
+    }
+  ]
+}

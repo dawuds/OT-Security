@@ -1,112 +1,664 @@
 {
   "$schema": "ot-security-v1",
-  "description": "Evidence items for OT security audit — mapped to IEC 62443-3-3 SRs, domain requirements, and NACSA Act 854 obligations. For auditors conducting NACSA s23 assessments and for OT security teams preparing for audit.",
+  "description": "Evidence items for OT security audit \u2014 mapped to IEC 62443-3-3 SRs, domain requirements, and NACSA Act 854 obligations. For auditors conducting NACSA s23 assessments and for OT security teams preparing for audit.",
   "auditorNote": "For NACSA s23 audits: the auditor should be NACSA-licensed with OT security expertise (GICSP or equivalent). Evidence should demonstrate both policy (documents exist) and operational effectiveness (controls are working). Passive evidence (logs, monitoring outputs) is more reliable than documentation alone.",
   "totalDomains": 11,
   "evidenceByDomain": {
     "network-segmentation": {
       "description": "Evidence that OT network zones are defined, enforced, and monitored.",
-      "primarySRs": ["SR-5.1", "SR-5.2"],
+      "primarySRs": [
+        "SR-5.1",
+        "SR-5.2"
+      ],
       "evidenceItems": [
-        { "id": "E-NS-01", "name": "Network topology diagram with zones and conduits", "mandatory": true, "whatGoodLooksLike": ["Current diagram dated within 6 months", "All zones labelled with SL-T", "All conduits with permitted traffic flows", "IDMZ clearly shown breaking IT-OT path"], "commonGaps": ["Diagram outdated", "IDMZ shown but not implemented", "Unknown devices not represented"], "howToVerify": "Compare diagram to live network using passive monitoring platform asset discovery" },
-        { "id": "E-NS-02", "name": "IDMZ firewall rulesets (both OT-side and IT-side)", "mandatory": true, "whatGoodLooksLike": ["Deny-all with explicit permit", "No direct IT-to-OT Layer 3 routes", "All permits documented with business justification", "Reviewed within 6 months"], "commonGaps": ["Overly permissive rules (any-any)", "Stale rules for decommissioned services", "No documented justification for permits"], "howToVerify": "Review firewall configuration; test blocked traffic is actually blocked" },
-        { "id": "E-NS-03", "name": "OT protocol-aware DPI configuration", "mandatory": false, "whatGoodLooksLike": ["DPI rules for each OT protocol in use", "Function code filtering applied", "Policy violation log showing DPI is active"], "commonGaps": ["Standard port-based firewall only", "DPI licensed but not configured"], "howToVerify": "Review DPI rules; send test traffic with unexpected function codes and verify block" },
-        { "id": "E-NS-04", "name": "Zone register (name, assets, SL-T, rationale)", "mandatory": true, "whatGoodLooksLike": ["All zones listed with asset counts", "SL-T per zone with documented rationale", "Reviewed as part of most recent risk assessment"], "commonGaps": ["Zone model defined once, never updated", "SL-T assigned without rationale"], "howToVerify": "Cross-reference zone register against topology diagram and monitoring platform asset list" }
-      ]
-    },
-    "identity-access": {
-      "description": "Evidence that OT access is individually attributed, role-based, and privileged access is managed.",
-      "primarySRs": ["SR-1.1", "SR-1.3", "SR-1.5", "SR-2.1"],
-      "evidenceItems": [
-        { "id": "E-IAM-01", "name": "OT user account register with role assignments", "mandatory": true, "whatGoodLooksLike": ["All OT users listed with systems, roles, last review date", "No shared accounts unless individually justified", "Leavers removed — last access review within 12 months"], "commonGaps": ["Shared accounts in use", "Leavers with active accounts", "No review process"], "howToVerify": "Extract user list from each OT system. Compare to HR leavers list. Any former employee accounts are critical findings." },
-        { "id": "E-IAM-02", "name": "PAM deployment evidence and session recordings", "mandatory": false, "whatGoodLooksLike": ["PAM tool deployed with OT credential vault", "Sample session recordings capture full session", "Privileged account list matches PAM vault"], "commonGaps": ["PAM for IT only; OT still using direct credential access", "Session recording retention too short", "PAM vault does not include embedded device credentials"], "howToVerify": "Review PAM vault for OT systems. Request sample session recording. Verify no engineer can access PLC without PAM." },
-        { "id": "E-IAM-03", "name": "Annual OT access review records", "mandatory": true, "whatGoodLooksLike": ["Review covers all OT systems", "Signed off by OT manager", "Action items executed (removals, role changes)", "Completed within last 12 months"], "commonGaps": ["Review conducted but actions not executed", "Review covers SCADA but not PLCs/historians/network devices"], "howToVerify": "Review most recent access review. Sample 5-10 accounts removed during review and verify changes applied in target systems." },
-        { "id": "E-IAM-04", "name": "Default credential elimination audit results", "mandatory": true, "whatGoodLooksLike": ["Annual audit conducted", "Zero known default credentials in environment", "Devices where defaults cannot be changed documented with compensating controls"], "commonGaps": ["Audit never conducted", "Only covers newly commissioned devices, not legacy", "Known defaults with no remediation plan"], "howToVerify": "Review last audit report. Test default credentials on sample OT devices in maintenance window. Any success is a critical finding." }
+        {
+          "id": "E-NS-01",
+          "name": "Network topology diagram with zones and conduits",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Current diagram dated within 6 months",
+            "All zones labelled with SL-T",
+            "All conduits with permitted traffic flows",
+            "IDMZ clearly shown breaking IT-OT path"
+          ],
+          "commonGaps": [
+            "Diagram outdated",
+            "IDMZ shown but not implemented",
+            "Unknown devices not represented"
+          ],
+          "howToVerify": "Compare diagram to live network using passive monitoring platform asset discovery"
+        },
+        {
+          "id": "E-NS-02",
+          "name": "IDMZ firewall rulesets (both OT-side and IT-side)",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Deny-all with explicit permit",
+            "No direct IT-to-OT Layer 3 routes",
+            "All permits documented with business justification",
+            "Reviewed within 6 months"
+          ],
+          "commonGaps": [
+            "Overly permissive rules (any-any)",
+            "Stale rules for decommissioned services",
+            "No documented justification for permits"
+          ],
+          "howToVerify": "Review firewall configuration; test blocked traffic is actually blocked"
+        },
+        {
+          "id": "E-NS-03",
+          "name": "OT protocol-aware DPI configuration",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "DPI rules for each OT protocol in use",
+            "Function code filtering applied",
+            "Policy violation log showing DPI is active"
+          ],
+          "commonGaps": [
+            "Standard port-based firewall only",
+            "DPI licensed but not configured"
+          ],
+          "howToVerify": "Review DPI rules; send test traffic with unexpected function codes and verify block"
+        },
+        {
+          "id": "E-NS-04",
+          "name": "Zone register (name, assets, SL-T, rationale)",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "All zones listed with asset counts",
+            "SL-T per zone with documented rationale",
+            "Reviewed as part of most recent risk assessment"
+          ],
+          "commonGaps": [
+            "Zone model defined once, never updated",
+            "SL-T assigned without rationale"
+          ],
+          "howToVerify": "Cross-reference zone register against topology diagram and monitoring platform asset list"
+        }
       ]
     },
     "remote-access": {
       "description": "Evidence that all remote access to OT systems is controlled, authenticated, and monitored.",
-      "primarySRs": ["SR-1.13", "SR-2.6", "SR-2.7"],
+      "primarySRs": [
+        "SR-1.13",
+        "SR-2.6",
+        "SR-2.7"
+      ],
       "evidenceItems": [
-        { "id": "E-RA-01", "name": "Remote access gateway architecture and MFA configuration", "mandatory": true, "whatGoodLooksLike": ["Dedicated OT remote access gateway in IDMZ", "MFA enforced for all users", "All remote access through gateway — no direct VPN to OT", "Session recording enabled"], "commonGaps": ["Standard IT VPN grants direct OT network access", "MFA deployed for IT but not OT-destined sessions", "Vendor remote access via separate unmonitored path"], "howToVerify": "Test remote access path from external network. Verify routing through IDMZ gateway. Verify MFA is prompted." },
-        { "id": "E-RA-02", "name": "Session recording retention and review evidence", "mandatory": false, "whatGoodLooksLike": ["Recordings retained minimum 90 days", "Evidence of periodic session review", "Recording review procedure documented"], "commonGaps": ["Sessions logged but never reviewed", "Retention less than 30 days", "Only remote access recorded, not on-site engineering sessions"], "howToVerify": "Request sample session recordings from last 30 days. Verify completeness. Check retention configuration." },
-        { "id": "E-RA-03", "name": "Vendor access approval and time-limited credential records", "mandatory": false, "whatGoodLooksLike": ["Per-session approval workflow", "Vendor credentials time-limited and revoked after session", "Audit trail of all vendor access with duration and actions"], "commonGaps": ["Permanent vendor accounts active between maintenance visits", "No approval workflow", "No record of vendor actions during sessions"], "howToVerify": "Review vendor access procedure. Verify last 5 vendor access events had approval records. Verify credentials revoked after session." }
-      ]
-    },
-    "patch-vulnerability": {
-      "description": "Evidence that OT vulnerabilities are tracked and patched within a defined programme.",
-      "primarySRs": ["SR-3.2", "SR-7.7"],
-      "evidenceItems": [
-        { "id": "E-PV-01", "name": "Vendor advisory subscriptions and tracking register", "mandatory": true, "whatGoodLooksLike": ["Subscriptions to advisories for all major OT vendors", "Advisory tracking register showing each advisory assessed", "Assessment records dated within 30 days of advisory publication"], "commonGaps": ["No vendor advisory subscriptions", "Advisories received but not systematically assessed", "Assessment only for IT-managed OT components, not field devices"], "howToVerify": "Request last 3 months of advisories. Select 3 and verify they were assessed against the asset inventory." },
-        { "id": "E-PV-02", "name": "Patch deployment records with vendor qualification checks", "mandatory": true, "whatGoodLooksLike": ["Patch records show: advisory reference, vendor qualification confirmation, change management approval, test environment validation, post-patch verification", "Applied patches recorded against asset inventory"], "commonGaps": ["Patches applied without vendor qualification check", "No test environment — patches applied directly to production", "Records exist for HMI/SCADA servers but not for PLC firmware"], "howToVerify": "Request last quarterly patch deployment records. Verify vendor qualification confirmed for each patch. For PLCs, verify firmware version against vendor latest." },
-        { "id": "E-PV-03", "name": "Compensating controls register for unpatchable assets", "mandatory": false, "whatGoodLooksLike": ["List of OT assets that cannot be patched with documented reason", "Compensating controls for each (network isolation, stricter access controls, monitoring)", "Risk acceptance sign-off from OT manager or CISO"], "commonGaps": ["No formal register", "Compensating controls documented but not implemented", "No risk acceptance sign-off"], "howToVerify": "Review compensating controls register. Select 3 unpatched assets and verify documented compensating controls are implemented." }
+        {
+          "id": "E-RA-01",
+          "name": "Remote access gateway architecture and MFA configuration",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Dedicated OT remote access gateway in IDMZ",
+            "MFA enforced for all users",
+            "All remote access through gateway \u2014 no direct VPN to OT",
+            "Session recording enabled"
+          ],
+          "commonGaps": [
+            "Standard IT VPN grants direct OT network access",
+            "MFA deployed for IT but not OT-destined sessions",
+            "Vendor remote access via separate unmonitored path"
+          ],
+          "howToVerify": "Test remote access path from external network. Verify routing through IDMZ gateway. Verify MFA is prompted."
+        },
+        {
+          "id": "E-RA-02",
+          "name": "Session recording retention and review evidence",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "Recordings retained minimum 90 days",
+            "Evidence of periodic session review",
+            "Recording review procedure documented"
+          ],
+          "commonGaps": [
+            "Sessions logged but never reviewed",
+            "Retention less than 30 days",
+            "Only remote access recorded, not on-site engineering sessions"
+          ],
+          "howToVerify": "Request sample session recordings from last 30 days. Verify completeness. Check retention configuration."
+        },
+        {
+          "id": "E-RA-03",
+          "name": "Vendor access approval and time-limited credential records",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "Per-session approval workflow",
+            "Vendor credentials time-limited and revoked after session",
+            "Audit trail of all vendor access with duration and actions"
+          ],
+          "commonGaps": [
+            "Permanent vendor accounts active between maintenance visits",
+            "No approval workflow",
+            "No record of vendor actions during sessions"
+          ],
+          "howToVerify": "Review vendor access procedure. Verify last 5 vendor access events had approval records. Verify credentials revoked after session."
+        }
       ]
     },
     "monitoring-logging": {
       "description": "Evidence that OT security events are captured, retained, and actioned.",
-      "primarySRs": ["SR-6.1", "SR-6.2", "SR-2.8", "SR-2.9", "SR-2.11"],
+      "primarySRs": [
+        "SR-6.1",
+        "SR-6.2",
+        "SR-2.8",
+        "SR-2.9",
+        "SR-2.11"
+      ],
       "evidenceItems": [
-        { "id": "E-ML-01", "name": "OT monitoring platform coverage map and alert records", "mandatory": true, "whatGoodLooksLike": ["Coverage map showing all OT segments with sensors", "Active alert log for last 30 days", "Evidence of alert review within defined SLA", "NACSA-relevant alert categories configured"], "commonGaps": ["Monitoring deployed but alerts not reviewed", "Coverage gaps at remote sites", "IT SIEM without OT-specific detection rules"], "howToVerify": "Review coverage map against topology. Request last 30 days alert records. Ask how high-severity alerts are triaged." },
-        { "id": "E-ML-02", "name": "Log retention configuration and integrity verification", "mandatory": true, "whatGoodLooksLike": ["SIEM retention minimum 12 months online, 7 years archive (NACSA s26)", "Log integrity verification mechanism (hash, write-once)", "Capacity monitoring alerts before exhaustion"], "commonGaps": ["Retention only 30-90 days — insufficient for s26 7-year requirement", "Logs in modifiable storage without integrity controls", "No capacity alerting — logs silently overwritten"], "howToVerify": "Review SIEM retention config. Review log storage architecture for write protection. Check capacity alerts." },
-        { "id": "E-ML-03", "name": "NTP synchronisation evidence", "mandatory": false, "whatGoodLooksLike": ["All OT components synchronised to common NTP source", "Time accuracy within 1 second", "Authenticated NTP configured"], "commonGaps": ["OT systems on different NTP sources with drift", "No NTP on older field devices", "NTP unauthenticated"], "howToVerify": "Query NTP status on sample OT components. Compare timestamps. Confirm log correlation across systems is possible without significant drift." }
-      ]
-    },
-    "incident-response": {
-      "description": "Evidence that the organisation can detect, classify, respond, and notify for OT security incidents.",
-      "primarySRs": ["SR-6.1", "SR-6.2", "SR-2.8"],
-      "evidenceItems": [
-        { "id": "E-IR-01", "name": "OT monitoring platform deployment and alert records", "mandatory": true, "whatGoodLooksLike": ["Sensor coverage map showing all OT network segments covered", "Alert log showing active detection", "Evidence of alert review and triage within defined SLA", "NACSA-relevant alert types configured"], "commonGaps": ["Monitoring deployed but alerts not reviewed", "Coverage gaps in remote sites", "No OT-specific detection rules — only generic IT rules"], "howToVerify": "Review sensor coverage map; request sample alert review records for last 30 days" },
-        { "id": "E-IR-02", "name": "NACSA notification procedure and tabletop exercise records", "mandatory": true, "whatGoodLooksLike": ["Written procedure with incident classification matrix", "NACSA contact details current", "Tabletop exercise showing team classified incidents within 6-hour window", "Notification decision authority defined"], "commonGaps": ["Procedure exists but never tested", "NACSA contact details outdated", "Team unaware of 6-hour notification requirement"], "howToVerify": "Review classification matrix. Confirm NACSA contact details are current. Review last tabletop exercise records." },
-        { "id": "E-IR-03", "name": "OT Incident Response Plan with OT-specific runbooks", "mandatory": true, "whatGoodLooksLike": ["OT IRP separate from IT IRP or as dedicated OT appendix", "Runbooks for: ransomware, HMI compromise, PLC program modification, SIS anomaly", "Operations engineering involvement documented", "Annual review completed"], "commonGaps": ["IT IRP used as-is — no OT-specific procedures", "Operations engineering not involved in OT IR", "IRP never tested or updated"], "howToVerify": "Review IRP. Confirm operations management has reviewed OT sections. Check last review date." }
-      ]
-    },
-    "asset-management": {
-      "description": "Evidence that OT assets are inventoried, classified, and configuration-managed.",
-      "primarySRs": ["SR-7.8", "SR-7.6"],
-      "evidenceItems": [
-        { "id": "E-AM-01", "name": "OT asset register completeness evidence", "mandatory": true, "whatGoodLooksLike": ["All zones represented", "Required fields populated (make/model, firmware, IP/MAC, zone, criticality)", "Updated within 30 days", "Passive discovery cross-checked — no significant gaps"], "commonGaps": ["More than 10% unaccounted vs monitoring platform", "Firmware versions missing for field devices", "Remote site assets not included"], "howToVerify": "Compare asset register to OT monitoring platform list. Select 10 random assets and verify accuracy." },
-        { "id": "E-AM-02", "name": "OT change management records", "mandatory": true, "whatGoodLooksLike": ["Change requests for all known changes", "Post-change verification records", "Emergency change records with retrospective review", "No unreconciled gaps vs configuration monitoring"], "commonGaps": ["Undocumented changes discovered by configuration monitoring", "Post-change verification skipped", "No emergency change process"], "howToVerify": "Cross-reference change log with configuration monitoring deviation log. Unreconciled deviations are changes made outside the change management process." }
-      ]
-    },
-    "safety-system": {
-      "description": "Evidence that Safety Instrumented Systems are physically isolated and their integrity is maintained.",
-      "primarySRs": ["SR-5.1", "SR-3.4"],
-      "evidenceItems": [
-        { "id": "E-SS-01", "name": "SIS network isolation verification record", "mandatory": true, "whatGoodLooksLike": ["Physical cable trace confirming no network cables between SIS and DCS/IT", "Signed off by safety engineer and OT security engineer", "Dated within 12 months or after any SIS maintenance"], "commonGaps": ["Verification never performed — assumed isolated", "Data diode bypassed during maintenance and not restored", "Physical access panel connections not traced"], "howToVerify": "Physical inspection — trace every cable from SIS controller back-panel" },
-        { "id": "E-SS-02", "name": "SIS program checksum register with pre/post maintenance comparisons", "mandatory": true, "whatGoodLooksLike": ["Baseline checksums at commissioning or last verified state", "Pre-maintenance hash matches baseline", "Post-maintenance hash matches expectation for approved change", "Two-person sign-off"], "commonGaps": ["No baseline established", "Checksums checked by single person", "Hash comparison not performed after maintenance"], "howToVerify": "Review checksum register; select one controller and verify current hash against register" },
-        { "id": "E-SS-03", "name": "SIS key switch configuration records", "mandatory": true, "whatGoodLooksLike": ["All SIS controllers in Run mode during normal operation", "Key held by named individual — not hanging in cabinet", "Log of key switch mode changes"], "commonGaps": ["Key switch left in Program mode permanently", "Key hanging in cabinet lock", "No awareness that key switch is a security control"], "howToVerify": "Physical inspection of all SIS controller key switches; verify key holder identity" }
+        {
+          "id": "E-ML-01",
+          "name": "OT monitoring platform coverage map and alert records",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Coverage map showing all OT segments with sensors",
+            "Active alert log for last 30 days",
+            "Evidence of alert review within defined SLA",
+            "NACSA-relevant alert categories configured"
+          ],
+          "commonGaps": [
+            "Monitoring deployed but alerts not reviewed",
+            "Coverage gaps at remote sites",
+            "IT SIEM without OT-specific detection rules"
+          ],
+          "howToVerify": "Review coverage map against topology. Request last 30 days alert records. Ask how high-severity alerts are triaged."
+        },
+        {
+          "id": "E-ML-02",
+          "name": "Log retention configuration and integrity verification",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "SIEM retention minimum 12 months online, 7 years archive (NACSA s26)",
+            "Log integrity verification mechanism (hash, write-once)",
+            "Capacity monitoring alerts before exhaustion"
+          ],
+          "commonGaps": [
+            "Retention only 30-90 days \u2014 insufficient for s26 7-year requirement",
+            "Logs in modifiable storage without integrity controls",
+            "No capacity alerting \u2014 logs silently overwritten"
+          ],
+          "howToVerify": "Review SIEM retention config. Review log storage architecture for write protection. Check capacity alerts."
+        },
+        {
+          "id": "E-ML-03",
+          "name": "NTP synchronisation evidence",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "All OT components synchronised to common NTP source",
+            "Time accuracy within 1 second",
+            "Authenticated NTP configured"
+          ],
+          "commonGaps": [
+            "OT systems on different NTP sources with drift",
+            "No NTP on older field devices",
+            "NTP unauthenticated"
+          ],
+          "howToVerify": "Query NTP status on sample OT components. Compare timestamps. Confirm log correlation across systems is possible without significant drift."
+        }
       ]
     },
     "configuration-management": {
       "description": "Evidence that OT system configurations are baselined, hardened, and change-controlled.",
-      "primarySRs": ["SR-7.6", "SR-7.7", "SR-3.3", "SR-3.4"],
+      "primarySRs": [
+        "SR-7.6",
+        "SR-7.7",
+        "SR-3.3",
+        "SR-3.4"
+      ],
       "evidenceItems": [
-        { "id": "E-CM-01", "name": "OT configuration baseline documents per system type", "mandatory": true, "whatGoodLooksLike": ["Baseline hardening guide for each OT platform (Windows HMI, SCADA server, historian, EWS, PLC)", "Current configuration compared to baseline with deviations documented", "Baselines reviewed annually"], "commonGaps": ["No hardening guide — default configuration in use", "Baselines defined but never applied or verified", "IT hardening standards applied without OT-specific adjustments"], "howToVerify": "Review hardening baseline. Select one system type and compare live configuration against baseline." },
-        { "id": "E-CM-02", "name": "Configuration monitoring deviation alerts and resolution records", "mandatory": false, "whatGoodLooksLike": ["Configuration monitoring deployed", "Deviation alerts generated for unexpected changes", "Alert resolution records — each either matches a change record or was remediated"], "commonGaps": ["Configuration monitoring deployed but deviations not actioned", "Monitoring only covers IT components, not field devices", "Alert fatigue — volume too high to review"], "howToVerify": "Review last 30 days deviation alerts. Verify each alert matches a change management record or was investigated." }
+        {
+          "id": "E-CM-01",
+          "name": "OT configuration baseline documents per system type",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Baseline hardening guide for each OT platform (Windows HMI, SCADA server, historian, EWS, PLC)",
+            "Current configuration compared to baseline with deviations documented",
+            "Baselines reviewed annually"
+          ],
+          "commonGaps": [
+            "No hardening guide \u2014 default configuration in use",
+            "Baselines defined but never applied or verified",
+            "IT hardening standards applied without OT-specific adjustments"
+          ],
+          "howToVerify": "Review hardening baseline. Select one system type and compare live configuration against baseline."
+        },
+        {
+          "id": "E-CM-02",
+          "name": "Configuration monitoring deviation alerts and resolution records",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "Configuration monitoring deployed",
+            "Deviation alerts generated for unexpected changes",
+            "Alert resolution records \u2014 each either matches a change record or was remediated"
+          ],
+          "commonGaps": [
+            "Configuration monitoring deployed but deviations not actioned",
+            "Monitoring only covers IT components, not field devices",
+            "Alert fatigue \u2014 volume too high to review"
+          ],
+          "howToVerify": "Review last 30 days deviation alerts. Verify each alert matches a change management record or was investigated."
+        }
       ]
     },
     "supply-chain": {
       "description": "Evidence that OT vendor and supply chain security risks are assessed and managed.",
-      "primarySRs": ["SR-3.4", "SR-2.3"],
+      "primarySRs": [
+        "SR-3.4",
+        "SR-2.3"
+      ],
       "evidenceItems": [
-        { "id": "E-SC-01", "name": "Vendor security assessment questionnaires and approved vendor register", "mandatory": true, "whatGoodLooksLike": ["Security questionnaire completed for all critical OT vendors within last 12 months", "Approved vendor register maintained", "Contractual security requirements in all OT vendor contracts (SBOM clause, vulnerability notification, audit rights)", "Annual reassessment"], "commonGaps": ["Vendor assessments at procurement only — never reassessed", "Security requirements missing from OT vendor contracts", "Approved vendor list for IT only, not OT-specific vendors"], "howToVerify": "Review vendor assessment records for top 5 OT vendors. Review one OT vendor contract for security clauses." },
-        { "id": "E-SC-02", "name": "Transient device management procedure and records", "mandatory": false, "whatGoodLooksLike": ["Documented procedure for vendor laptops, USB drives entering OT environment", "Scanning records for transient devices before OT network connection", "USB port control technically enforced", "Vendor acknowledgement of policy before access"], "commonGaps": ["Vendor laptops connected without scanning", "USB drives accepted without scanning", "USB blocking policy only, not technically enforced"], "howToVerify": "Review transient device procedure. Verify last vendor onsite visit had a scanning record. Test USB port blocking on an OT workstation." }
+        {
+          "id": "E-SC-01",
+          "name": "Vendor security assessment questionnaires and approved vendor register",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Security questionnaire completed for all critical OT vendors within last 12 months",
+            "Approved vendor register maintained",
+            "Contractual security requirements in all OT vendor contracts (SBOM clause, vulnerability notification, audit rights)",
+            "Annual reassessment"
+          ],
+          "commonGaps": [
+            "Vendor assessments at procurement only \u2014 never reassessed",
+            "Security requirements missing from OT vendor contracts",
+            "Approved vendor list for IT only, not OT-specific vendors"
+          ],
+          "howToVerify": "Review vendor assessment records for top 5 OT vendors. Review one OT vendor contract for security clauses."
+        },
+        {
+          "id": "E-SC-02",
+          "name": "Transient device management procedure and records",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "Documented procedure for vendor laptops, USB drives entering OT environment",
+            "Scanning records for transient devices before OT network connection",
+            "USB port control technically enforced",
+            "Vendor acknowledgement of policy before access"
+          ],
+          "commonGaps": [
+            "Vendor laptops connected without scanning",
+            "USB drives accepted without scanning",
+            "USB blocking policy only, not technically enforced"
+          ],
+          "howToVerify": "Review transient device procedure. Verify last vendor onsite visit had a scanning record. Test USB port blocking on an OT workstation."
+        }
       ]
     },
     "backup-recovery": {
       "description": "Evidence that OT configurations can be backed up and restored within defined recovery objectives.",
-      "primarySRs": ["SR-7.3", "SR-7.4"],
+      "primarySRs": [
+        "SR-7.3",
+        "SR-7.4"
+      ],
       "evidenceItems": [
-        { "id": "E-BR-01", "name": "OT backup configuration and schedule records", "mandatory": true, "whatGoodLooksLike": ["Backup scope covers all OT components (PLC programs, DCS config, HMI files, SCADA DB, historian config, network device configs)", "Automated backups verified running", "Offline copy maintained (not only on network share)", "Backup integrity checks configured"], "commonGaps": ["Backup covers SCADA servers but not PLC programs", "Backup stored on network share only — vulnerable to ransomware", "Automated backup configured but not verified as running"], "howToVerify": "Review backup configuration. Verify PLC programs explicitly in scope. Check last successful backup timestamp. Verify offline copy exists." },
-        { "id": "E-BR-02", "name": "Restore test records with RTO demonstrated", "mandatory": true, "whatGoodLooksLike": ["Restore test within last 12 months", "Test covers at least one PLC/DCS component (not just file-level)", "RTO verified — demonstrated restore time within defined recovery objective", "Operations engineering involved in test"], "commonGaps": ["Backup exists but restore never tested", "Test covers file restore only, not functional restoration of control system", "RTO defined but never measured"], "howToVerify": "Review restore test records. Verify test included PLC or DCS restoration to functional state. Compare test time to defined RTO." }
+        {
+          "id": "E-BR-01",
+          "name": "OT backup configuration and schedule records",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Backup scope covers all OT components (PLC programs, DCS config, HMI files, SCADA DB, historian config, network device configs)",
+            "Automated backups verified running",
+            "Offline copy maintained (not only on network share)",
+            "Backup integrity checks configured"
+          ],
+          "commonGaps": [
+            "Backup covers SCADA servers but not PLC programs",
+            "Backup stored on network share only \u2014 vulnerable to ransomware",
+            "Automated backup configured but not verified as running"
+          ],
+          "howToVerify": "Review backup configuration. Verify PLC programs explicitly in scope. Check last successful backup timestamp. Verify offline copy exists."
+        },
+        {
+          "id": "E-BR-02",
+          "name": "Restore test records with RTO demonstrated",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Restore test within last 12 months",
+            "Test covers at least one PLC/DCS component (not just file-level)",
+            "RTO verified \u2014 demonstrated restore time within defined recovery objective",
+            "Operations engineering involved in test"
+          ],
+          "commonGaps": [
+            "Backup exists but restore never tested",
+            "Test covers file restore only, not functional restoration of control system",
+            "RTO defined but never measured"
+          ],
+          "howToVerify": "Review restore test records. Verify test included PLC or DCS restoration to functional state. Compare test time to defined RTO."
+        }
       ]
     },
     "physical-security": {
       "description": "Evidence that physical access to OT assets is controlled and OT zones have appropriate physical security.",
-      "primarySRs": ["SR-2.3"],
+      "primarySRs": [
+        "SR-2.3"
+      ],
       "evidenceItems": [
-        { "id": "E-PS-01", "name": "Physical access control records for OT control rooms and panels", "mandatory": true, "whatGoodLooksLike": ["Access control on all OT control rooms, server rooms, relay/MCC rooms", "Access log retained minimum 90 days", "Access list review within last 12 months — removing personnel no longer requiring access", "Tailgating prevention in high-security OT areas"], "commonGaps": ["Combination codes not changed after personnel changes", "Access log exists but not reviewed", "OT server rooms co-located with non-OT assets without separation"], "howToVerify": "Review access control configuration. Request access log for last 30 days. Verify access list includes only current OT personnel." },
-        { "id": "E-PS-02", "name": "Field site physical security assessment records", "mandatory": false, "whatGoodLooksLike": ["Remote substations, pump stations, field cabinets have security assessment records", "Tamper-evident seals on critical field equipment", "CCTV coverage of field OT equipment where feasible", "Periodic site inspection records"], "commonGaps": ["Remote sites assumed secure because remote", "Field cabinets unlocked or key held at site", "No physical tamper detection on critical remote OT equipment"], "howToVerify": "Review field site security assessment. Inspect sample field cabinet — verify locked and sealed. Check whether broken tamper seals were investigated." }
+        {
+          "id": "E-PS-01",
+          "name": "Physical access control records for OT control rooms and panels",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Access control on all OT control rooms, server rooms, relay/MCC rooms",
+            "Access log retained minimum 90 days",
+            "Access list review within last 12 months \u2014 removing personnel no longer requiring access",
+            "Tailgating prevention in high-security OT areas"
+          ],
+          "commonGaps": [
+            "Combination codes not changed after personnel changes",
+            "Access log exists but not reviewed",
+            "OT server rooms co-located with non-OT assets without separation"
+          ],
+          "howToVerify": "Review access control configuration. Request access log for last 30 days. Verify access list includes only current OT personnel."
+        },
+        {
+          "id": "E-PS-02",
+          "name": "Field site physical security assessment records",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "Remote substations, pump stations, field cabinets have security assessment records",
+            "Tamper-evident seals on critical field equipment",
+            "CCTV coverage of field OT equipment where feasible",
+            "Periodic site inspection records"
+          ],
+          "commonGaps": [
+            "Remote sites assumed secure because remote",
+            "Field cabinets unlocked or key held at site",
+            "No physical tamper detection on critical remote OT equipment"
+          ],
+          "howToVerify": "Review field site security assessment. Inspect sample field cabinet \u2014 verify locked and sealed. Check whether broken tamper seals were investigated."
+        }
+      ]
+    },
+    "asset-inventory": {
+      "description": "Evidence that OT assets are inventoried, classified, and configuration-managed.",
+      "primarySRs": [
+        "SR-7.8",
+        "SR-7.6"
+      ],
+      "evidenceItems": [
+        {
+          "id": "E-AM-01",
+          "name": "OT asset register completeness evidence",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "All zones represented",
+            "Required fields populated (make/model, firmware, IP/MAC, zone, criticality)",
+            "Updated within 30 days",
+            "Passive discovery cross-checked \u2014 no significant gaps"
+          ],
+          "commonGaps": [
+            "More than 10% unaccounted vs monitoring platform",
+            "Firmware versions missing for field devices",
+            "Remote site assets not included"
+          ],
+          "howToVerify": "Compare asset register to OT monitoring platform list. Select 10 random assets and verify accuracy."
+        },
+        {
+          "id": "E-AM-02",
+          "name": "OT change management records",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Change requests for all known changes",
+            "Post-change verification records",
+            "Emergency change records with retrospective review",
+            "No unreconciled gaps vs configuration monitoring"
+          ],
+          "commonGaps": [
+            "Undocumented changes discovered by configuration monitoring",
+            "Post-change verification skipped",
+            "No emergency change process"
+          ],
+          "howToVerify": "Cross-reference change log with configuration monitoring deviation log. Unreconciled deviations are changes made outside the change management process."
+        }
+      ]
+    },
+    "safety-system-security": {
+      "description": "Evidence that Safety Instrumented Systems are physically isolated and their integrity is maintained.",
+      "primarySRs": [
+        "SR-5.1",
+        "SR-3.4"
+      ],
+      "evidenceItems": [
+        {
+          "id": "E-SS-01",
+          "name": "SIS network isolation verification record",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Physical cable trace confirming no network cables between SIS and DCS/IT",
+            "Signed off by safety engineer and OT security engineer",
+            "Dated within 12 months or after any SIS maintenance"
+          ],
+          "commonGaps": [
+            "Verification never performed \u2014 assumed isolated",
+            "Data diode bypassed during maintenance and not restored",
+            "Physical access panel connections not traced"
+          ],
+          "howToVerify": "Physical inspection \u2014 trace every cable from SIS controller back-panel"
+        },
+        {
+          "id": "E-SS-02",
+          "name": "SIS program checksum register with pre/post maintenance comparisons",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Baseline checksums at commissioning or last verified state",
+            "Pre-maintenance hash matches baseline",
+            "Post-maintenance hash matches expectation for approved change",
+            "Two-person sign-off"
+          ],
+          "commonGaps": [
+            "No baseline established",
+            "Checksums checked by single person",
+            "Hash comparison not performed after maintenance"
+          ],
+          "howToVerify": "Review checksum register; select one controller and verify current hash against register"
+        },
+        {
+          "id": "E-SS-03",
+          "name": "SIS key switch configuration records",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "All SIS controllers in Run mode during normal operation",
+            "Key held by named individual \u2014 not hanging in cabinet",
+            "Log of key switch mode changes"
+          ],
+          "commonGaps": [
+            "Key switch left in Program mode permanently",
+            "Key hanging in cabinet lock",
+            "No awareness that key switch is a security control"
+          ],
+          "howToVerify": "Physical inspection of all SIS controller key switches; verify key holder identity"
+        }
+      ]
+    },
+    "identity-access-management": {
+      "description": "Evidence that OT access is individually attributed, role-based, and privileged access is managed.",
+      "primarySRs": [
+        "SR-1.1",
+        "SR-1.3",
+        "SR-1.5",
+        "SR-2.1"
+      ],
+      "evidenceItems": [
+        {
+          "id": "E-IAM-01",
+          "name": "OT user account register with role assignments",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "All OT users listed with systems, roles, last review date",
+            "No shared accounts unless individually justified",
+            "Leavers removed \u2014 last access review within 12 months"
+          ],
+          "commonGaps": [
+            "Shared accounts in use",
+            "Leavers with active accounts",
+            "No review process"
+          ],
+          "howToVerify": "Extract user list from each OT system. Compare to HR leavers list. Any former employee accounts are critical findings."
+        },
+        {
+          "id": "E-IAM-02",
+          "name": "PAM deployment evidence and session recordings",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "PAM tool deployed with OT credential vault",
+            "Sample session recordings capture full session",
+            "Privileged account list matches PAM vault"
+          ],
+          "commonGaps": [
+            "PAM for IT only; OT still using direct credential access",
+            "Session recording retention too short",
+            "PAM vault does not include embedded device credentials"
+          ],
+          "howToVerify": "Review PAM vault for OT systems. Request sample session recording. Verify no engineer can access PLC without PAM."
+        },
+        {
+          "id": "E-IAM-03",
+          "name": "Annual OT access review records",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Review covers all OT systems",
+            "Signed off by OT manager",
+            "Action items executed (removals, role changes)",
+            "Completed within last 12 months"
+          ],
+          "commonGaps": [
+            "Review conducted but actions not executed",
+            "Review covers SCADA but not PLCs/historians/network devices"
+          ],
+          "howToVerify": "Review most recent access review. Sample 5-10 accounts removed during review and verify changes applied in target systems."
+        },
+        {
+          "id": "E-IAM-04",
+          "name": "Default credential elimination audit results",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Annual audit conducted",
+            "Zero known default credentials in environment",
+            "Devices where defaults cannot be changed documented with compensating controls"
+          ],
+          "commonGaps": [
+            "Audit never conducted",
+            "Only covers newly commissioned devices, not legacy",
+            "Known defaults with no remediation plan"
+          ],
+          "howToVerify": "Review last audit report. Test default credentials on sample OT devices in maintenance window. Any success is a critical finding."
+        }
+      ]
+    },
+    "patch-vulnerability-management": {
+      "description": "Evidence that OT vulnerabilities are tracked and patched within a defined programme.",
+      "primarySRs": [
+        "SR-3.2",
+        "SR-7.7"
+      ],
+      "evidenceItems": [
+        {
+          "id": "E-PV-01",
+          "name": "Vendor advisory subscriptions and tracking register",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Subscriptions to advisories for all major OT vendors",
+            "Advisory tracking register showing each advisory assessed",
+            "Assessment records dated within 30 days of advisory publication"
+          ],
+          "commonGaps": [
+            "No vendor advisory subscriptions",
+            "Advisories received but not systematically assessed",
+            "Assessment only for IT-managed OT components, not field devices"
+          ],
+          "howToVerify": "Request last 3 months of advisories. Select 3 and verify they were assessed against the asset inventory."
+        },
+        {
+          "id": "E-PV-02",
+          "name": "Patch deployment records with vendor qualification checks",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Patch records show: advisory reference, vendor qualification confirmation, change management approval, test environment validation, post-patch verification",
+            "Applied patches recorded against asset inventory"
+          ],
+          "commonGaps": [
+            "Patches applied without vendor qualification check",
+            "No test environment \u2014 patches applied directly to production",
+            "Records exist for HMI/SCADA servers but not for PLC firmware"
+          ],
+          "howToVerify": "Request last quarterly patch deployment records. Verify vendor qualification confirmed for each patch. For PLCs, verify firmware version against vendor latest."
+        },
+        {
+          "id": "E-PV-03",
+          "name": "Compensating controls register for unpatchable assets",
+          "mandatory": false,
+          "whatGoodLooksLike": [
+            "List of OT assets that cannot be patched with documented reason",
+            "Compensating controls for each (network isolation, stricter access controls, monitoring)",
+            "Risk acceptance sign-off from OT manager or CISO"
+          ],
+          "commonGaps": [
+            "No formal register",
+            "Compensating controls documented but not implemented",
+            "No risk acceptance sign-off"
+          ],
+          "howToVerify": "Review compensating controls register. Select 3 unpatched assets and verify documented compensating controls are implemented."
+        }
+      ]
+    },
+    "incident-detection-response": {
+      "description": "Evidence that the organisation can detect, classify, respond, and notify for OT security incidents.",
+      "primarySRs": [
+        "SR-6.1",
+        "SR-6.2",
+        "SR-2.8"
+      ],
+      "evidenceItems": [
+        {
+          "id": "E-IR-01",
+          "name": "OT monitoring platform deployment and alert records",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Sensor coverage map showing all OT network segments covered",
+            "Alert log showing active detection",
+            "Evidence of alert review and triage within defined SLA",
+            "NACSA-relevant alert types configured"
+          ],
+          "commonGaps": [
+            "Monitoring deployed but alerts not reviewed",
+            "Coverage gaps in remote sites",
+            "No OT-specific detection rules \u2014 only generic IT rules"
+          ],
+          "howToVerify": "Review sensor coverage map; request sample alert review records for last 30 days"
+        },
+        {
+          "id": "E-IR-02",
+          "name": "NACSA notification procedure and tabletop exercise records",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "Written procedure with incident classification matrix",
+            "NACSA contact details current",
+            "Tabletop exercise showing team classified incidents within 6-hour window",
+            "Notification decision authority defined"
+          ],
+          "commonGaps": [
+            "Procedure exists but never tested",
+            "NACSA contact details outdated",
+            "Team unaware of 6-hour notification requirement"
+          ],
+          "howToVerify": "Review classification matrix. Confirm NACSA contact details are current. Review last tabletop exercise records."
+        },
+        {
+          "id": "E-IR-03",
+          "name": "OT Incident Response Plan with OT-specific runbooks",
+          "mandatory": true,
+          "whatGoodLooksLike": [
+            "OT IRP separate from IT IRP or as dedicated OT appendix",
+            "Runbooks for: ransomware, HMI compromise, PLC program modification, SIS anomaly",
+            "Operations engineering involvement documented",
+            "Annual review completed"
+          ],
+          "commonGaps": [
+            "IT IRP used as-is \u2014 no OT-specific procedures",
+            "Operations engineering not involved in OT IR",
+            "IRP never tested or updated"
+          ],
+          "howToVerify": "Review IRP. Confirm operations management has reviewed OT sections. Check last review date."
+        }
       ]
     }
   }

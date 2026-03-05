@@ -31,7 +31,7 @@ Tracking all planned enhancements. Grouped by phase. Check off items as complete
 - [x] Add NACSA s19, s20, s24, s25 to `cross-references/iec62443-to-nacsa.json`
 - [x] Convert `slToNacsaMapping` to proper array in `iec62443-to-nacsa.json`
 - [x] Add `cross-references/mitre-to-controls.json` — 66 ICS techniques mapped to defensive controls and requirements
-- [ ] Add `cross-references/iec62443-to-nist80082.json` — IEC 62443 SR to NIST SP 800-82 Rev 3 section mapping
+- [x] Add `cross-references/iec62443-to-nist80082.json` — IEC 62443 SR to NIST SP 800-82 Rev 3 section mapping
 - [x] Add bidirectional lookup to NIST CSF cross-reference (CSF subcategory → which SRs)
 - [x] Add sector `regulatoryOverlap` arrays in `sectors/index.json`
 - [x] Add sector-specific content (sector controls/threats/requirements arrays)
@@ -50,13 +50,13 @@ Tracking all planned enhancements. Grouped by phase. Check off items as complete
 ## Phase 5 — Completeness & Quality
 
 - [x] Add `LEARNINGS.md` — document patterns, pitfalls, and prevention checklist specific to OT Security repo
-- [ ] Expand monitoring-logging requirements (add ML-R3 log retention, ML-R4 threat hunting, ML-R5 SOC integration)
-- [ ] Expand physical-security requirements (add PS-R3 personnel controls, PS-R4 delivery/media controls)
-- [ ] Expand backup-recovery requirements (add BR-R3 integrity verification, BR-R4 RTO/RPO testing)
-- [ ] Expand IAM requirements (add IAM-R5 session management, IAM-R6 emergency access/break-glass)
-- [ ] Add sector-specific requirement files per sector (energy, water, oil-gas, transport)
-- [ ] Populate `artifacts/inventory.json` with comprehensive audit artifact list
-- [ ] Add validation script (`validate.js`) — check cross-reference resolution, closed set counts, ID consistency
+- [x] Expand monitoring-logging requirements (ML-R3 log retention/NACSA s26, ML-R4 threat hunting, ML-R5 SOC integration)
+- [x] Expand physical-security requirements (PS-R3 personnel security, PS-R4 removable media/external device controls)
+- [x] Expand backup-recovery requirements (BR-R3 backup integrity verification, BR-R4 RTO/RPO definition and testing)
+- [x] Expand IAM requirements (IAM-R5 session management, IAM-R6 emergency access/break-glass)
+- [x] Add sector-specific requirement files: sectors/requirements/energy.json, water.json, oil-gas.json, transport.json
+- [x] Populate `artifacts/inventory.json` — expanded from 15 to 28 artifacts covering all domains
+- [x] Add validation script (`validate.js`) — 11-check validator; 213 checks pass, 0 warnings, 0 failures
 
 ---
 

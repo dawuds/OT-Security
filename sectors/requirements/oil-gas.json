@@ -1,0 +1,77 @@
+{
+  "$schema": "ot-security-v1",
+  "sector": "oil-gas",
+  "sectorName": "Oil and Gas",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Sector-specific requirements are constructed from IEC 62443, IEC 61511 (functional safety), and NACSA Act 854 obligations for the Malaysian oil and gas sector. The TRITON/TRISIS attack (Petro Rabigh, 2017) specifically targeted Safety Instrumented Systems in the petrochemical sector and directly informs this sector's threat model. These requirements have not been endorsed by PETRONAS, DOSH, or NACSA.",
+  "nacsaSectorLead": "Ministry of Natural Resources and Environmental Sustainability / Department of Occupational Safety and Health (DOSH) for SIS",
+  "nacsaSectorNumber": 7,
+  "applicableStandards": [
+    "IEC 62443 (OT cybersecurity — all applicable SRs)",
+    "IEC 61511 (Functional Safety — Safety Instrumented Systems — SIL)",
+    "IEC 61508 (Functional Safety — general)",
+    "API 1164 (Pipeline SCADA security)",
+    "API 1130 (Computational pipeline monitoring)",
+    "NIST SP 800-82 Rev 3"
+  ],
+  "targetSLByZone": {
+    "Process plant DCS (upstream/downstream)": "SL 3",
+    "Pipeline SCADA": "SL 2",
+    "Safety Instrumented Systems (SIS)": "SL 4",
+    "Compressor station control": "SL 2",
+    "FLNG/FPSO control systems": "SL 3",
+    "Emergency Shutdown System (ESD)": "SL 4"
+  },
+  "sectorOtCharacteristics": [
+    "Safety Instrumented Systems are life-safety and environmental protection devices — SL 4 mandatory",
+    "TRITON/TRISIS (2017) was the first malware specifically designed to attack SIS (Triconex Safety Controllers)",
+    "Large geographic footprint — upstream production, midstream pipelines, downstream refineries, LNG terminals",
+    "High process consequence of control system failure — fires, explosions, environmental release",
+    "IEC 61511 compliance is a DOSH requirement for SIS in Malaysian industrial facilities",
+    "Petronas upstream: safety-critical systems are NCII assets"
+  ],
+  "requirements": [
+    {
+      "id": "OG-R1",
+      "name": "Safety Instrumented System (SIS) cyber security",
+      "description": "SIS (Triconex, Hima, Yokogawa ProSafe, Emerson DeltaV SIS) are the last line of defence against process safety incidents. The TRITON attack demonstrated that sophisticated adversaries specifically target SIS to disable safety protection before launching a more destructive attack on the DCS. SIS must be treated as the highest-security OT asset — SL 4 target, network isolated from DCS, with strict physical access controls.",
+      "applicableZones": ["Safety Instrumented Systems", "Emergency Shutdown System"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1 (SL 4)", "IEC 62443-3-3 SR-3.4 (SL 4)", "IEC 61511-1 Section 11 (SIS management of change)", "NACSA Act 854 s18", "DOSH — Occupational Safety and Health Act 1994 (Act 514)"], "summary": "IEC 61511 (DOSH-required for SIS) requires SIS management of change procedures that encompass cybersecurity. IEC 62443 SL 4 is required for all SIS per the NACSA cross-reference. TRITON-class attacks represent a state-sponsored threat that specifically targets safety systems to enable physical destruction.", "owner": "Safety Instrumented Systems Engineer / OT Security Manager / Safety Manager" },
+      "technical": { "summary": "SIS completely isolated from DCS and all other networks. SIS engineering workstation air-gapped or on dedicated isolated segment. No remote access to SIS under any circumstances. Physical access with two-person rule. SIS program integrity verified via checksum after every maintenance event.", "actions": ["SIS controller network completely isolated from DCS — separate physical cables, separate physical switches; no logical path from DCS to SIS", "SIS engineering workstation (EWS): air-gapped from all networks; media handling requires two-person protocol and scanning workstation", "No remote access to SIS under any circumstances — this is an absolute requirement regardless of operational convenience", "Physical access to SIS controllers and EWS: locked SIS room separate from DCS control room; access requires two persons from approved list; physical log maintained", "SIS program integrity: record SHA-256 hash (or vendor-provided checksum) of each SIS program after commissioning and after every approved change; verify before each maintenance event", "SIS key switch: SIS controllers must be in RUN mode (hardware key switch) during operations — PROGRAM mode only during approved maintenance with two-person awareness", "Security assessment of SIS: assess SIS system against IEC 62443-3-3 SL 4 requirements — assess current SL-A and document gaps; use only qualified OT security assessors familiar with SIS cybersecurity"] },
+      "governance": { "summary": "SIS cybersecurity is part of the IEC 61511 SIS management of change procedure. All SIS changes require SIS engineer + safety manager approval. No SIS cybersecurity exceptions without C-suite risk acceptance.", "actions": ["All SIS program changes go through formal management of change with SIS engineer + safety manager approval", "SIS program checksum register maintained as controlled document — physical copy in SIS room", "Annual SIS security review against IEC 62443-3-3 SL 4 requirements", "SIS cyber security incident (any unauthorised access or program modification) triggers immediate plant safety review"] },
+      "evidenceItems": ["SIS network isolation architecture (physical separation documented)", "SIS EWS configuration (air-gapped or isolated segment)", "SIS program checksum register (physical + electronic)", "SIS access log (two-person, physical)", "SIS management of change records (IEC 61511 compliant)", "SIS key switch policy and verification records", "SIS security assessment report (SL 4 gap analysis)"],
+      "slMapping": { "sl4": "All controls above are SL 4 requirements. SL 4 is mandatory for all SIS regardless of NCII designation. SL 3 is not acceptable for SIS — the TRITON attack demonstrated SL 3-calibre adversaries specifically target SIS." },
+      "mitreAttackIcs": ["T0829", "T0857", "T0838", "T0880"]
+    },
+    {
+      "id": "OG-R2",
+      "name": "Pipeline SCADA security and leak detection",
+      "description": "Pipeline SCADA provides remote monitoring and control of high-pressure oil, gas, and LNG pipelines. Security requirements include: protection of SCADA from WAN attack, integrity of flow and pressure sensor data used for leak detection, and protection of emergency shutdown commands.",
+      "applicableZones": ["Pipeline SCADA", "Compressor station control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-6.2", "API 1164 Pipeline SCADA Security", "NACSA Act 854 s18"], "summary": "Pipeline SCADA is NCII OT. API 1164 (widely adopted reference) provides pipeline SCADA security guidance aligned with IEC 62443. NACSA s18 and s21 apply.", "owner": "Pipeline Control Engineer / OT Security / HSSE" },
+      "technical": { "summary": "Pipeline SCADA: encrypted WAN communications, integrity-verified flow/pressure data, CPM (computational pipeline monitoring) for leak detection cross-validated against SCADA data, remote RTU access via jump server.", "actions": ["Pipeline WAN: MPLS or encrypted VPN for all RTU/compressor station to SCADA communications — no cleartext DNP3/Modbus over internet", "RTU/compressor station remote access: jump server with MFA; all sessions recorded; time-limited vendor sessions", "Flow and pressure sensor data: SCADA validation logic detects sensor outliers; CPM leak detection uses independent sensor data path where possible", "Emergency valve closure/ESD commands: command authentication and confirmation required from SCADA operator — not single-click", "OT network monitoring on pipeline SCADA WAN — detect anomalous control commands (unexpected valve operations, ESD activations)", "Compressor station physical security: remote sites with camera/alarm; perimeter fencing; cellular modem isolated from control network"] },
+      "governance": { "summary": "Pipeline SCADA security reviewed annually and after any significant incident or near-miss.", "actions": ["Annual pipeline SCADA security review", "CPM vs SCADA data correlation reviewed monthly", "Emergency command procedure tested in annual exercise"] },
+      "evidenceItems": ["Pipeline WAN encryption configuration", "RTU/compressor remote access log (PAM records)", "SCADA sensor validation configuration", "OT monitoring coverage of pipeline SCADA", "Emergency command authentication configuration"],
+      "slMapping": { "sl2": "Encrypted WAN; jump server for remote access; physical security at compressor stations", "sl3": "OT monitoring on pipeline SCADA WAN; sensor validation; emergency command confirmation; PAM with session recording", "sl4": "Cryptographic command authentication for pipeline ESD; independent CPM data path; continuous integrity monitoring of RTU configurations" },
+      "mitreAttackIcs": ["T0856", "T0855", "T0822", "T0806"]
+    },
+    {
+      "id": "OG-R3",
+      "name": "Process plant DCS security (refinery, petrochemical)",
+      "description": "DCS (Distributed Control System) in refineries and petrochemical plants controls complex, high-energy processes. Compromise could allow setpoint manipulation causing product quality failures, equipment damage, or process safety incidents. DCS is the primary target after SIS has been disabled in a TRITON-class attack scenario.",
+      "applicableZones": ["Process plant DCS"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-3.2", "IEC 62443-3-3 SR-6.2", "NACSA Act 854 s18", "DOSH Act 514"], "summary": "Process plant DCS is NCII OT. NACSA s18 and s21 apply. DCS security is also implicitly required under DOSH Act 514 occupational safety obligations for high-hazard facilities.", "owner": "DCS Engineer / OT Security Manager / Process Safety Engineer" },
+      "technical": { "summary": "DCS network fully segregated from business network; IDMZ historian for data export; application whitelisting on DCS servers; OT network monitoring on DCS LAN; vendor access via PAM-controlled jump server.", "actions": ["DCS control network physically segregated from business network; IDMZ with historian for data export", "DCS servers (HMI, application server): application whitelisting; no internet access; OT-specific hardening applied", "DCS vendor remote access: dedicated jump server with MFA; all sessions recorded; session duration limited to active work only; no persistent VPN", "OT network monitoring on DCS LAN: alert on new device, unexpected communication patterns, off-hours engineering access, DCS component restarts", "Process setpoint changes: log all setpoint changes in DCS audit log; alert on out-of-window changes", "DCS patch management: coordinate with vendor on patching cadence; test patches in non-production before applying; accept temporary risk before high-risk patches"] },
+      "governance": { "summary": "DCS security part of plant cybersecurity management system. Reviewed annually.", "actions": ["Annual DCS SL assessment (SL 3 target for primary process units)", "DCS firewall changes via change management — OT security manager approval required", "DCS patch schedule agreed with vendor and plant management annually"] },
+      "evidenceItems": ["DCS network architecture (segregation from business network)", "Application whitelist configuration", "PAM records for vendor DCS access", "OT monitoring coverage of DCS LAN", "DCS setpoint change audit log"],
+      "slMapping": { "sl2": "DCS segregated; IDMZ historian; vendor access via jump server", "sl3": "OT monitoring on DCS LAN; application whitelisting; MFA on all remote access; setpoint change alerting", "sl4": "All SL 3 controls plus: dual-person approval for safety-relevant setpoint changes; cryptographic integrity of DCS configuration; SIS isolation verified continuously" },
+      "mitreAttackIcs": ["T0836", "T0806", "T0855", "T0829"]
+    }
+  ],
+  "sectorSpecificThreats": [
+    { "threat": "TRITON/TRISIS-class SIS attack (disable safety layer)", "relevantTechniques": ["T0829", "T0857", "T0838", "T0880"], "controls": ["sis-network-isolation", "ot-network-segmentation"] },
+    { "threat": "DCS setpoint manipulation for process damage", "relevantTechniques": ["T0836", "T0806"], "controls": ["ot-network-monitoring", "ot-remote-access-gateway"] },
+    { "threat": "Pipeline SCADA WAN attack", "relevantTechniques": ["T0822", "T0856"], "controls": ["ot-remote-access-gateway", "ot-network-segmentation"] },
+    { "threat": "Vendor remote access exploitation", "relevantTechniques": ["T0822", "T0886"], "controls": ["ot-remote-access-gateway", "ot-vendor-security-assessment"] }
+  ]
+}

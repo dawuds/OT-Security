@@ -1,0 +1,76 @@
+{
+  "$schema": "ot-security-v1",
+  "sector": "transport",
+  "sectorName": "Transport",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Sector-specific requirements are constructed from IEC 62443, IEC 62280 (railway communication security), and NACSA Act 854 obligations for the Malaysian transport sector. They have not been endorsed by the Ministry of Transport, Land Public Transport Authority (APAD), MAVCOM, or NACSA.",
+  "nacsaSectorLead": "Ministry of Transport",
+  "nacsaSectorNumber": 3,
+  "applicableStandards": [
+    "IEC 62443 (OT cybersecurity — primary)",
+    "IEC 62280 (Railway Communication Networks — Security)",
+    "IEC 62280-1/2 (RAMS/security for railway applications)",
+    "ICAO Annex 17 (Aviation Security — reference, non-binding for OT)",
+    "IMO MSC-FAL.1/Circ.3 (Maritime cyber risk management — ships/ports)",
+    "NIST SP 800-82 Rev 3"
+  ],
+  "targetSLByZone": {
+    "KLIA/airport ATC/BCAS systems": "SL 3",
+    "Rail signalling systems (ATP/ATO)": "SL 3",
+    "Port terminal operating system (TOS)": "SL 2",
+    "Major port SCADA (cranes, utilities)": "SL 2",
+    "Highway tolling and traffic management": "SL 2",
+    "Mass rapid transit (MRT) OCC systems": "SL 3"
+  },
+  "sectorOtCharacteristics": [
+    "Multiple OT sub-domains: aviation, rail, maritime/port, road/highway",
+    "Rail signalling (ATP/ATO) is safety-critical — SL 3 minimum",
+    "Aviation ground systems overlap with IT (airport management) creating blurred OT/IT boundary",
+    "Port SCADA controls cranes, utilities, and mooring — safety and operational implications",
+    "Transport OT typically managed by separate operations companies (PRASARANA, MAS, PORT Klang Authority)",
+    "High visibility — transport disruption has public and economic impact amplified by media"
+  ],
+  "requirements": [
+    {
+      "id": "TR-R1",
+      "name": "Rail signalling system cyber security",
+      "description": "Automatic Train Protection (ATP) and Automatic Train Operation (ATO) systems are safety-critical — they enforce speed limits, prevent overruns, and manage collision prevention. These systems must be treated as safety-critical OT with security equivalent to SIS in the process industry. The European NIS2 Directive and IEC 62280 address this sector specifically.",
+      "applicableZones": ["Rail signalling systems", "Operations Control Centre (OCC)"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-3.4", "IEC 62280 (Railway Communication Networks Security)", "NACSA Act 854 s18"], "summary": "Rail signalling is designated NCII in Malaysia. ATP/ATO systems must be assessed as safety-critical OT. NACSA s18 requires measures appropriate to the nature and criticality of the NCII. PRASARANA and KTM carry s17-s26 obligations as NCII entities.", "owner": "Rail OT Security / Signalling Engineer / OCC Security Manager" },
+      "technical": { "summary": "ATP/ATO control network isolated from all IT networks. OCC (Operations Control Centre) on dedicated secure network. Signalling system changes only via formal management of change. No remote access to signalling system controllers. Interlocking systems air-gapped.", "actions": ["ATP/ATO communication network completely isolated from IT network and internet — dedicated physical infrastructure", "OCC network: segregated from station WiFi, passenger information systems, and corporate network; IDMZ for any data export to business systems", "Interlocking system controllers: air-gapped from WAN; programming access requires physical presence at depot or interlocking location with two-person authorisation", "Signalling system changes: mandatory safety case + cyber security assessment before any software/firmware change; IEC 62280 compliance required", "Wayside equipment (signals, track circuits, balises): physical security at wayside locations; tamper-evident seals; periodic inspection on maintenance schedule", "OCC workstations: application whitelisting; no internet access; OT monitoring for anomalous operator activity"] },
+      "governance": { "summary": "Rail signalling security integrated with Railway Safety Management System (SMS). Changes require safety + security dual approval.", "actions": ["Annual rail signalling security review against IEC 62443 SL 3 and IEC 62280", "Signalling change management requires SMS + cyber security dual approval", "Annual wayside equipment physical security inspection"] },
+      "evidenceItems": ["ATP/ATO network isolation architecture diagram", "OCC network segregation configuration", "Signalling change management records (safety case + security assessment)", "Wayside physical security inspection records", "OCC application whitelist configuration"],
+      "slMapping": { "sl2": "ATP/ATO network isolated from IT; OCC network segregated; physical security at wayside locations", "sl3": "Air-gapped interlocking; dual approval for signalling changes; OT monitoring on OCC; application whitelisting", "sl4": "Cryptographic integrity verification of signalling software; anomaly detection on ATP/ATO communication; real-time safety monitoring of interlocking state" },
+      "mitreAttackIcs": ["T0855", "T0806", "T0836"]
+    },
+    {
+      "id": "TR-R2",
+      "name": "Airport ground systems OT security",
+      "description": "Major airports (KLIA, Penang, Kota Kinabalu, Kuching) operate critical OT including: baggage handling SCADA, building management systems (BMS), fuel distribution, airfield lighting control, and ground support equipment. These systems are adjacent to high-security areas and their disruption causes significant passenger and cargo impact.",
+      "applicableZones": ["Airport SCADA/BMS", "Baggage handling systems", "Fuel distribution control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-6.2", "NACSA Act 854 s18"], "summary": "Major airports are NCII NCII under NACSA Act 854. Airport operating companies (Malaysia Airports Holdings Berhad — MAHB) carry s17-s26 obligations for airport OT systems. ICAO Annex 17 (aviation security) provides the physical security context.", "owner": "Airport OT Security / Facilities Engineering / IT Security" },
+      "technical": { "summary": "Airport OT systems (baggage, BMS, fuel, lighting) on dedicated OT network segments isolated from passenger WiFi and corporate IT. IDMZ for data integration with airport management systems. Vendor access for baggage and BMS systems strictly controlled via jump server.", "actions": ["Baggage handling SCADA: dedicated OT network segment; no passenger WiFi exposure; IDMZ interface to departure control system", "Building Management System (BMS): BMS network isolated from corporate IT; HVAC/fire system control not accessible from internet-connected systems", "Airfield lighting control: isolated control network; physical access to control panels restricted to licensed personnel", "Fuel distribution control at airside: isolated from landside systems; physical access to fuel control at airside security perimeter", "Vendor remote access for all airport OT systems: jump server with MFA; PAM session recording; time-limited access", "OT monitoring on airport SCADA networks: alert on new device, unexpected control commands, off-hours maintenance activity"] },
+      "governance": { "summary": "Airport OT security reviewed annually and integrated with airport security plan.", "actions": ["Annual airport OT security review covering all OT systems", "Airport security plan (required under Aviation Security Act) integrates OT cybersecurity", "Vendor access log reviewed monthly"] },
+      "evidenceItems": ["Airport OT network architecture (BMS, baggage, fuel, lighting — all segregation documented)", "Vendor access log (PAM records)", "OT monitoring coverage of airport SCADA systems", "Physical access control for airfield control systems"],
+      "slMapping": { "sl2": "Airport OT systems on dedicated segments; vendor access via jump server; physical access controls", "sl3": "IDMZ for IT/OT data integration; OT monitoring on airport SCADA; PAM with session recording for all vendor access; application whitelisting on SCADA servers", "sl4": "Anomaly detection on baggage handling commands; integrity monitoring of airfield lighting control sequences; real-time alerting on fuel distribution anomalies" },
+      "mitreAttackIcs": ["T0816", "T0822", "T0855"]
+    },
+    {
+      "id": "TR-R3",
+      "name": "Port SCADA and terminal operating system security",
+      "description": "Major Malaysian ports (Port Klang, Tanjung Pelepas, Penang Port) operate SCADA for crane control, power management, and utilities; and Terminal Operating Systems (TOS) for cargo tracking and berth management. Port cyberattacks (NotPetya at Maersk/Port of Rotterdam, 2017) demonstrate the operational and economic impact of OT security failures.",
+      "applicableZones": ["Port SCADA", "Terminal Operating System"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IMO MSC-FAL.1/Circ.3 (Maritime cyber risk management — ports)", "NACSA Act 854 s18"], "summary": "Major Malaysian ports are NCII assets under NACSA Act 854. Port operators carry s17-s26 obligations. IMO MSC-FAL.1/Circ.3 provides the international maritime reference for port cyber risk management, aligned with IEC 62443 principles.", "owner": "Port OT Security / Terminal Operations / IT Security" },
+      "technical": { "summary": "Port SCADA (cranes, utilities) isolated from TOS and corporate IT. TOS on dedicated server environment with controlled interface to shipping lines and customs. Quay crane PLCs isolated from port IT network.", "actions": ["Quay crane PLC control network isolated from port IT network and TOS; crane operator workstations on dedicated segment", "TOS: dedicated server environment; interface to shipping lines via controlled API (not direct network access); customs system interface via government gateway, not ad-hoc connection", "Port utilities SCADA (power, water, fire): isolated from TOS and shipping IT; IDMZ interface for monitoring data to port management", "Vendor access for crane maintenance, TOS updates: jump server with MFA; PAM session recording; vendor activities coordinated with port operations", "OT monitoring on port SCADA networks: alert on quay crane anomalous command sequences, unexpected device connections", "NotPetya lesson: port OT must be air-gapped from any Windows systems that connect to general corporate email/internet — ransomware spread via network shares"] },
+      "governance": { "summary": "Port OT security reviewed annually. Port Facility Security Officer (PFSO — required under ISPS Code) coordinates OT and physical security.", "actions": ["Annual port OT security review", "PFSO includes OT cybersecurity in port facility security assessment (PFSA)", "Crane vendor access schedule reviewed monthly"] },
+      "evidenceItems": ["Port SCADA architecture (crane, utilities, TOS segregation documented)", "TOS-to-shipping-line interface security configuration", "PAM records for crane and TOS vendor access", "OT monitoring coverage of port SCADA", "Port ransomware resilience assessment (air-gap from email/internet-connected systems)"],
+      "slMapping": { "sl2": "Crane SCADA isolated from TOS and corporate IT; vendor access via jump server; TOS on dedicated servers", "sl3": "OT monitoring on port SCADA; PAM with session recording; TOS-shipping-line interface controlled API; application whitelisting", "sl4": "Anomaly detection on crane control commands; real-time monitoring of power distribution SCADA; offline backup of TOS sufficient for business continuity" },
+      "mitreAttackIcs": ["T0816", "T0822", "T0828"]
+    }
+  ],
+  "sectorSpecificThreats": [
+    { "threat": "Rail signalling manipulation for collision/derailment", "relevantTechniques": ["T0855", "T0806", "T0836"], "controls": ["ot-network-segmentation", "sis-network-isolation"] },
+    { "threat": "Port ransomware (NotPetya-class — network spread to SCADA)", "relevantTechniques": ["T0828", "T0816"], "controls": ["ot-network-segmentation", "ot-network-monitoring"] },
+    { "threat": "Airport BMS disruption (HVAC, fire suppression)", "relevantTechniques": ["T0816", "T0822"], "controls": ["ot-network-segmentation", "ot-remote-access-gateway"] }
+  ]
+}

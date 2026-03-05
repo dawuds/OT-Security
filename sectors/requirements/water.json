@@ -1,0 +1,72 @@
+{
+  "$schema": "ot-security-v1",
+  "sector": "water",
+  "sectorName": "Water and Wastewater",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Sector-specific requirements are constructed from IEC 62443, NIST SP 800-82 Rev 3, and NACSA Act 854 obligations for the Malaysian water sector. They have not been endorsed by SPAN (National Water Services Commission) or NACSA. The Oldsmar, Florida water plant attack (2021) and similar incidents inform the threat model for this sector.",
+  "nacsaSectorLead": "SPAN — Suruhanjaya Perkhidmatan Air Negara (National Water Services Commission)",
+  "nacsaSectorNumber": 8,
+  "applicableStandards": [
+    "IEC 62443 (primary OT security standard)",
+    "NIST SP 800-82 Rev 3 (OT security guidance)",
+    "IWA (International Water Association) cybersecurity guidelines"
+  ],
+  "targetSLByZone": {
+    "Water treatment plant SCADA": "SL 3",
+    "Pumping station control systems": "SL 2",
+    "Wastewater treatment SCADA": "SL 2",
+    "Distribution telemetry (RTU/remote sites)": "SL 2",
+    "Chemical dosing control systems": "SL 3"
+  },
+  "sectorOtCharacteristics": [
+    "Direct public health impact — water quality tampering could affect large populations",
+    "Chemical dosing systems (chlorine, fluoride) are highest-consequence OT assets",
+    "Many remote unmanned pump stations with cellular connectivity",
+    "High ratio of legacy PLCs and RTUs with limited authentication capability",
+    "24/7 operational requirement with real-time process monitoring",
+    "Historically low OT cybersecurity investment compared to energy sector"
+  ],
+  "requirements": [
+    {
+      "id": "WW-R1",
+      "name": "Chemical dosing system isolation and integrity",
+      "description": "Chemical dosing control systems (chlorine, coagulant, fluoride) are the highest-consequence OT assets in water treatment. Unauthorised manipulation of chemical dosing setpoints or control logic could cause public health harm. The Oldsmar attack (February 2021) involved remote manipulation of sodium hydroxide dosing to a dangerous level via TeamViewer left open on an HMI.",
+      "applicableZones": ["Water treatment plant SCADA", "Chemical dosing control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-2.1", "IEC 62443-3-3 SR-3.4", "NACSA Act 854 s18"], "summary": "Chemical dosing systems represent the highest-consequence OT assets in the water sector. NACSA s18 requires measures appropriate to the nature and sensitivity of NCII. SPAN may issue specific requirements for chemical dosing security as sector codes are developed.", "owner": "Plant OT Security / Operations Manager" },
+      "technical": { "summary": "Chemical dosing controllers on dedicated isolated segment. No remote access to chemical dosing PLCs except via approved PAM-controlled session with dual-person awareness. Hardware interlocks independent of software. Chemical dosing setpoint changes logged and alerted.", "actions": ["Chemical dosing PLCs on dedicated network segment, further isolated from main SCADA LAN — no remote access path from internet", "Eliminate any general remote desktop tools (TeamViewer, AnyDesk, VNC) from chemical dosing HMI — replace with organisation-controlled jump server with MFA if remote visibility is genuinely required", "Implement hardware-based setpoint limits independent of PLC software: high-limit trip switches at chemical injection pumps that cannot be overridden from software alone", "Log all changes to chemical dosing setpoints: who, when, from where, old value, new value — alert OT security team immediately on setpoint change outside approved maintenance window", "Physical access: chemical dosing control cabinets locked; key access tightly controlled; operations manager holds keys", "OT network monitoring covering chemical dosing segment — alert on any new connection to chemical dosing PLCs"] },
+      "governance": { "summary": "Chemical dosing control system security reviewed annually and after any security incident. Hardware interlock testing documented.", "actions": ["Annual chemical dosing security review", "Hardware interlock test documented at each annual maintenance shutdown", "Chemical dosing setpoint change procedure defines approval process and logging requirement"] },
+      "evidenceItems": ["Chemical dosing network architecture (isolation documented)", "Absence of generic remote desktop tools on dosing HMI (configuration evidence)", "Hardware interlock test records", "Chemical dosing setpoint change log", "Physical access control for dosing cabinets"],
+      "slMapping": { "sl2": "Chemical dosing PLCs on isolated segment; no TeamViewer/VNC; setpoint change logging", "sl3": "Hardware interlocks independent of software; jump server with MFA for any remote access; OT monitoring covering dosing segment; immediate alert on setpoint change", "sl4": "Dual-person approval for chemical dosing setpoint changes; cryptographic integrity verification of dosing PLC programs; real-time alerting to operations and OT security team" },
+      "mitreAttackIcs": ["T0806", "T0855", "T0836"]
+    },
+    {
+      "id": "WW-R2",
+      "name": "Remote pump station and RTU security",
+      "description": "Water distribution networks include many remote, unmanned pump stations connected via cellular (4G/5G) or MPLS WAN. These remote sites have limited physical security, often use legacy PLCs/RTUs with weak authentication, and represent a large attack surface. Compromise of remote pump stations could disrupt water distribution pressure.",
+      "applicableZones": ["Pumping station control systems", "Distribution telemetry"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-1.13", "IEC 62443-3-3 SR-5.1", "NACSA Act 854 s18"], "summary": "Remote pump stations are NCII OT assets. NACSA s18 requires measures appropriate to their criticality. NACSA s21 risk assessment must include remote sites.", "owner": "OT Security Engineer / Field Operations" },
+      "technical": { "summary": "Remote pump stations: encrypted WAN connection (VPN or MPLS), no direct internet exposure of RTU/PLC IP addresses, physical tamper detection, cellular modem in separate locked enclosure from PLC cabinet.", "actions": ["All remote pump station communications over encrypted VPN or dedicated MPLS — no direct internet access to RTU/PLC IP addresses", "Cellular modems for WAN connectivity configured with firewall rules: only permit inbound from SCADA IP, no inbound management access from internet", "Remote stations: cellular modem in separate locked enclosure from PLC — if cellular modem is compromised, physical access still needed to reach PLC", "Physical tamper detection on RTU/PLC cabinets at remote sites — alert on cabinet open", "Legacy RTUs with no authentication capability: compensating controls are VPN encryption at WAN layer and physical access control; document as exception", "Periodic physical inspection of remote sites on schedule based on criticality (monthly for high-criticality pumping stations; quarterly for distribution RTU sites)", "SCADA operator alert if remote site stops communicating — could indicate intentional disruption or network attack"] },
+      "governance": { "summary": "Remote site security assessment included in annual risk review.", "actions": ["Annual audit of remote site WAN configuration — verify VPN/MPLS in use; no direct internet exposure", "Remote site inspection schedule maintained; missed inspections escalated", "Exception register for legacy RTUs without authentication"] },
+      "evidenceItems": ["Remote site WAN architecture (VPN/MPLS documented)", "Cellular modem firewall rule configuration", "Physical tamper detection configuration", "Remote site inspection log", "Exception register for legacy RTUs"],
+      "slMapping": { "sl2": "VPN/MPLS WAN; cellular modem firewall; physical cabinet locks; inspection schedule", "sl3": "Tamper detection on RTU cabinets with SCADA alert; modem separated from PLC; legacy RTU exceptions documented", "sl4": "Continuous remote monitoring of RTU communication integrity; automated alert on anomalous command patterns from remote sites" },
+      "mitreAttackIcs": ["T0822", "T0812", "T0856"]
+    },
+    {
+      "id": "WW-R3",
+      "name": "Water quality monitoring data integrity",
+      "description": "Online water quality sensors (turbidity, pH, residual chlorine, pressure) feed directly into SCADA for automated process adjustments. If sensor data is falsified or sensor communications are manipulated, automated controls could apply incorrect chemical doses or fail to detect contamination events.",
+      "applicableZones": ["Water treatment plant SCADA"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-3.4", "IEC 62443-3-3 SR-6.2", "NACSA Act 854 s18"], "summary": "Water quality data integrity is a public health obligation. NACSA s18 applies. Contamination events with OT cyber causation would also trigger NACSA s26 notification obligations.", "owner": "OT Security / Water Quality Manager / Operations" },
+      "technical": { "summary": "Online water quality sensor data validated against expected ranges in SCADA. Anomalous sensor readings that would trigger significant process adjustment require operator confirmation. Manual water quality sampling runs in parallel as independent verification.", "actions": ["Implement SCADA validation logic: sensor readings outside defined operating ranges trigger operator confirmation before automated action", "Cross-validate water quality sensor readings against manual laboratory results — significant divergence triggers investigation", "OT network monitoring on sensor communication segments — alert on new device appearing or unusual communication patterns from sensor gateways", "Sensor communication security: IEC 62443 SR-5.1 zoning applied to sensor network — sensors on dedicated segment, not directly on SCADA LAN", "Historian records all sensor readings with timestamp — anomaly in sensor data recordable and investigable post-incident"] },
+      "governance": { "summary": "Water quality data integrity procedure integrates OT security and water quality management.", "actions": ["Procedure defines response to sensor anomaly: manual sampling initiated, SCADA operator informed, OT security alerted if cyber cause suspected", "Annual review of SCADA validation thresholds against operational experience"] },
+      "evidenceItems": ["SCADA sensor validation configuration", "Cross-validation procedure between online sensors and manual sampling", "OT monitoring coverage of sensor network", "Anomaly response procedure for sensor data integrity events"],
+      "slMapping": { "sl2": "Sensor validation in SCADA; manual sampling cross-check; sensor network segmented from SCADA LAN", "sl3": "Automated alert on sensor anomaly; OT monitoring on sensor network; divergence triggers investigation procedure", "sl4": "Cryptographic integrity of sensor communications; real-time divergence analysis across multiple sensors; automated contamination alert" },
+      "mitreAttackIcs": ["T0836", "T0806", "T0855"]
+    }
+  ],
+  "sectorSpecificThreats": [
+    { "threat": "Chemical dosing setpoint manipulation (Oldsmar-class attack)", "relevantTechniques": ["T0806", "T0855", "T0836"], "controls": ["ot-network-segmentation", "ot-remote-access-gateway", "ot-network-monitoring"] },
+    { "threat": "Remote pump station compromise via WAN", "relevantTechniques": ["T0822", "T0812"], "controls": ["ot-remote-access-gateway", "ot-network-segmentation"] },
+    { "threat": "Water quality sensor data manipulation", "relevantTechniques": ["T0836", "T0806"], "controls": ["ot-network-monitoring"] }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "ot-security-v1",
+  "sector": "energy",
+  "sectorName": "Energy",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Sector-specific requirements are constructed from IEC 62443, IEC 61850, NERC CIP (reference), and NACSA Act 854 obligations for the Malaysian energy sector. They have not been endorsed by the Energy Commission (Suruhanjaya Tenaga) or NACSA. Verify against current NACSA and sector lead directives before use.",
+  "nacsaSectorLead": "Energy Commission (Suruhanjaya Tenaga)",
+  "nacsaSectorNumber": 4,
+  "applicableStandards": [
+    "IEC 62443 (primary OT security standard)",
+    "IEC 61850 (substation automation and communication)",
+    "IEC 60870-5 (telecontrol protocols — legacy substations)",
+    "IEC 61968/61970 (power system information models / CIM)",
+    "NERC CIP (reference — not Malaysian mandate; useful benchmark for generation/transmission)"
+  ],
+  "targetSLByZone": {
+    "Generation DCS (primary generation)": "SL 3",
+    "Transmission EMS/SCADA": "SL 3",
+    "Substation automation (IEC 61850)": "SL 3",
+    "Distribution DCS/SCADA": "SL 2",
+    "AMI head-end system": "SL 2",
+    "Safety Instrumented Systems (turbine, boiler protection)": "SL 4"
+  },
+  "requirements": [
+    {
+      "id": "EN-R1",
+      "name": "IEC 61850 substation network security",
+      "description": "IEC 61850 substation automation networks (GOOSE, MMS, SAMPLED VALUES) require dedicated security controls. IEC 61850 protocols were not designed with authentication or encryption — all communications are assumed trusted. This creates significant risk: an attacker who gains access to the substation LAN can issue GOOSE messages that manipulate protection relay behaviour, potentially causing equipment damage or cascading outages.",
+      "applicableZones": ["Substation automation", "Protection and control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-5.2", "IEC 61850-90-8 (security extensions)", "NACSA Act 854 s18"], "summary": "IEC 62443 zone boundary protection requirements (SR-5.1, SR-5.2) apply to IEC 61850 networks. The Energy Commission is expected to issue sector-specific SL requirements for substation automation as NACSA codes of practice are developed.", "owner": "OT Security Engineer / Substation Engineer / SCADA Engineer" },
+      "technical": { "summary": "IEC 61850 security: segregate substation LAN from SCADA WAN at Layer 2/3. Do not route IEC 61850 GOOSE or SV traffic beyond substation boundary. Apply IEC 62351 extensions where relay/IED firmware supports it.", "actions": ["Segregate IEC 61850 substation LAN from WAN — GOOSE and Sampled Values must not traverse WAN links", "Implement Layer 2 VLANs to separate protection GOOSE network from MMS engineering access network", "Apply IEC 62351 authentication for MMS client/server connections where IED firmware supports it (newer relays only)", "For legacy relays without IEC 62351 support: compensating controls are physical access control and network isolation — document as exception", "Engineering access to IEC 61850 IEDs via dedicated engineering VLAN only; not accessible from corporate network", "Implement OT network monitoring on substation LAN to detect anomalous GOOSE or MMS activity", "Substation remote access: encrypted VPN or MPLS with MFA; no direct IP access from internet to substation IEDs"] },
+      "governance": { "summary": "Substation cybersecurity standard reviewed at each major substation upgrade. IEC 62351 implementation roadmap maintained.", "actions": ["IEC 62351 implementation tracked against relay replacement/upgrade schedule", "Annual substation cyber security assessment", "Substation cyber security included in Grid Code compliance"] },
+      "evidenceItems": ["Substation LAN architecture diagram (GOOSE/SV/MMS VLANs documented)", "IEC 62351 implementation register (relay by relay)", "Exception register for legacy IEDs without IEC 62351 support", "Substation remote access configuration"],
+      "slMapping": { "sl2": "Substation LAN segregated from WAN; GOOSE not routed beyond substation; engineering access via dedicated VLAN", "sl3": "IEC 62351 on MMS connections; OT monitoring on substation LAN; anomaly detection for GOOSE patterns", "sl4": "IEC 62351 on all IEC 61850 services; cryptographic authentication for GOOSE where IED supports it; continuous integrity monitoring of relay configurations" },
+      "mitreAttackIcs": ["T0855", "T0816", "T0821"]
+    },
+    {
+      "id": "EN-R2",
+      "name": "Energy Management System (EMS/SCADA) security",
+      "description": "The Energy Management System (EMS) or Transmission SCADA provides real-time visibility and control of the national grid. Compromise of EMS could allow false data injection (causing incorrect dispatch decisions), control manipulation (causing load shedding or equipment damage), or denial of service (leaving operators blind). EMS is the highest-consequence OT system in the energy sector.",
+      "applicableZones": ["Transmission EMS/SCADA", "Generation SCADA"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-5.2", "IEC 62443-3-3 SR-6.2", "NACSA Act 854 s18", "NACSA Act 854 s21"], "summary": "EMS/SCADA is the core NCII asset for the energy sector. NACSA s21 risk assessment must cover EMS as the highest-criticality zone. NACSA s18 requires measures appropriate to this criticality.", "owner": "SCADA/EMS Security Owner / TNB Grid Systems / Sarawak Energy Grid Control" },
+      "technical": { "summary": "EMS network: fully isolated SCADA LAN with controlled IDMZ interface for data export to business systems. No direct connections between EMS and corporate network. Historian in IDMZ collects data unidirectionally from EMS. Remote access to EMS via dedicated jump server with MFA and session recording.", "actions": ["EMS SCADA network completely segregated — no direct IP connectivity to corporate network or internet", "All data from EMS to business systems via IDMZ historian or data diode (unidirectional gateway)", "Remote access to EMS via dedicated jump server with MFA; all sessions recorded via PAM", "EMS application servers: application whitelisting; no general-purpose software; antivirus with OT-safe profile", "OT network monitoring on EMS SCADA LAN for anomaly detection (passive only — no active scanning)", "Physical access: control room with card access, CCTV, visitor escort; EMS servers in locked data centre room separate from control room", "Quarterly EMS firewall rule review — confirm only required communication paths remain open"] },
+      "governance": { "summary": "EMS security review annually and after any significant change. Included in NACSA s23 audit scope.", "actions": ["Annual EMS security assessment against IEC 62443 SL 3 requirements", "EMS firewall change management — all changes require OT security manager approval", "EMS included in NACSA s23 audit scope as highest-criticality asset"] },
+      "evidenceItems": ["EMS network architecture diagram with IDMZ", "EMS firewall rule set (review records)", "OT monitoring platform coverage of EMS SCADA LAN", "PAM session records for EMS remote access", "EMS application whitelist configuration"],
+      "slMapping": { "sl2": "EMS network segregated; IDMZ historian; jump server for remote access", "sl3": "OT monitoring on EMS LAN; PAM with session recording; application whitelisting; MFA on all remote access", "sl4": "Data diode for EMS to business transfer; dedicated 24/7 OT SOC monitoring EMS; real-time integrity monitoring of EMS database" },
+      "mitreAttackIcs": ["T0816", "T0806", "T0831", "T0855"]
+    },
+    {
+      "id": "EN-R3",
+      "name": "AMI (Advanced Metering Infrastructure) network segregation",
+      "description": "AMI head-end systems communicate with millions of smart meters via radio frequency (RF) or power line carrier (PLC) networks. The AMI network is a large, distributed attack surface that connects to the distribution OT environment. Compromise of AMI head-end could allow mass meter disconnection, false demand data injection, or use as a pivot point into distribution SCADA.",
+      "applicableZones": ["AMI head-end", "Distribution DCS"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "NACSA Act 854 s18"], "summary": "AMI is part of the distribution NCII OT environment. NACSA s18 requirements apply. Energy Commission sector lead may issue specific AMI cybersecurity requirements.", "owner": "AMI Programme Owner / Distribution OT Security" },
+      "technical": { "summary": "AMI head-end on dedicated network segment, segregated from distribution SCADA. No direct communication from AMI RF/PLC network into SCADA. AMI head-end data transferred to DMS/SCADA via controlled interface in IDMZ.", "actions": ["AMI head-end server on dedicated network segment — not on same VLAN as distribution SCADA", "AMI RF or PLC network: no direct IP path from field meters to SCADA — all communication through AMI head-end server with parsing and validation", "AMI head-end to DMS/SCADA interface: one-way data transfer via IDMZ; AMI head-end cannot receive commands from DMS direction", "AMI head-end: hardened OS, application whitelisting, no internet access", "Monitor AMI head-end for anomalous meter disconnect/reconnect commands — bulk disconnect is a high-priority alert", "Vendor remote access to AMI head-end via dedicated jump server — not general corporate VPN"] },
+      "governance": { "summary": "AMI security reviewed at each major AMI rollout or upgrade.", "actions": ["AMI cyber security risk assessment at programme initiation and after major changes", "Annual review of AMI head-end firewall rules and access logs"] },
+      "evidenceItems": ["AMI network architecture diagram (segregation from distribution SCADA documented)", "AMI head-end firewall rules", "Bulk disconnect alert configuration", "AMI vendor access procedure"],
+      "slMapping": { "sl2": "AMI head-end segregated from distribution SCADA; vendor access via jump server", "sl3": "IDMZ interface for AMI-to-DMS data; bulk disconnect alerting; application whitelisting on AMI head-end", "sl4": "Cryptographic authentication of field-to-head-end AMI communications; anomaly detection on meter command patterns" },
+      "mitreAttackIcs": ["T0856", "T0855"]
+    }
+  ],
+  "sectorSpecificThreats": [
+    { "threat": "Grid manipulation via EMS/SCADA compromise", "relevantTechniques": ["T0816", "T0831", "T0855"], "controls": ["ot-network-monitoring", "ot-remote-access-gateway"] },
+    { "threat": "Protection relay manipulation via IEC 61850 GOOSE injection", "relevantTechniques": ["T0855", "T0821"], "controls": ["ot-network-segmentation", "ot-network-monitoring"] },
+    { "threat": "AMI mass disconnect for grid destabilisation", "relevantTechniques": ["T0856", "T0855"], "controls": ["ot-network-segmentation"] },
+    { "threat": "Substation remote access exploitation", "relevantTechniques": ["T0822", "T0886"], "controls": ["ot-remote-access-gateway"] }
+  ]
+}
