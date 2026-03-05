@@ -712,16 +712,18 @@ async function renderDomainDetail(domainId, domains) {
 
 // ─── CONTROLS ─────────────────────────────────────────────────────────────────
 async function renderControls(sub) {
-  const [controls, domains] = await Promise.all([
+  const [controls, domains, artifactInventory, evidenceIndex] = await Promise.all([
     load('controls/library.json'),
     load('controls/domains.json'),
+    load('artifacts/inventory.json').catch(() => []),
+    load('evidence/index.json').catch(() => ({})),
   ]);
 
   const allControls = Array.isArray(controls) ? controls : [];
 
   if (sub) {
     const ctrl = allControls.find(c => c.slug === sub);
-    if (ctrl) return renderControlDetail(ctrl, allControls);
+    if (ctrl) return renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex);
   }
 
   // Group by domain
@@ -759,7 +761,7 @@ async function renderControls(sub) {
   `);
 }
 
-function renderControlDetail(ctrl, allControls) {
+function renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex) {
   const backHtml = `<button class="back-link" onclick="navigate('controls',null)">← All Controls</button>`;
 
   const maturityHtml = ctrl.maturity ? Object.entries(ctrl.maturity).map(([lvl, desc]) => `
@@ -767,6 +769,74 @@ function renderControlDetail(ctrl, allControls) {
       <div class="card-title" style="text-transform:capitalize">${escHtml(lvl)}</div>
       <div class="card-desc">${escHtml(desc)}</div>
     </div>`).join('') : '';
+
+  // Audit Package
+  const controlSlug = ctrl.slug;
+  const domain = ctrl.domain;
+  const linkedArtifacts = (Array.isArray(artifactInventory) ? artifactInventory : [])
+    .filter(a => Array.isArray(a.controlSlugs) && a.controlSlugs.includes(controlSlug))
+    .sort((a, b) => (b.mandatory ? 1 : 0) - (a.mandatory ? 1 : 0));
+
+  const linkedArtifactIds = new Set(linkedArtifacts.map(a => a.id));
+  const evidenceByDomain = (evidenceIndex || {}).evidenceByDomain || {};
+  const domainEvidence = evidenceByDomain[domain];
+  const linkedEvidence = [];
+  if (domainEvidence && domainEvidence.evidenceItems) {
+    domainEvidence.evidenceItems.forEach(item => {
+      const itemArtifacts = item.artifactSlugs || [];
+      if (!itemArtifacts.length || itemArtifacts.some(id => linkedArtifactIds.has(id))) {
+        linkedEvidence.push(item);
+      }
+    });
+  }
+
+  const artifactsHtml = linkedArtifacts.length ? linkedArtifacts.map(a => `
+    <div class="artifact-link-card">
+      <div class="artifact-link-header">
+        <span class="artifact-link-name">${escHtml(a.name)}</span>
+        ${a.mandatory ? '<span class="badge badge-malaysia">Mandatory</span>' : '<span class="badge">Optional</span>'}
+      </div>
+      <div class="artifact-link-meta">${escHtml(a.category || '')} · ${escHtml(a.id)}</div>
+      ${a.description ? `<div class="artifact-link-desc">${escHtml(a.description)}</div>` : ''}
+      ${a.format ? `<div class="artifact-link-format"><strong>Format:</strong> ${escHtml(a.format)}</div>` : ''}
+    </div>`).join('') : '<p class="text-muted">No artifacts linked to this control.</p>';
+
+  const evidenceHtml = linkedEvidence.length ? linkedEvidence.map(ev => `
+    <div class="accordion-item">
+      <div class="accordion-header" data-accordion>
+        <span>
+          ${ev.mandatory ? '<span class="badge badge-malaysia" style="margin-right:0.35rem">Mandatory</span>' : '<span class="badge" style="margin-right:0.35rem">Optional</span>'}
+          ${escHtml(ev.name)}
+        </span>
+        <span class="accordion-arrow">&#9654;</span>
+      </div>
+      <div class="accordion-body">
+        ${ev.howToVerify ? `<div class="evidence-how-to-verify"><strong>How to verify:</strong> ${escHtml(ev.howToVerify)}</div>` : ''}
+        ${ev.whatGoodLooksLike && ev.whatGoodLooksLike.length ? `
+          <div class="evidence-good">
+            <strong>What good looks like:</strong>
+            <ul>${ev.whatGoodLooksLike.map(w => `<li>${escHtml(w)}</li>`).join('')}</ul>
+          </div>` : ''}
+        ${ev.commonGaps && ev.commonGaps.length ? `
+          <div class="evidence-gap">
+            <strong>Common gaps:</strong>
+            <ul>${ev.commonGaps.map(g => `<li>${escHtml(g)}</li>`).join('')}</ul>
+          </div>` : ''}
+      </div>
+    </div>`).join('') : '<p class="text-muted">No evidence items linked to this control.</p>';
+
+  const auditPackageHTML = `
+    <div class="audit-package" style="margin-top:1.5rem">
+      <h2>Audit Package</h2>
+      <div class="audit-package-section">
+        <h3>Linked Artifacts <span class="badge">${linkedArtifacts.length}</span></h3>
+        ${artifactsHtml}
+      </div>
+      <div class="audit-package-section" style="margin-top:1rem">
+        <h3>Evidence Checklist <span class="badge">${linkedEvidence.length}</span></h3>
+        ${evidenceHtml}
+      </div>
+    </div>`;
 
   setMain(`
     ${backHtml}
@@ -809,6 +879,8 @@ function renderControlDetail(ctrl, allControls) {
           ${ctrl.mitreAttackIcs.map(m => `<span class="tag" style="color:var(--danger)">${escHtml(m)}</span> `).join('')}
         </div>` : ''}
     </div>
+
+    ${auditPackageHTML}
   `);
 }
 
@@ -1551,6 +1623,17 @@ window.addEventListener('popstate', route);
 
 document.addEventListener('DOMContentLoaded', () => {
   initSearch();
+
+  // Accordion toggle handler
+  document.addEventListener('click', (e) => {
+    const accHeader = e.target.closest('[data-accordion]');
+    if (accHeader) {
+      const item = accHeader.closest('.accordion-item');
+      if (item) item.classList.toggle('open');
+      return;
+    }
+  });
+
   // Handle search query in URL
   const { view, sub } = parseHash();
   if (view === 'search' && sub) {

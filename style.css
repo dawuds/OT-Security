@@ -384,3 +384,33 @@ tr:hover td { background: #FAFBFD; }
 .mb-1 { margin-bottom: 0.5rem; }
 .mb-2 { margin-bottom: 1rem; }
 .gap-badges { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+
+/* ===== ACCORDION ===== */
+.accordion-item { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 0.5rem; }
+.accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 0.75rem; cursor: pointer; font-weight: 600; font-size: 0.8125rem; background: var(--surface2); user-select: none; }
+.accordion-header:hover { background: var(--border); }
+.accordion-arrow { font-size: 0.625rem; transition: transform 0.2s; }
+.accordion-body { display: none; padding: 0.75rem; }
+.accordion-item.open > .accordion-body { display: block; }
+.accordion-item.open > .accordion-header .accordion-arrow { transform: rotate(90deg); }
+
+/* ===== AUDIT PACKAGE ===== */
+.audit-package { margin-top: 1.5rem; }
+.audit-package h2 { margin-bottom: 0.75rem; }
+.audit-package-section { margin-bottom: 1rem; }
+.audit-package-section h3 { margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+
+.artifact-link-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem; margin-bottom: 0.5rem; background: var(--surface); }
+.artifact-link-header { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.25rem; }
+.artifact-link-name { font-weight: 600; font-size: 0.875rem; }
+.artifact-link-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+.artifact-link-desc { font-size: 0.8125rem; color: var(--text); margin-top: 0.35rem; line-height: 1.5; }
+.artifact-link-format { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem; }
+
+.evidence-how-to-verify { font-size: 0.8125rem; margin-bottom: 0.5rem; line-height: 1.5; }
+.evidence-good { font-size: 0.8125rem; margin-bottom: 0.5rem; }
+.evidence-good ul { margin-left: 1.25rem; margin-top: 0.25rem; }
+.evidence-good li { color: var(--success); margin-bottom: 0.15rem; }
+.evidence-gap { font-size: 0.8125rem; margin-bottom: 0.5rem; }
+.evidence-gap ul { margin-left: 1.25rem; margin-top: 0.25rem; }
+.evidence-gap li { color: var(--danger); margin-bottom: 0.15rem; }
