@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "domain": "monitoring-logging",
   "name": "Monitoring and Logging",
   "description": "Comprehensive logging and monitoring requirements for OT environments. Covers audit log generation per OT component, centralised log collection, SIEM integration, and the specific OT monitoring considerations (passive-only, no active probing, OT protocol-aware analysis).",

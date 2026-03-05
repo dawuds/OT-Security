@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "official-extracted",
+  "verificationNote": "Incident details sourced from public CISA advisories, Dragos/Mandiant/CrowdStrike reports, US DOJ indictments, and vendor disclosures. IEC 62443 requirement mappings are reasoned assessments, not normatively specified.",
   "description": "Documented OT cybersecurity incidents used as teaching examples — each incident maps to the IEC 62443 requirements that would have prevented or mitigated it. These are real-world cases that demonstrate the consequences of OT security failures.",
   "incidents": [
     {

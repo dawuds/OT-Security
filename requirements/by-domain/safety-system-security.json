@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "domain": "safety-system-security",
   "name": "Safety System Security",
   "description": "Security requirements specific to Safety Instrumented Systems (SIS), Emergency Shutdown Systems (ESD), and Fire and Gas (F&G) systems. This domain sits at the intersection of IEC 61511 (Functional Safety) and IEC 62443 (OT Security). The TRITON/TRISIS attack (2017) demonstrated that targeting safety systems is a viable adversary objective — requiring dedicated security treatment beyond standard OT security.",

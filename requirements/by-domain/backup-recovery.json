@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "domain": "backup-recovery",
   "name": "Backup and Recovery",
   "description": "OT backup and recovery is fundamentally different from IT backup. Restoring a SCADA server is only step one — the system must then be synchronised with the physical plant state before it can resume control. Recovery planning must include operations engineering, not just IT.",

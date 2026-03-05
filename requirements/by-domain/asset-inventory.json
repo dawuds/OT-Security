@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "domain": "asset-inventory",
   "name": "Asset Inventory and Management",
   "description": "A complete, current OT asset inventory is the foundation of all other OT security controls. You cannot patch what you do not know you have. You cannot segment what you have not identified. You cannot monitor what you cannot see. OT asset inventories are consistently the first thing found inadequate in OT security assessments.",

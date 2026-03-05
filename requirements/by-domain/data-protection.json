@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "domain": "data-protection",
   "name": "Data Confidentiality and Integrity",
   "description": "Requirements for protecting sensitive OT data — process data, engineering configurations, credentials, and operational records — from unauthorised disclosure and modification. Applies to data in transit, at rest, and during decommissioning.",

@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "domain": "physical-security",
   "name": "Physical Security",
   "description": "Physical access controls for OT environments. Physical security is the foundation of OT security — all network controls can be bypassed if an attacker has physical access to a PLC cabinet or engineering workstation. Field sites (remote RTUs, unmanned substations, pipeline valve stations) are particularly vulnerable.",

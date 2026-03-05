@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Evidence items are constructed guidance for OT security audits based on IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "description": "Evidence items for OT security audit — mapped to IEC 62443-3-3 SRs, domain requirements, and NACSA Act 854 obligations. For auditors conducting NACSA s23 assessments and for OT security teams preparing for audit.",
   "auditorNote": "For NACSA s23 audits: the auditor should be NACSA-licensed with OT security expertise (GICSP or equivalent). Evidence should demonstrate both policy (documents exist) and operational effectiveness (controls are working). Passive evidence (logs, monitoring outputs) is more reliable than documentation alone.",
   "totalDomains": 12,

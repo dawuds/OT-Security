@@ -133,8 +133,6 @@ The Audit Package data layer is **fully wired** in this repo. UI rendering in ap
 
 **Remaining work:**
 - `data-protection` domain has no evidence section in `evidence/index.json` — add evidence items for E-DP-01 through E-DP-03
-- Validation script (`validate.js`) not yet written — should assert domain ID consistency across all files
-
 ### Reference Implementation
 
 See `dawuds/pdpa-my` repo — `app.js` `renderControlDetail()` and `style.css` Audit Package section. Pattern is designed for copy-adapt across all compliance repos.
@@ -203,4 +201,4 @@ See `TODO.md` for the full tracked task list. Key remaining items:
 2. Expand thin requirement domains (monitoring-logging, physical-security, backup-recovery)
 3. Sector-specific requirement files (energy, water, oil-gas)
 4. Artifacts inventory population
-5. Validation script (validate.js) for automated consistency checks
+5. ~~Validation script (validate.js)~~ — implemented (356 lines, 11 checks)

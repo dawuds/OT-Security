@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Not endorsed by any standards body — verify against authoritative sources before use in formal assessments.",
   "domain": "identity-access",
   "name": "Identity and Access Management",
   "description": "Requirements for managing who can access OT systems, how they authenticate, and what they can do. OT IAM must balance security with operational accessibility — an operator who cannot access the HMI during an emergency poses a safety risk. Design for security under normal conditions and graceful degradation under emergency conditions.",

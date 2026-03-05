@@ -1,5 +1,7 @@
 {
   "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Requirements index constructed from IEC 62443, NIST SP 800-82, and NACSA Act 854 obligations. Domain groupings and SR mappings are reasoned assessments — verify against authoritative sources before use in formal assessments.",
   "description": "Master requirements index for OT security. Requirements are organised by security domain — each domain consolidates requirements from IEC 62443, NIST SP 800-82, and NACSA Act 854. Requirements are cross-referenced to standards, sectors, and controls.",
   "domains": [
     { "id": "network-segmentation", "name": "Network Segmentation and Zone Architecture", "description": "Zone and conduit design, IDMZ, firewall architecture, traffic flow control", "primaryFR": ["FR5"], "primarySRs": ["SR-5.1", "SR-5.2", "SR-5.3", "SR-5.4"], "file": "requirements/by-domain/network-segmentation.json" },
