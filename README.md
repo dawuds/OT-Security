@@ -172,6 +172,7 @@ See full mapping: [`cross-references/iec62443-to-nacsa.json`](cross-references/i
 
 ## Related Repositories
 
+- [dawuds/cloud-sec](https://github.com/dawuds/cloud-sec) — Cloud cybersecurity framework (CSA CCM v4, CIS Benchmarks, BNM RMiT Cloud)
 - [dawuds/AI-Governance](https://github.com/dawuds/AI-Governance) — Multi-framework AI governance reference (11 frameworks, Malaysia NGAIGE anchor)
 - [dawuds/nacsa](https://github.com/dawuds/nacsa) — NACSA Act 854 (Act 854) structured compliance database
 - [dawuds/RMIT](https://github.com/dawuds/RMIT) — BNM Risk Management in Technology (RMiT)
