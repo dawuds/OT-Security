@@ -1307,7 +1307,7 @@ async function renderSearch(query) {
   }
 
   // Load all searchable datasets
-  const [reqs, controls, incidents, actors, sectors, srs, evidence] = await Promise.all([
+  const [reqs, controls, incidents, actors, sectors, srs, evidence, artifacts, zones, purdue, assetTypes, riskRegister] = await Promise.all([
     load('requirements/index.json').then(d => d.domains || []),
     load('controls/library.json').then(d => Array.isArray(d) ? d : []),
     load('threats/known-incidents.json').then(d => d.incidents || []),
@@ -1321,7 +1321,21 @@ async function renderSearch(query) {
       });
       return items;
     }),
+    load('artifacts/inventory.json').then(d => Array.isArray(d) ? d : []),
+    load('architecture/zones-conduits.json').catch(() => null),
+    load('architecture/purdue-model.json').catch(() => null),
+    load('architecture/asset-types.json').catch(() => null),
+    load('risk-management/risk-register.json').catch(() => null),
   ]);
+
+  // Load per-domain requirement items
+  const reqItems = [];
+  await Promise.all(reqs.map(async d => {
+    try {
+      const domData = await load(`requirements/by-domain/${d.id}.json`);
+      (domData.requirements || []).forEach(r => reqItems.push({ ...r, domainId: d.id, domainName: d.name }));
+    } catch (e) { /* domain file may not exist */ }
+  }));
 
   const results = [];
 
@@ -1337,8 +1351,14 @@ async function renderSearch(query) {
     }
   });
 
+  reqItems.forEach(r => {
+    if ([r.id, r.name, r.description].some(f => String(f||'').toLowerCase().includes(q))) {
+      results.push({ type: 'Requirement', title: `${r.id} — ${r.name}`, desc: r.description || '', action: () => navigate('requirements', r.domainId) });
+    }
+  });
+
   controls.forEach(c => {
-    if ([c.name, c.description, c.slug].some(f => String(f||'').toLowerCase().includes(q))) {
+    if ([c.name, c.description, c.slug, ...(c.keyActivities || [])].some(f => String(f||'').toLowerCase().includes(q))) {
       results.push({ type: 'Control', title: c.name, desc: c.description || '', action: () => navigate('controls', c.slug) });
     }
   });
@@ -1356,20 +1376,69 @@ async function renderSearch(query) {
   });
 
   sectors.forEach(s => {
-    if ([s.name, s.description].some(f => String(f||'').toLowerCase().includes(q))) {
+    if ([s.name, s.description, ...(s.requirements || [])].some(f => String(f||'').toLowerCase().includes(q))) {
       results.push({ type: 'Sector', title: s.name, desc: s.description || '', action: () => navigate('sectors', s.id) });
     }
   });
 
   evidence.forEach(e => {
-    if ([e.id, e.name, e.howToVerify].some(f => String(f||'').toLowerCase().includes(q))) {
-      results.push({ type: 'Evidence', title: `${e.id} — ${e.name}`, desc: e.howToVerify || '', action: () => navigate('evidence', e.domain) });
+    if ([e.id, e.name, e.howToVerify, e.description].some(f => String(f||'').toLowerCase().includes(q))) {
+      results.push({ type: 'Evidence', title: `${e.id} — ${e.name}`, desc: e.howToVerify || e.description || '', action: () => navigate('evidence', e.domain) });
     }
   });
 
+  artifacts.forEach(a => {
+    if ([a.name, a.description, a.id].some(f => String(f||'').toLowerCase().includes(q))) {
+      results.push({ type: 'Artifact', title: a.name, desc: a.description || '', action: () => navigate('controls') });
+    }
+  });
+
+  // Search architecture — zones and conduits
+  if (zones) {
+    (zones.zones || []).forEach(z => {
+      if ([z.name, z.description, z.id].some(f => String(f||'').toLowerCase().includes(q))) {
+        results.push({ type: 'Zone', title: z.name || z.id, desc: z.description || '', action: () => navigate('architecture','zones') });
+      }
+    });
+    (zones.conduits || []).forEach(c => {
+      if ([c.name, c.description, c.id].some(f => String(f||'').toLowerCase().includes(q))) {
+        results.push({ type: 'Conduit', title: c.name || c.id, desc: c.description || '', action: () => navigate('architecture','zones') });
+      }
+    });
+  }
+
+  // Search architecture — Purdue model levels
+  if (purdue) {
+    (purdue.levels || []).forEach(l => {
+      if ([l.name, l.description, `Level ${l.level}`].some(f => String(f||'').toLowerCase().includes(q))) {
+        results.push({ type: 'Purdue Level', title: `Level ${l.level} — ${l.name}`, desc: l.description || '', action: () => navigate('architecture','purdue') });
+      }
+    });
+  }
+
+  // Search architecture — asset types
+  if (assetTypes) {
+    (assetTypes.assetTypes || []).forEach(a => {
+      if ([a.name, a.id, a.purdueLevel].some(f => String(f||'').toLowerCase().includes(q))) {
+        results.push({ type: 'Asset Type', title: `${a.id} — ${a.name}`, desc: `Purdue Level ${a.purdueLevel}`, action: () => navigate('architecture','assets') });
+      }
+    });
+  }
+
+  // Search risk register
+  if (riskRegister) {
+    (riskRegister.risks || []).forEach(r => {
+      if ([r.title, r.description, r.id, r.category, r.treatmentPlan].some(f => String(f||'').toLowerCase().includes(q))) {
+        results.push({ type: 'Risk', title: r.title, desc: r.description || '', action: () => navigate('risk','register') });
+      }
+    });
+  }
+
   const typeBadgeMap = {
     'SR': 'badge-sl2', 'Domain': 'badge-sl3', 'Control': 'badge-preventive',
-    'Incident': 'badge-critical', 'Actor': 'badge-significant', 'Sector': 'badge-malaysia', 'Evidence': 'badge-detective'
+    'Incident': 'badge-critical', 'Actor': 'badge-significant', 'Sector': 'badge-malaysia', 'Evidence': 'badge-detective',
+    'Requirement': 'badge-sl3', 'Artifact': 'badge-minor', 'Zone': 'badge-sl2', 'Conduit': 'badge-sl2',
+    'Purdue Level': 'badge-sl2', 'Asset Type': 'badge-sl2', 'Risk': 'badge-critical'
   };
 
   const html = results.length ? results.map((r, i) => `
