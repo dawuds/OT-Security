@@ -89,7 +89,7 @@ Tracking all planned enhancements. Grouped by phase. Check off items as complete
 
 - [ ] Export functionality (PDF/CSV export of controls, evidence, risk register)
 - [ ] ARIA accessibility improvements (screen reader support, keyboard navigation)
-- [ ] Manufacturing and building automation sector requirement files
+- [x] Manufacturing and building automation sector requirement files
 - [x] Search functionality across all data layers
 - [ ] Interactive Purdue model diagram
 - [ ] SL gap assessment tool (current SL vs target SL analysis)

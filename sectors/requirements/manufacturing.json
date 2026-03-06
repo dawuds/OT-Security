@@ -1,0 +1,104 @@
+{
+  "$schema": "ot-security-v1",
+  "sector": "manufacturing",
+  "sectorName": "Manufacturing",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Sector-specific requirements are constructed from IEC 62443, ISA-95, ISO 10218 (industrial robots), and NACSA Act 854 obligations for the Malaysian manufacturing sector. Malaysia's semiconductor, electronics, automotive, and food/pharma manufacturing subsectors are covered. These requirements have not been endorsed by MITI, FMM, or NACSA.",
+  "nacsaSectorLead": "MITI (Ministry of International Trade and Industry)",
+  "nacsaSectorNumber": "Not explicit NCII sector — subset of Trade, Industry and Economy sector",
+  "applicableStandards": [
+    "IEC 62443 (primary OT security standard)",
+    "ISA-95 (manufacturing operations management — enterprise/control integration)",
+    "ISO 10218-1/2 (Industrial robots — safety requirements)",
+    "IEC 61131-3 (PLC programming languages — relevant for CNC/PLC integrity)",
+    "FDA 21 CFR Part 11 (pharmaceutical — computer system validation)",
+    "GAMP 5 (pharmaceutical — computer system validation guidance)",
+    "NIST SP 800-82 Rev 3"
+  ],
+  "targetSLByZone": {
+    "Process control (safety-critical chemical manufacturing)": "SL 3",
+    "Production line control (assembly, packaging)": "SL 2",
+    "Industrial robot control systems": "SL 2-3",
+    "CNC machine control networks": "SL 2",
+    "Quality control automation": "SL 2",
+    "Batch manufacturing (pharma/food)": "SL 2-3",
+    "MES/SCADA integration layer": "SL 2"
+  },
+  "sectorOtCharacteristics": [
+    "High diversity of OT systems — semiconductor fabs, electronics assembly, automotive, food/beverage, pharmaceutical all have different OT architectures",
+    "Industry 4.0 / IIoT adoption increasing OT exposure — direct cloud connectivity of production equipment creates new attack vectors",
+    "ISA-95 integration between MES and ERP means production OT is closer to IT than in traditional process industries",
+    "Intellectual property (semiconductor process recipes, proprietary formulations) is a high-value target for espionage",
+    "Ransomware is the primary threat — EKANS/SNAKE and LockerGoga specifically targeted manufacturing environments",
+    "Product quality sabotage risk: manipulation of pharmaceutical batch records or food processing parameters could cause public health harm",
+    "High ratio of legacy PLCs and CNC controllers with limited security capabilities"
+  ],
+  "requirements": [
+    {
+      "id": "MF-R1",
+      "name": "Industrial robot safety and cyber security",
+      "description": "Industrial robots (ABB, FANUC, KUKA, Yaskawa) operate in collaborative (cobot) and traditional safety-fenced environments. ISO 10218 and ISO/TS 15066 define physical safety requirements. Cyber security of robot controllers is critical because compromised motion parameters or safety zone overrides could cause physical harm to operators. Robot controllers are increasingly network-connected for remote monitoring and programming.",
+      "applicableZones": ["Industrial robot control systems", "Production line control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-3.4", "ISO 10218-1:2011 (robot safety)", "ISO/TS 15066 (collaborative robots)", "NACSA Act 854 s18", "OSHA 1994 (Act 514)"], "summary": "ISO 10218 mandates safety-rated monitored stop, hand guiding, and safety-monitored speed/separation. If cybersecurity compromise can override these safety functions, then OT security is a prerequisite for ISO 10218 compliance. OSHA Act 514 general safety duties apply.", "owner": "Automation Engineer / OT Security / Safety Manager" },
+      "technical": { "summary": "Robot controllers on dedicated production network segment, isolated from enterprise IT. Safety controller (safety PLC or safety-rated robot controller) network-independent of standard controller where architecture permits. Robot programming access restricted to authorised programmers via physical key switch or authenticated engineering station.", "actions": ["Robot controller networks on dedicated VLAN, segregated from enterprise IT and MES via IEC 62443 zone boundary firewall", "Safety-rated functions (emergency stop, speed/separation monitoring, safety zones) must not be configurable via standard network interface — use hardware safety modules or safety-rated network protocols only", "Robot teach pendant and programming access: physical key switch to enable programming mode; logged access with user identification", "Remote monitoring of robot status permitted via IDMZ read-only data export — remote programming access requires VPN with MFA and change management approval", "Application whitelisting on robot HMI/controller where operating system supports it (Windows-based controllers)", "Firmware and software updates to robot controllers: vendor-approved patches only; tested in staging environment before production deployment; change management approval required"] },
+      "governance": { "summary": "Robot safety and cybersecurity integrated into ISO 10218 safety assessment. Robot programming change management procedure maintained.", "actions": ["Annual robot safety and cybersecurity risk assessment — aligned with ISO 10218 periodic review", "Robot program change management: all program changes logged with programmer ID, date, reason, and approval", "Vendor remote access to robot controllers documented and controlled via jump server"] },
+      "evidenceItems": ["Robot controller network architecture diagram (VLAN isolation)", "Safety function independence evidence (safety PLC/safety controller separate from network programming interface)", "Robot access control configuration (key switch, authentication)", "Robot program change log", "Vendor remote access records"],
+      "slMapping": { "sl2": "Robot controllers on dedicated VLAN; programming access via key switch; firmware update change management", "sl3": "Safety functions network-independent; application whitelisting on HMI; MFA for remote programming; annual security assessment", "sl4": "Cryptographic integrity verification of robot programs; real-time anomaly detection on robot motion parameters; safety function integrity monitoring" },
+      "mitreAttackIcs": ["T0855", "T0836", "T0821"]
+    },
+    {
+      "id": "MF-R2",
+      "name": "CNC machine security and program integrity",
+      "description": "CNC (Computer Numerical Control) machines execute machining programs (G-code) that define precision manufacturing operations. Compromise of CNC programs could cause out-of-specification parts (quality sabotage), equipment damage, or intellectual property theft of proprietary designs. Modern CNC machines are network-connected for DNC (Distributed Numerical Control) program transfer and remote monitoring.",
+      "applicableZones": ["CNC machine control networks", "Production line control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-3.4", "IEC 62443-3-3 SR-6.2", "NACSA Act 854 s18"], "summary": "CNC networks are OT assets. If NCII-designated, NACSA s18 measures apply. CNC program integrity is critical for product quality and intellectual property protection.", "owner": "CNC Programming Manager / OT Security / Quality Manager" },
+      "technical": { "summary": "CNC machines on dedicated shop floor network. DNC server (program distribution) in IDMZ with controlled access. CNC program library with version control and integrity verification. No direct internet access from CNC machines.", "actions": ["CNC machines on dedicated shop floor VLAN — no direct connectivity to enterprise IT or internet", "DNC server for program distribution: located in IDMZ; access controlled by user authentication; programs transferred via secure file share (not open network shares)", "CNC program version control: maintain master program library with checksums (SHA-256); verify program integrity before production run", "Intellectual property protection: CNC programs containing proprietary designs classified as confidential; access restricted to authorised programmers only", "USB port control on CNC machines: disable or restrict USB to prevent unauthorised program loading or data exfiltration", "Legacy CNC machines without network security: compensating controls are physical isolation and manual program loading via verified media"] },
+      "governance": { "summary": "CNC program management integrated with quality management system (ISO 9001). Program change control documented.", "actions": ["CNC program change control: ISO 9001-aligned document control for machining programs", "Annual review of CNC network architecture and access controls", "IP-sensitive programs: additional access restrictions and audit trail requirements"] },
+      "evidenceItems": ["CNC network architecture diagram", "DNC server configuration and access control", "CNC program version control and checksum register", "USB port control policy and configuration", "CNC program change log"],
+      "slMapping": { "sl2": "CNC machines on dedicated VLAN; DNC server with authentication; USB port controls; program version control", "sl3": "Program integrity verification before production; IP classification and access restriction; legacy CNC exceptions documented", "sl4": "Cryptographic signing of CNC programs; automated integrity verification at machine before execution; anomaly detection on machining parameters" },
+      "mitreAttackIcs": ["T0855", "T0836", "T0843"]
+    },
+    {
+      "id": "MF-R3",
+      "name": "SCADA/MES integration security (ISA-95 boundary)",
+      "description": "Manufacturing Execution Systems (MES) bridge the gap between enterprise ERP systems and shop floor control (SCADA/PLCs). The ISA-95 model defines integration levels. The MES-to-SCADA boundary is a critical security boundary — compromise of MES could allow manipulation of production schedules, recipe parameters, or quality records. Industry 4.0 initiatives often weaken this boundary by introducing direct cloud-to-OT connectivity.",
+      "applicableZones": ["MES/SCADA integration layer", "Production line control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-5.2", "ISA-95 (enterprise-control integration)", "NACSA Act 854 s18"], "summary": "ISA-95 Levels 0-3 (production) to Level 4 (enterprise) boundary is a critical security demarcation. IEC 62443 zone/conduit model applies. Industry 4.0 cloud connectivity must not bypass this boundary.", "owner": "OT Security Manager / MES Administrator / IT Security" },
+      "technical": { "summary": "MES in IDMZ between enterprise IT and production OT. All data exchange between MES and SCADA/PLCs via controlled interfaces with input validation. No direct ERP-to-PLC communication. Industry 4.0 cloud connectivity via IDMZ gateway only — not direct OT-to-cloud.", "actions": ["MES servers in IDMZ — not on production OT network and not on enterprise IT network", "MES-to-SCADA/PLC communication: defined interfaces only; input validation on all production parameters received from MES before executing on production equipment", "No direct ERP-to-PLC communication — all production scheduling and recipe data flows through MES with validation", "Industry 4.0 / IIoT connectivity: all cloud connections via IDMZ gateway with data diode or proxy; no direct OT-to-cloud paths", "MES access control: role-based access; production operators cannot modify recipes or schedules without supervisor approval", "MES database integrity: production records (batch records, quality data) protected against unauthorised modification; audit trail maintained"] },
+      "governance": { "summary": "ISA-95 boundary security reviewed annually. Industry 4.0 initiatives require security assessment before OT connectivity changes.", "actions": ["Annual review of ISA-95 boundary architecture — verify no unapproved IT-to-OT paths", "Industry 4.0 / IIoT project security assessment: mandatory OT security review before any new cloud-to-OT connectivity", "MES access control review quarterly — remove stale accounts"] },
+      "evidenceItems": ["ISA-95 boundary architecture diagram (MES in IDMZ)", "MES-to-SCADA interface definition and input validation configuration", "Industry 4.0 connectivity inventory (all cloud-to-OT paths documented)", "MES access control configuration and review records", "MES database audit trail configuration"],
+      "slMapping": { "sl2": "MES in IDMZ; defined MES-to-SCADA interfaces; no direct ERP-to-PLC; MES access control", "sl3": "Input validation on all MES-to-PLC parameters; Industry 4.0 via IDMZ gateway only; MES audit trail; quarterly access review", "sl4": "Data diode for OT-to-cloud telemetry; cryptographic integrity of production records; real-time anomaly detection on production parameters" },
+      "mitreAttackIcs": ["T0855", "T0806", "T0831"]
+    },
+    {
+      "id": "MF-R4",
+      "name": "Supply chain integrity for OT components",
+      "description": "Manufacturing OT systems rely on controllers, firmware, and software from global supply chains. Counterfeit PLCs, compromised firmware, or tampered software updates could introduce backdoors or cause equipment malfunction. The SolarWinds and 3CX supply chain attacks demonstrated the effectiveness of this vector. For semiconductor manufacturers, the integrity of manufacturing equipment itself (lithography, CVD, etch tools) is critical.",
+      "applicableZones": ["All manufacturing OT zones"],
+      "legal": { "basis": ["IEC 62443-2-4 (security requirements for system integrators)", "IEC 62443-4-1 (product development lifecycle requirements)", "NACSA Act 854 s18", "NACSA Act 854 s22"], "summary": "IEC 62443-2-4 requires supply chain security for system integrators. NACSA s22 (codes of practice) may impose supply chain requirements on NCII operators. Semiconductor manufacturers have additional export control obligations.", "owner": "OT Security / Procurement / Vendor Management" },
+      "technical": { "summary": "Maintain approved vendor list for OT components. Verify firmware/software integrity via vendor-provided checksums before deployment. Test all OT software updates in staging environment. Restrict supply chain to authorised distributors.", "actions": ["Maintain approved vendor list for PLCs, HMIs, drives, and other OT components — purchase only from authorised distributors", "Firmware and software integrity: verify vendor-provided checksums (SHA-256 or vendor signing) before deployment to production OT", "OT software updates tested in staging/lab environment before production deployment — minimum 48-hour staging period for non-emergency patches", "Semiconductor process equipment: vendor access for maintenance strictly controlled; all vendor sessions monitored and recorded", "Vendor security assessment: evaluate critical OT vendors against IEC 62443-4-1 product security requirements", "Track end-of-life (EOL) announcements for all OT components — plan migration before security support ends"] },
+      "governance": { "summary": "OT supply chain security integrated into vendor management process. Vendor security assessments documented.", "actions": ["Annual vendor security assessment for Tier 1 OT suppliers", "EOL register maintained for all OT components with planned migration dates", "Supply chain incident response: procedure for responding to vendor-reported vulnerabilities or compromised updates"] },
+      "evidenceItems": ["Approved OT vendor list", "Firmware/software integrity verification records", "OT patch staging and testing records", "Vendor security assessment reports", "EOL register for OT components"],
+      "slMapping": { "sl2": "Approved vendor list; firmware integrity verification; staging environment for updates; EOL tracking", "sl3": "Vendor security assessments (IEC 62443-4-1); monitored vendor access; supply chain incident response procedure", "sl4": "Cryptographic chain-of-custody for OT software from vendor to production; automated integrity monitoring of deployed OT firmware" },
+      "mitreAttackIcs": ["T0862", "T0857", "T0839"]
+    },
+    {
+      "id": "MF-R5",
+      "name": "Quality management system (QMS) and OT security integration",
+      "description": "ISO 9001 quality management systems depend on the integrity of production data, measurement systems, and process parameters. For pharmaceutical manufacturers (FDA 21 CFR Part 11, GAMP 5) and food manufacturers (HACCP, GMP), data integrity is a regulatory requirement. Cyber compromise of quality-related OT systems (measurement instruments, batch records, calibration data) could result in regulatory violations, product recalls, or public health harm.",
+      "applicableZones": ["Quality control automation", "Batch manufacturing (pharma/food)"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-3.4", "IEC 62443-3-3 SR-6.2", "ISO 9001:2015 (quality management)", "FDA 21 CFR Part 11 (pharmaceutical — electronic records)", "NACSA Act 854 s18"], "summary": "FDA 21 CFR Part 11 requires electronic record integrity, audit trails, and electronic signatures for pharmaceutical manufacturers exporting to the US. ISO 9001 requires control of monitoring and measuring equipment. OT security is a prerequisite for data integrity compliance.", "owner": "Quality Manager / OT Security / Regulatory Compliance" },
+      "technical": { "summary": "Quality-critical OT systems (measurement instruments, batch record systems, calibration databases) protected with integrity controls, audit trails, and access management. Electronic records comply with ALCOA+ principles (Attributable, Legible, Contemporaneous, Original, Accurate).", "actions": ["Quality measurement instruments (CMMs, spectrometers, scales): network-connected instruments on dedicated quality network segment with access control", "Electronic batch records: complete audit trail — all changes tracked with user ID, timestamp, old value, new value; no deletion of records permitted", "Electronic signatures on batch release: compliant with FDA 21 CFR Part 11 requirements where applicable; user authentication before signature", "Calibration data integrity: calibration records stored in protected database; calibration certificates verified against instrument serial numbers", "Quality data backup: quality-critical data backed up to separate storage; backup integrity verified; retention per regulatory requirements (pharmaceutical: minimum 1 year beyond product expiry)", "SCADA historian data used for quality trending: historian database integrity protected; access controlled to prevent retrospective modification"] },
+      "governance": { "summary": "QMS-OT security integration documented in quality manual. Data integrity risk assessment performed annually.", "actions": ["Data integrity risk assessment: annual review of quality-critical OT systems for data integrity risks", "Quality-OT security procedure: defines responsibilities for OT security aspects of QMS", "Regulatory audit preparation: maintain evidence of OT security controls supporting data integrity for regulatory inspections (FDA, GMP auditors)"] },
+      "evidenceItems": ["Quality network architecture diagram", "Electronic batch record audit trail configuration", "Electronic signature configuration (21 CFR Part 11 compliance where applicable)", "Calibration data integrity controls", "Data integrity risk assessment report"],
+      "slMapping": { "sl2": "Quality instruments on dedicated network; electronic batch records with audit trail; calibration data protected", "sl3": "21 CFR Part 11 compliant electronic signatures; SCADA historian integrity protection; annual data integrity risk assessment", "sl4": "Cryptographic integrity of quality records; real-time anomaly detection on measurement data; automated reconciliation between instrument readings and batch records" },
+      "mitreAttackIcs": ["T0836", "T0855", "T0831"]
+    }
+  ],
+  "sectorSpecificThreats": [
+    { "threat": "Ransomware causing production shutdown (EKANS/SNAKE, LockerGoga)", "relevantTechniques": ["T0880", "T0829", "T0831"], "controls": ["ot-network-segmentation", "ot-backup-recovery", "ot-patch-vulnerability-management"] },
+    { "threat": "Product quality sabotage via batch parameter manipulation", "relevantTechniques": ["T0836", "T0806", "T0855"], "controls": ["ot-network-monitoring", "ot-network-segmentation"] },
+    { "threat": "Intellectual property theft (semiconductor process recipes, proprietary designs)", "relevantTechniques": ["T0882", "T0843"], "controls": ["ot-network-segmentation", "ot-identity-access-management"] },
+    { "threat": "Supply chain compromise of OT components or firmware", "relevantTechniques": ["T0862", "T0857"], "controls": ["ot-supply-chain", "ot-patch-vulnerability-management"] }
+  ]
+}

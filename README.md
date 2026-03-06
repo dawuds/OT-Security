@@ -80,7 +80,9 @@ OT-Security/
 ├── sectors/
 │   ├── index.json                      # 6 OT-focused NACSA NCII sectors
 │   └── requirements/                   # Sector-specific requirements
+│       ├── building-automation.json
 │       ├── energy.json
+│       ├── manufacturing.json
 │       ├── oil-gas.json
 │       ├── transport.json
 │       └── water.json
@@ -111,7 +113,7 @@ OT-Security/
 - 20 OT/ICS risks across 7 categories with 5x5 safety-weighted risk matrix
 - 66 MITRE ATT&CK for ICS techniques mapped to defensive controls
 - 5 cross-reference files (NACSA, NIST CSF 2.0, NIST SP 800-82, MITRE ICS, sector COPs)
-- 4 sector-specific requirement files (energy, water, oil & gas, transport)
+- 6 sector-specific requirement files (energy, water, oil & gas, transport, manufacturing, building automation)
 - Audit Package UI on control detail views (artifacts + evidence checklist)
 - Risk Management section (methodology, matrix, register, checklist, treatment options)
 - Dark mode toggle
