@@ -28,9 +28,9 @@ Initial commit had several data-code mismatches that caused silent failures or J
 
 **Lesson:** Use a single canonical field name across the entire repo. When a file is first created with an empty array placeholder, the app.js should defensively try alternative field names (`data.requirements || data.systemRequirements || []`). Better: agree on field names before writing the first file.
 
-### 3. Evidence Coverage Gap — 4 of 11 Domains Only
+### 3. Evidence Coverage Gap — 4 of 11 Domains Initially (Now Resolved)
 
-Initial evidence index covered 4 of 11 security domains. The remaining 7 (IAM, remote access, patch/vuln, monitoring, physical security, backup, supply chain) had no evidence items despite having full requirements files. An auditor using this repo for a NACSA s23 assessment would have no evidence guidance for 64% of domains.
+Initial evidence index covered 4 of 11 security domains. The remaining 7 (IAM, remote access, patch/vuln, monitoring, physical security, backup, supply chain) had no evidence items despite having full requirements files. Now resolved: all 13 domains have evidence coverage (36 items total).
 
 **Lesson:** Evidence and requirements are paired — for every requirements domain, there must be a corresponding evidence section. Build them in parallel, not as an afterthought. The evidence index should be checked against the requirements index as a validation step.
 
@@ -125,8 +125,8 @@ The Audit Package data layer is **fully wired** in this repo. UI rendering in ap
 
 **Completed (2026-03-05):**
 - **Domain ID standardization:** All files now use canonical IDs from `requirements/index.json`. Fixed `controls/library.json` (9 domain renames: `zone-architecture` -> `network-segmentation`, `identity-access` -> `identity-access-management`, `monitoring-detection` -> `monitoring-logging`, `asset-management` -> `asset-inventory` / `configuration-management`, `patch-vulnerability` -> `patch-vulnerability-management`, `safety-system` -> `safety-system-security`, `incident-response` -> `backup-recovery` / `incident-detection-response`). Fixed `controls/domains.json` (all 13 canonical domains now present, including previously missing `backup-recovery`, `configuration-management`, `monitoring-logging`). Verified `evidence/index.json` keys already matched canonical IDs (12 of 13 domains covered; `data-protection` has no evidence section yet).
-- **`controlSlugs[]` added to all 28 artifacts** in `artifacts/inventory.json` — 1-3 curated control slugs per artifact based on semantic relevance.
-- **`artifactSlugs[]` added to all 48 evidence items** in `evidence/index.json` — 1-2 artifact slugs per evidence item.
+- **`controlSlugs[]` added to all 31 artifacts** in `artifacts/inventory.json` — 1-3 curated control slugs per artifact based on semantic relevance.
+- **`artifactSlugs[]` added to all 36 evidence items** in `evidence/index.json` — 1-2 artifact slugs per evidence item.
 - `controls/library.json`: 17 controls across 13 domains — all domains now have at least one control except `data-protection` (which has 2: `ot-data-encryption`, `ot-historian-integrity`).
 
 - `app.js`: Audit Package UI implemented in `renderControlDetail()` with accordion-based artifact cards and evidence checklist. Accordion CSS and click handler added.
@@ -196,9 +196,15 @@ Before publishing any new content in this repo:
 
 ## Outstanding Work
 
-See `TODO.md` for the full tracked task list. Key remaining items:
+All major items completed. See `TODO.md` for the full tracked task list.
+
 1. ~~NIST SP 800-82 → IEC 62443 cross-reference file (iec62443-to-nist80082.json)~~ — completed
 2. ~~Expand thin requirement domains (monitoring-logging, physical-security, backup-recovery)~~ — completed
-3. ~~Sector-specific requirement files (energy, water, oil-gas)~~ — completed
-4. ~~Artifacts inventory population~~ — completed (28 artifacts with controlSlugs)
-5. ~~Validation script (validate.js)~~ — implemented (356 lines, 11 checks)
+3. ~~Sector-specific requirement files (energy, water, oil-gas, transport)~~ — completed
+4. ~~Artifacts inventory population~~ — completed (31 artifacts with controlSlugs)
+5. ~~Validation script (validate.js)~~ — implemented (11 checks)
+6. ~~Domain ID standardization~~ — completed (all 13 canonical IDs aligned)
+7. ~~Audit Package UI~~ — completed (accordion-based artifact cards + evidence checklist)
+8. ~~Risk Management section~~ — completed (methodology, matrix, register, checklist, treatment)
+9. ~~Dark mode + favicon~~ — completed
+10. ~~data-protection evidence~~ — completed (3 evidence items: E-DP-01, E-DP-02, E-DP-03)

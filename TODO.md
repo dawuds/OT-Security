@@ -55,8 +55,44 @@ Tracking all planned enhancements. Grouped by phase. Check off items as complete
 - [x] Expand backup-recovery requirements (BR-R3 backup integrity verification, BR-R4 RTO/RPO definition and testing)
 - [x] Expand IAM requirements (IAM-R5 session management, IAM-R6 emergency access/break-glass)
 - [x] Add sector-specific requirement files: sectors/requirements/energy.json, water.json, oil-gas.json, transport.json
-- [x] Populate `artifacts/inventory.json` — expanded from 15 to 28 artifacts covering all domains
-- [x] Add validation script (`validate.js`) — 11-check validator; 213 checks pass, 0 warnings, 0 failures
+- [x] Populate `artifacts/inventory.json` — expanded to 31 artifacts covering all domains
+- [x] Add validation script (`validate.js`) — 11-check validator
+
+---
+
+## Phase 6 — Audit Package + Domain Standardization (Complete)
+
+- [x] Standardize all domain IDs to canonical IDs from `requirements/index.json`
+- [x] Add `controlSlugs[]` to all 31 artifacts in `artifacts/inventory.json`
+- [x] Add `artifactSlugs[]` to all 36 evidence items in `evidence/index.json`
+- [x] Add `data-protection` evidence section (3 items: E-DP-01, E-DP-02, E-DP-03)
+- [x] Implement Audit Package UI in `renderControlDetail()` (accordion-based artifact cards + evidence checklist)
+- [x] Add `sourceType` to all 19 JSON files missing it
+
+---
+
+## Phase 7 — Risk Management + Polish (Complete)
+
+- [x] Risk methodology (OT/ICS-specific risk assessment)
+- [x] 5x5 safety-weighted risk matrix
+- [x] Risk register (20 OT/ICS risks across 7 categories)
+- [x] 18-item risk assessment checklist
+- [x] Treatment options (4 strategies with OT examples)
+- [x] Dark mode toggle
+- [x] Favicon
+- [x] CSS fixes (layout, Purdue components rendering)
+- [x] Fix hardcoded counts and stale documentation
+
+---
+
+## Remaining — Future Enhancements
+
+- [ ] Export functionality (PDF/CSV export of controls, evidence, risk register)
+- [ ] ARIA accessibility improvements (screen reader support, keyboard navigation)
+- [ ] Manufacturing and building automation sector requirement files
+- [ ] Search functionality across all data layers
+- [ ] Interactive Purdue model diagram
+- [ ] SL gap assessment tool (current SL vs target SL analysis)
 
 ---
 

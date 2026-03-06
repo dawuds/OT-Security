@@ -18,15 +18,15 @@ A structured, open-access knowledge base for Operational Technology (OT) cyberse
 
 | Layer | Content |
 |---|---|
-| **Standards** | IEC 62443 series overview, all 51 SRs with SL 1-4 descriptions, NIST SP 800-82, MITRE ATT&CK for ICS |
+| **Standards** | IEC 62443 series overview, all 51 SRs with SL 1-4 descriptions, NIST SP 800-82, MITRE ATT&CK for ICS (66 techniques) |
 | **Architecture** | Purdue model, zones and conduits, IDMZ pattern, asset types |
 | **Requirements** | 13 security domains with detailed requirements, SL mapping, NACSA obligations |
-| **Controls** | Control library with maturity levels and NACSA/NIST CSF mappings |
-| **Evidence** | Audit evidence items per domain — what auditors look for, common gaps, how to verify |
-| **Threats** | Threat actor profiles, known incidents (Stuxnet, TRITON, Ukraine, Colonial Pipeline) mapped to preventive controls |
-| **Risk Management** | OT/ICS risk methodology, 5x5 safety-weighted matrix, 20-risk register, assessment checklist, treatment options |
-| **Sectors** | Energy, water, oil & gas, transport, manufacturing, building automation — with NACSA NCII obligations |
-| **Cross-References** | IEC 62443 ↔ NACSA Act 854, NIST CSF 2.0, NIST SP 800-82, sector ↔ NACSA codes of practice |
+| **Controls** | 17 controls with maturity levels and NACSA/NIST CSF mappings |
+| **Evidence** | 36 audit evidence items across 13 domains — what auditors look for, common gaps, how to verify |
+| **Threats** | 7 threat actor profiles, 5 known incidents (Stuxnet, TRITON, Ukraine, Colonial Pipeline, Oldsmar) mapped to preventive controls |
+| **Risk Management** | OT/ICS risk methodology, 5x5 safety-weighted matrix, 20-risk register, 18-item assessment checklist, treatment options |
+| **Sectors** | 6 OT-focused sectors (energy, water, oil & gas, transport, manufacturing, building automation) — with NACSA NCII obligations |
+| **Cross-References** | IEC 62443 ↔ NACSA Act 854, NIST CSF 2.0, NIST SP 800-82, MITRE ICS ↔ controls, sector ↔ NACSA codes of practice |
 
 ---
 
@@ -43,7 +43,7 @@ OT-Security/
 │   ├── purdue-model.json               # Purdue model levels 0-5
 │   └── zones-conduits.json             # Zone and conduit definitions
 ├── artifacts/
-│   └── inventory.json                  # 28 audit artifacts with controlSlugs
+│   └── inventory.json                  # 31 audit artifacts with controlSlugs
 ├── controls/
 │   ├── domains.json                    # 13 security domains
 │   └── library.json                    # 17 controls with maturity levels
@@ -54,7 +54,7 @@ OT-Security/
 │   ├── mitre-to-controls.json          # MITRE ATT&CK ICS ↔ controls
 │   └── sector-to-nacsa-cop.json        # Sectors ↔ NACSA codes of practice
 ├── evidence/
-│   └── index.json                      # Evidence items per domain (48 items)
+│   └── index.json                      # Evidence items per domain (36 items across 13 domains)
 ├── requirements/
 │   ├── index.json                      # Domain index (13 domains)
 │   └── by-domain/                      # Per-domain requirement files
@@ -99,6 +99,24 @@ OT-Security/
     ├── known-incidents.json            # Stuxnet, TRITON, Ukraine, etc.
     └── threat-actors.json              # OT threat actor profiles
 ```
+
+---
+
+## Features
+
+- IEC 62443 full SR coverage (51 SRs across 7 FRs with SL 1-4 descriptions)
+- 17 controls across 13 security domains with maturity levels
+- 36 evidence items across all 13 domains with audit guidance (whatGoodLooksLike, commonGaps)
+- 31 audit artifacts with control-slug mapping
+- 20 OT/ICS risks across 7 categories with 5x5 safety-weighted risk matrix
+- 66 MITRE ATT&CK for ICS techniques mapped to defensive controls
+- 5 cross-reference files (NACSA, NIST CSF 2.0, NIST SP 800-82, MITRE ICS, sector COPs)
+- 4 sector-specific requirement files (energy, water, oil & gas, transport)
+- Audit Package UI on control detail views (artifacts + evidence checklist)
+- Risk Management section (methodology, matrix, register, checklist, treatment options)
+- Dark mode toggle
+- Data validation script (`validate.js` — 11 checks)
+- CC-BY-4.0 license
 
 ---
 
@@ -154,6 +172,7 @@ See full mapping: [`cross-references/iec62443-to-nacsa.json`](cross-references/i
 
 ## Related Repositories
 
+- [dawuds/AI-Governance](https://github.com/dawuds/AI-Governance) — Multi-framework AI governance reference (11 frameworks, Malaysia NGAIGE anchor)
 - [dawuds/nacsa](https://github.com/dawuds/nacsa) — NACSA Act 854 (Act 854) structured compliance database
 - [dawuds/RMIT](https://github.com/dawuds/RMIT) — BNM Risk Management in Technology (RMiT)
 - [dawuds/pdpa-my](https://github.com/dawuds/pdpa-my) — Malaysia PDPA Act 709 + Amendment A1727
