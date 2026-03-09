@@ -523,5 +523,91 @@
       "default-credential-elimination",
       "ot-tamper-detection"
     ]
+  },
+  {
+    "slug": "master-isp",
+    "name": "Master Information Security Policy (ISP)",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "The foundational Tier-1 policy mapped to ISO 27001, NIST CSF, and local regulations.",
+    "controlSlugs": [
+      "cyber-risk-management-strategy",
+      "privacy-policy-management"
+    ]
+  },
+  {
+    "slug": "statement-of-applicability",
+    "name": "Statement of Applicability (SoA)",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "Formal assessment of ISO 27001 Annex A controls against organizational scope.",
+    "controlSlugs": [
+      "compliance-monitoring-and-audit"
+    ]
+  },
+  {
+    "slug": "risk-treatment-plan",
+    "name": "Risk Treatment Plan (RTP)",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "Detailed mapping of unacceptable risks to specific technical and organizational controls.",
+    "controlSlugs": [
+      "risk-treatment-and-acceptance"
+    ]
+  },
+  {
+    "slug": "cyber-incident-response-plan",
+    "name": "Cyber Incident Response Plan (CIRP)",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "The definitive response framework for Sev-1 to Sev-4 incidents with statutory notification SLAs.",
+    "controlSlugs": [
+      "incident-response-plan",
+      "breach-notification-to-commissioner"
+    ]
+  },
+  {
+    "slug": "business-continuity-plan",
+    "name": "Business Continuity Plan (BCP)",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "Resilience framework defining RTO/RPO targets and failover strategies for critical services.",
+    "controlSlugs": [
+      "it-service-continuity",
+      "disaster-recovery"
+    ]
+  },
+  {
+    "slug": "third-party-risk-management-policy",
+    "name": "Third-Party Risk Management (TPRM) Policy",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "Vendor lifecycle management framework based on NIST SP 800-161 and RMiT Appendix 7.",
+    "controlSlugs": [
+      "vendor-risk-assessment",
+      "third-party-processor-oversight"
+    ]
+  },
+  {
+    "slug": "data-classification-handling-standard",
+    "name": "Data Classification & Handling Standard",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "Unified classification levels (C1-C4) with mandatory handling controls.",
+    "controlSlugs": [
+      "data-classification",
+      "encryption-at-rest-and-transit"
+    ]
+  },
+  {
+    "slug": "identity-access-management-policy",
+    "name": "Identity & Access Management (IAM) Policy",
+    "category": "gold-standard",
+    "tier": "authoritative",
+    "description": "Strict RBAC, MFA, and PAM requirements aligned with CIS Control 5.",
+    "controlSlugs": [
+      "access-control-framework",
+      "multi-factor-authentication"
+    ]
   }
 ]
