@@ -2026,3 +2026,56 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   route();
 });
+
+// === Export Functions ===
+
+function exportToPDF() {
+  window.print();
+}
+
+function exportToCSV() {
+  const view = state.route.view;
+  let data = [];
+  let filename = `export-${view}-${new Date().toISOString().slice(0,10)}.csv`;
+
+  if (view === 'controls') {
+    const list = state.controls.library || state.controls;
+    data = list.map(c => ({
+      ID: c.id || '',
+      Name: c.name,
+      Domain: c.domain,
+      Description: c.description.replace(/\n/g, ' ')
+    }));
+  } else if (view === 'risk-management') {
+    const list = state.riskManagement?.register || [];
+    data = list.map(r => ({
+      ID: r.id,
+      Risk: r.risk,
+      Impact: r.impact,
+      Likelihood: r.likelihood,
+      Level: r.inherentRiskLevel
+    }));
+  } else {
+    alert('CSV export only supported for Controls and Risk Register views.');
+    return;
+  }
+
+  if (data.length === 0) {
+    alert('No data found to export.');
+    return;
+  }
+
+  const headers = Object.keys(data[0]);
+  const csvContent = [
+    headers.join(','),
+    ...data.map(row => headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(','))
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

@@ -40,7 +40,12 @@
       <a href="#risk-management" class="nav-link" data-view="risk-management">Risk Mgmt</a>
       <a href="#framework" class="nav-link" data-view="framework">Framework</a>
       <a href="#cross-ref" class="nav-link" data-view="cross-ref">Cross-Refs</a>
-    </div>
+    
+      <div class="nav-actions" style="display: flex; gap: 0.5rem; margin-left: auto;">
+        <button onclick="exportToPDF()" class="btn-export">PDF</button>
+        <button onclick="exportToCSV()" class="btn-export">CSV</button>
+      </div>
+</div>
   </nav>
   <div id="main">
     <div class="loading">
