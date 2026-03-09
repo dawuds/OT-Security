@@ -30,6 +30,24 @@ A structured, open-access knowledge base for Operational Technology (OT) cyberse
 
 ---
 
+## Technical Architecture
+
+This repository follows the **GRC Portfolio v2.0 Standardized Schema**, optimized for machine-readability and dynamic SPA rendering.
+
+### The Compliance Chain
+Data is structured to maintain a strict bidirectional mapping:
+`IEC 62443 Requirement (SR)` $\leftrightarrow$ `OT Security Control` $\leftrightarrow$ `Audit Evidence` $\leftrightarrow$ `Artifact Template`
+
+### Data Layers
+- **Controls (`/controls/library.json`):** 49 OT-specific controls mapped to the Purdue Model using the unified schema.
+- **Evidence (`/evidence/index.json`):** Mapped to 51 System Requirements (SRs) and 7 Foundational Requirements (FRs).
+- **Standards:** Comprehensive data for IEC 62443-3-3, NIST 800-82, and NACSA Section 26.
+
+### Consistency & Style
+- **Naming:** Kebab-case slugs; safety-weighted risk levels.
+- **Scoring:** Standardized 5x5 Likelihood/Impact risk matrix.
+- **Audit Ready:** FAT/SAT security checklists included in the templates.
+
 ## Repository Structure
 
 ```
