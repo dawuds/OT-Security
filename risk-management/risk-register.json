@@ -20,11 +20,20 @@
       "description": "Attacker gains access to Safety Instrumented System and modifies safety logic to prevent emergency shutdown, enabling a TRITON/TRISIS-style attack. The SIS is the last line of defence against catastrophic process events.",
       "category": "Safety",
       "safetyImpact": true,
-      "iec62443Ref": ["SR-5.1", "SR-3.4", "SR-1.1"],
+      "iec62443Ref": [
+        "SR-5.1",
+        "SR-3.4",
+        "SR-1.1"
+      ],
       "likelihood": 2,
       "impact": 5,
       "inherentRisk": "Critical",
-      "existingControls": ["SIS physically isolated from DCS/IT network", "SIS key switch in Run mode", "SIS program checksum verification", "Two-person sign-off for SIS modifications"],
+      "existingControls": [
+        "SIS physically isolated from DCS/IT network",
+        "SIS key switch in Run mode",
+        "SIS program checksum verification",
+        "Two-person sign-off for SIS modifications"
+      ],
       "residualLikelihood": 1,
       "residualImpact": 5,
       "residualRisk": "Critical",
@@ -40,11 +49,19 @@
       "category": "Process Integrity",
       "safetyImpact": true,
       "safetyOverrideApplied": true,
-      "iec62443Ref": ["SR-3.4", "SR-7.6", "SR-2.1"],
+      "iec62443Ref": [
+        "SR-3.4",
+        "SR-7.6",
+        "SR-2.1"
+      ],
       "likelihood": 3,
       "impact": 4,
       "inherentRisk": "Critical",
-      "existingControls": ["PLC program change management process", "Engineering workstation access restricted to authorised engineers", "PLC program backup and checksum register"],
+      "existingControls": [
+        "PLC program change management process",
+        "Engineering workstation access restricted to authorised engineers",
+        "PLC program backup and checksum register"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -59,11 +76,19 @@
       "description": "Attacker compromises IT network and pivots into OT through inadequate segmentation, shared credentials, or IDMZ bypass. Initial compromise is typically via phishing or internet-facing IT service.",
       "category": "IT/OT Convergence",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-5.1", "SR-5.2", "SR-1.1"],
+      "iec62443Ref": [
+        "SR-5.1",
+        "SR-5.2",
+        "SR-1.1"
+      ],
       "likelihood": 4,
       "impact": 4,
       "inherentRisk": "Critical",
-      "existingControls": ["IDMZ implemented between IT and OT", "Separate IT and OT Active Directory domains", "Firewall deny-all with explicit permits"],
+      "existingControls": [
+        "IDMZ implemented between IT and OT",
+        "Separate IT and OT Active Directory domains",
+        "Firewall deny-all with explicit permits"
+      ],
       "residualLikelihood": 3,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -78,11 +103,19 @@
       "description": "Attacker modifies historian data to conceal malicious process changes, corrupt operational records used for decision-making, or tamper with evidence needed for NACSA s26 incident reporting.",
       "category": "Process Integrity",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-3.4", "SR-4.1", "SR-3.9"],
+      "iec62443Ref": [
+        "SR-3.4",
+        "SR-4.1",
+        "SR-3.9"
+      ],
       "likelihood": 3,
       "impact": 3,
       "inherentRisk": "High",
-      "existingControls": ["Historian write access restricted to SCADA data bus", "Historian access logging enabled", "Historian backup with integrity verification"],
+      "existingControls": [
+        "Historian write access restricted to SCADA data bus",
+        "Historian access logging enabled",
+        "Historian backup with integrity verification"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 3,
       "residualRisk": "Medium",
@@ -98,11 +131,19 @@
       "category": "Legacy Systems",
       "safetyImpact": true,
       "safetyOverrideApplied": true,
-      "iec62443Ref": ["SR-3.1", "SR-4.3", "SR-5.1"],
+      "iec62443Ref": [
+        "SR-3.1",
+        "SR-4.3",
+        "SR-5.1"
+      ],
       "likelihood": 3,
       "impact": 4,
       "inherentRisk": "Critical",
-      "existingControls": ["Network segmentation limits access to OT protocols", "OT monitoring detects anomalous protocol traffic", "Firewall DPI for OT protocol function code filtering"],
+      "existingControls": [
+        "Network segmentation limits access to OT protocols",
+        "OT monitoring detects anomalous protocol traffic",
+        "Firewall DPI for OT protocol function code filtering"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -117,11 +158,20 @@
       "description": "Attacker compromises remote access credentials (VPN, remote desktop, vendor portal) to gain direct access to SCADA/HMI systems. Remote access is the most common initial access vector in OT incidents.",
       "category": "Remote Access",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-1.13", "SR-2.6", "SR-1.1"],
+      "iec62443Ref": [
+        "SR-1.13",
+        "SR-2.6",
+        "SR-1.1"
+      ],
       "likelihood": 4,
       "impact": 4,
       "inherentRisk": "Critical",
-      "existingControls": ["Dedicated OT remote access gateway in IDMZ", "MFA enforced for all remote access", "Session recording enabled", "Time-limited access for vendors"],
+      "existingControls": [
+        "Dedicated OT remote access gateway in IDMZ",
+        "MFA enforced for all remote access",
+        "Session recording enabled",
+        "Time-limited access for vendors"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -136,11 +186,19 @@
       "description": "Compromised firmware delivered via vendor update channel or supply chain injection. Malicious firmware on PLC, RTU, or network equipment provides persistent attacker access that survives reimaging.",
       "category": "Supply Chain",
       "safetyImpact": true,
-      "iec62443Ref": ["SR-3.4", "SR-3.2", "SR-7.7"],
+      "iec62443Ref": [
+        "SR-3.4",
+        "SR-3.2",
+        "SR-7.7"
+      ],
       "likelihood": 2,
       "impact": 5,
       "inherentRisk": "Critical",
-      "existingControls": ["Vendor qualification process", "Firmware integrity verification before deployment", "Test environment for firmware validation"],
+      "existingControls": [
+        "Vendor qualification process",
+        "Firmware integrity verification before deployment",
+        "Test environment for firmware validation"
+      ],
       "residualLikelihood": 1,
       "residualImpact": 5,
       "residualRisk": "Critical",
@@ -155,11 +213,20 @@
       "description": "Disgruntled or coerced insider with legitimate OT access modifies process controls, disables safety systems, or exfiltrates sensitive OT data. Insider has knowledge of process and bypass methods.",
       "category": "Safety",
       "safetyImpact": true,
-      "iec62443Ref": ["SR-1.1", "SR-2.1", "SR-6.1"],
+      "iec62443Ref": [
+        "SR-1.1",
+        "SR-2.1",
+        "SR-6.1"
+      ],
       "likelihood": 2,
       "impact": 4,
       "inherentRisk": "High",
-      "existingControls": ["Role-based access control", "Two-person rule for safety-critical changes", "Engineering workstation session recording", "Background screening for OT personnel"],
+      "existingControls": [
+        "Role-based access control",
+        "Two-person rule for safety-critical changes",
+        "Engineering workstation session recording",
+        "Background screening for OT personnel"
+      ],
       "residualLikelihood": 1,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -174,11 +241,19 @@
       "description": "Cyber attack causes physical damage to OT equipment by manipulating process parameters beyond safe operating limits (e.g., Stuxnet centrifuge destruction, pipeline overpressure). Damage may be irreversible and require equipment replacement.",
       "category": "Safety",
       "safetyImpact": true,
-      "iec62443Ref": ["SR-3.4", "SR-5.1", "SR-7.1"],
+      "iec62443Ref": [
+        "SR-3.4",
+        "SR-5.1",
+        "SR-7.1"
+      ],
       "likelihood": 2,
       "impact": 5,
       "inherentRisk": "Critical",
-      "existingControls": ["SIS independent from DCS", "Process variable limits configured in PLC/DCS", "Operator training on abnormal process conditions"],
+      "existingControls": [
+        "SIS independent from DCS",
+        "Process variable limits configured in PLC/DCS",
+        "Operator training on abnormal process conditions"
+      ],
       "residualLikelihood": 1,
       "residualImpact": 5,
       "residualRisk": "Critical",
@@ -193,11 +268,19 @@
       "description": "Unauthorised or undocumented changes to DCS configuration cause the system to deviate from the approved secure baseline. Drift can introduce vulnerabilities, disable security controls, or cause process instability.",
       "category": "Process Integrity",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-7.6", "SR-7.7", "SR-3.3"],
+      "iec62443Ref": [
+        "SR-7.6",
+        "SR-7.7",
+        "SR-3.3"
+      ],
       "likelihood": 4,
       "impact": 3,
       "inherentRisk": "High",
-      "existingControls": ["OT change management process", "Configuration baseline documents per system type", "Periodic configuration review"],
+      "existingControls": [
+        "OT change management process",
+        "Configuration baseline documents per system type",
+        "Periodic configuration review"
+      ],
       "residualLikelihood": 3,
       "residualImpact": 3,
       "residualRisk": "High",
@@ -212,11 +295,19 @@
       "description": "Network segmentation controls fail or are bypassed, allowing unauthorised traffic between zones. Caused by misconfigured firewalls, undocumented network connections, or temporary connections left permanent.",
       "category": "IT/OT Convergence",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-5.1", "SR-5.2", "SR-5.3"],
+      "iec62443Ref": [
+        "SR-5.1",
+        "SR-5.2",
+        "SR-5.3"
+      ],
       "likelihood": 3,
       "impact": 4,
       "inherentRisk": "High",
-      "existingControls": ["IDMZ with deny-all firewalls", "Zone-conduit diagram maintained", "Firewall rule review process"],
+      "existingControls": [
+        "IDMZ with deny-all firewalls",
+        "Zone-conduit diagram maintained",
+        "Firewall rule review process"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -231,11 +322,19 @@
       "description": "Attacker exploits known vulnerability in HMI software (Windows-based SCADA clients, web-based HMIs) that has not been patched due to vendor certification delay or uptime constraints.",
       "category": "Legacy Systems",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-3.2", "SR-7.7", "SR-1.1"],
+      "iec62443Ref": [
+        "SR-3.2",
+        "SR-7.7",
+        "SR-1.1"
+      ],
       "likelihood": 4,
       "impact": 3,
       "inherentRisk": "High",
-      "existingControls": ["Application allowlisting on HMI workstations", "Network segmentation limits HMI exposure", "Vendor advisory tracking and assessment"],
+      "existingControls": [
+        "Application allowlisting on HMI workstations",
+        "Network segmentation limits HMI exposure",
+        "Vendor advisory tracking and assessment"
+      ],
       "residualLikelihood": 3,
       "residualImpact": 3,
       "residualRisk": "High",
@@ -250,11 +349,19 @@
       "description": "Attacker intercepts or injects data on wireless sensor networks (WirelessHART, ISA100.11a, LoRaWAN) used for process monitoring, causing incorrect process data or denial of monitoring capability.",
       "category": "Process Integrity",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-4.3", "SR-3.1", "SR-5.1"],
+      "iec62443Ref": [
+        "SR-4.3",
+        "SR-3.1",
+        "SR-5.1"
+      ],
       "likelihood": 2,
       "impact": 3,
       "inherentRisk": "Medium",
-      "existingControls": ["Wireless protocol encryption enabled", "Wireless network segregated from control network", "Physical security around wireless access points"],
+      "existingControls": [
+        "Wireless protocol encryption enabled",
+        "Wireless network segregated from control network",
+        "Physical security around wireless access points"
+      ],
       "residualLikelihood": 1,
       "residualImpact": 3,
       "residualRisk": "Low",
@@ -269,11 +376,20 @@
       "description": "Attacker compromises engineering workstation (EWS) used to program PLCs, configure DCS, and modify safety systems. EWS has the highest privilege level in OT -- it can reprogram any controller it connects to.",
       "category": "Process Integrity",
       "safetyImpact": true,
-      "iec62443Ref": ["SR-1.1", "SR-2.1", "SR-3.4"],
+      "iec62443Ref": [
+        "SR-1.1",
+        "SR-2.1",
+        "SR-3.4"
+      ],
       "likelihood": 3,
       "impact": 5,
       "inherentRisk": "Critical",
-      "existingControls": ["EWS access restricted to authorised engineers", "EWS not connected to internet or email", "Application allowlisting on EWS", "PAM for EWS access"],
+      "existingControls": [
+        "EWS access restricted to authorised engineers",
+        "EWS not connected to internet or email",
+        "Application allowlisting on EWS",
+        "PAM for EWS access"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 5,
       "residualRisk": "Critical",
@@ -288,11 +404,20 @@
       "description": "OT vendor with remote maintenance access performs unauthorised actions, introduces vulnerable software, or their access is compromised by third-party attacker. Vendor access often has elevated privileges.",
       "category": "Supply Chain",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-1.13", "SR-2.6", "SR-2.7"],
+      "iec62443Ref": [
+        "SR-1.13",
+        "SR-2.6",
+        "SR-2.7"
+      ],
       "likelihood": 3,
       "impact": 3,
       "inherentRisk": "High",
-      "existingControls": ["Per-session vendor access approval", "Session recording for all vendor access", "Time-limited vendor credentials", "Vendor security assessment"],
+      "existingControls": [
+        "Per-session vendor access approval",
+        "Session recording for all vendor access",
+        "Time-limited vendor credentials",
+        "Vendor security assessment"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 3,
       "residualRisk": "Medium",
@@ -307,11 +432,19 @@
       "description": "OT monitoring platform (passive network monitoring, SIEM integration) fails or is disabled, leaving the organisation blind to OT security events. Attacker may deliberately disable monitoring as part of attack chain.",
       "category": "IT/OT Convergence",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-6.1", "SR-6.2", "SR-2.8"],
+      "iec62443Ref": [
+        "SR-6.1",
+        "SR-6.2",
+        "SR-2.8"
+      ],
       "likelihood": 3,
       "impact": 3,
       "inherentRisk": "High",
-      "existingControls": ["Monitoring platform health checks", "SIEM alerting on log source failure", "Redundant monitoring sensors"],
+      "existingControls": [
+        "Monitoring platform health checks",
+        "SIEM alerting on log source failure",
+        "Redundant monitoring sensors"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 3,
       "residualRisk": "Medium",
@@ -326,11 +459,19 @@
       "description": "Cyber attack disables or manipulates environmental monitoring systems (emissions, effluent, radiation), causing unreported environmental damage or false compliance reporting.",
       "category": "Safety",
       "safetyImpact": true,
-      "iec62443Ref": ["SR-3.4", "SR-6.1", "SR-7.1"],
+      "iec62443Ref": [
+        "SR-3.4",
+        "SR-6.1",
+        "SR-7.1"
+      ],
       "likelihood": 2,
       "impact": 4,
       "inherentRisk": "High",
-      "existingControls": ["Environmental monitoring on isolated network segment", "Manual verification sampling programme", "Redundant monitoring for critical parameters"],
+      "existingControls": [
+        "Environmental monitoring on isolated network segment",
+        "Manual verification sampling programme",
+        "Redundant monitoring for critical parameters"
+      ],
       "residualLikelihood": 1,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -345,11 +486,19 @@
       "description": "OT system backups are corrupted, incomplete, or untested, resulting in inability to recover from ransomware or destructive attack. Recovery time exceeds defined RTO, causing extended plant outage.",
       "category": "Process Integrity",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-7.3", "SR-7.4"],
+      "iec62443Ref": [
+        "SR-7.3",
+        "SR-7.4"
+      ],
       "likelihood": 3,
       "impact": 4,
       "inherentRisk": "High",
-      "existingControls": ["Automated OT backup schedule", "Offline backup copy maintained", "Backup integrity verification (hash)", "Annual restore test"],
+      "existingControls": [
+        "Automated OT backup schedule",
+        "Offline backup copy maintained",
+        "Backup integrity verification (hash)",
+        "Annual restore test"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 4,
       "residualRisk": "High",
@@ -364,11 +513,19 @@
       "description": "Shared SCADA or control system architecture across multiple sites allows a compromise at one site to cascade to others. Common in utilities with centralised SCADA and distributed field sites.",
       "category": "IT/OT Convergence",
       "safetyImpact": true,
-      "iec62443Ref": ["SR-5.1", "SR-5.2", "SR-7.1"],
+      "iec62443Ref": [
+        "SR-5.1",
+        "SR-5.2",
+        "SR-7.1"
+      ],
       "likelihood": 2,
       "impact": 5,
       "inherentRisk": "Critical",
-      "existingControls": ["Site-level network segmentation", "Centralised SCADA in hardened zone", "Per-site firewall policies"],
+      "existingControls": [
+        "Site-level network segmentation",
+        "Centralised SCADA in hardened zone",
+        "Per-site firewall policies"
+      ],
       "residualLikelihood": 1,
       "residualImpact": 5,
       "residualRisk": "Critical",
@@ -383,11 +540,18 @@
       "description": "Organisation fails to achieve required IEC 62443 security level (SL-T) for NCII-designated assets, resulting in non-compliance finding during NACSA s23 audit. Regulatory consequences include directives, penalties, or increased audit frequency.",
       "category": "Compliance",
       "safetyImpact": false,
-      "iec62443Ref": ["SR-7.8", "SR-7.6"],
+      "iec62443Ref": [
+        "SR-7.8",
+        "SR-7.6"
+      ],
       "likelihood": 3,
       "impact": 3,
       "inherentRisk": "High",
-      "existingControls": ["IEC 62443 gap assessment completed", "Remediation roadmap with timelines", "Quarterly progress tracking"],
+      "existingControls": [
+        "IEC 62443 gap assessment completed",
+        "Remediation roadmap with timelines",
+        "Quarterly progress tracking"
+      ],
       "residualLikelihood": 2,
       "residualImpact": 3,
       "residualRisk": "Medium",
