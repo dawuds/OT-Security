@@ -1,33 +1,527 @@
 [
-  { "id": "ot-asset-register", "name": "OT Asset Register", "category": "operational", "description": "Comprehensive inventory of all OT hardware, software, and firmware. Minimum fields: asset ID, make/model, firmware/software version, IP/MAC, zone, owner, criticality.", "format": "Spreadsheet / CMDB export / Asset management tool", "mandatory": true, "sections": ["SR-7.8", "AI-R1", "NACSA s18", "NACSA s21"], "controlSlugs": ["ot-asset-inventory", "ot-patch-management", "ot-passive-monitoring"] },
-  { "id": "zone-conduit-diagram", "name": "Zone and Conduit Architecture Diagram", "category": "technical", "description": "Network topology diagram showing all zones, zone boundaries, conduits, inter-zone data flows, and SL-T per zone.", "format": "Visio / Draw.io / PDF — version controlled", "mandatory": true, "sections": ["NS-R1", "SR-5.1", "SR-5.2", "NACSA s21"], "controlSlugs": ["idmz-implementation", "sis-network-isolation"] },
-  { "id": "sl-assessment-report", "name": "Security Level Assessment Report", "category": "compliance", "description": "Assessment of current SL-A (achieved) per zone against SL-T (target), based on evaluation of all 51 IEC 62443-3-3 SRs. Gap analysis and remediation roadmap.", "format": "PDF report — version controlled", "mandatory": true, "sections": ["NACSA s23", "IEC 62443-3-2"], "controlSlugs": ["idmz-implementation", "sis-network-isolation"] },
-  { "id": "ot-risk-assessment", "name": "OT Cyber Security Risk Assessment", "category": "compliance", "description": "IEC 62443-3-2 compliant risk assessment covering: asset inventory, zone definition, threat analysis, consequence assessment, SL-T setting, and risk treatment plan.", "format": "PDF report with supporting data — version controlled", "mandatory": true, "sections": ["NACSA s21", "SR-7.8"], "controlSlugs": ["ot-asset-inventory", "idmz-implementation"] },
-  { "id": "ot-irp", "name": "OT Incident Response Plan", "category": "operational", "description": "OT-specific incident response plan including system runbooks, NACSA notification procedure, evidence preservation guide, and operations engineering coordination protocol.", "format": "PDF / DOCX — version controlled", "mandatory": true, "sections": ["IR-R3", "NACSA s26"], "controlSlugs": ["nacsa-incident-notification", "ot-passive-monitoring"] },
-  { "id": "nacsa-notification-template", "name": "NACSA Incident Notification Template", "category": "compliance", "description": "Pre-populated template for NACSA s26 initial notification (within 6 hours), 72-hour follow-up, and 30-day final report.", "format": "Word template / PDF form", "mandatory": true, "sections": ["NACSA s26"], "controlSlugs": ["nacsa-incident-notification"] },
-  { "id": "vendor-access-log", "name": "Vendor Remote Access Log", "category": "operational", "description": "Log of all third-party remote access sessions: vendor name, personnel, date/time, duration, systems accessed, work performed, approver.", "format": "Spreadsheet / Ticketing system / Access management tool", "mandatory": true, "sections": ["RA-R3", "SR-1.13"], "controlSlugs": ["ot-remote-access-gateway", "ot-vendor-security-assessment"] },
-  { "id": "ot-backup-register", "name": "OT Backup Register and Test Records", "category": "operational", "description": "Register of all OT backup configurations: system, backup type, schedule, storage location, last successful backup, last restore test, RTO target.", "format": "Spreadsheet with linked test reports", "mandatory": true, "sections": ["BR-R1", "SR-7.3"], "controlSlugs": ["ot-backup-recovery"] },
-  { "id": "ot-change-log", "name": "OT Change Management Log", "category": "operational", "description": "Record of all OT system changes: change request ID, description, approver, implementation date, post-change verification result, rollback status.", "format": "Change management system / Spreadsheet", "mandatory": true, "sections": ["CM-R2", "SR-7.6"], "controlSlugs": ["ot-change-management", "ot-patch-management"] },
-  { "id": "sis-program-checksum-register", "name": "SIS Program Checksum Register", "category": "safety", "description": "Register of approved SIS program checksums/hashes per controller, established at commissioning or after each approved change. Used for integrity verification.", "format": "Hardcopy in secure storage + electronic in access-controlled system", "mandatory": true, "sections": ["SS-R3", "SR-3.4"], "controlSlugs": ["sis-network-isolation"] },
-  { "id": "sis-modification-log", "name": "SIS Modification Log", "category": "safety", "description": "Physical logbook and electronic record of all SIS modification activities: date, who, what work, pre-work program hash, post-work program hash, two-person sign-off.", "format": "Physical logbook + electronic record", "mandatory": true, "sections": ["SS-R1", "SS-R2"], "controlSlugs": ["sis-network-isolation", "ot-change-management"] },
-  { "id": "vulnerability-register", "name": "OT Vulnerability Register", "category": "operational", "description": "Register of known vulnerabilities per OT asset: CVE, CVSS score, applicability, patch status, compensating control, risk acceptance, target remediation date.", "format": "Spreadsheet / Vulnerability management platform", "mandatory": true, "sections": ["PV-R1", "PV-R2", "NACSA s21"], "controlSlugs": ["ot-patch-management", "ot-asset-inventory"] },
-  { "id": "ot-security-policy", "name": "OT Cybersecurity Policy", "category": "governance", "description": "Board-approved OT cybersecurity policy covering: scope, objectives, roles/responsibilities, compliance requirements (IEC 62443, NACSA Act 854), and review schedule.", "format": "PDF / DOCX — version controlled, board-approved", "mandatory": true, "sections": ["NACSA s18", "IEC 62443-2-1"], "controlSlugs": ["ot-rbac-implementation", "nacsa-incident-notification"] },
-  { "id": "ot-network-baseline", "name": "OT Network Baseline Documentation", "category": "technical", "description": "Documented expected communication patterns per zone: normal source/destination pairs, protocols, ports, frequency. Used as baseline for anomaly detection.", "format": "Spreadsheet / Monitoring platform export", "mandatory": false, "sections": ["SR-6.2", "IR-R1"], "controlSlugs": ["ot-passive-monitoring", "idmz-implementation"] },
-  { "id": "commissioning-checklist", "name": "OT Asset Commissioning Security Checklist", "category": "operational", "description": "Checklist completed at commissioning of each new OT asset: default credentials changed, unused services disabled, network zone confirmed, backup taken, asset register updated, tamper seals applied.", "format": "Checklist form — signed off by commissioning engineer and OT security", "mandatory": true, "sections": ["IAM-R4", "CM-R1", "SR-1.5", "SR-7.7"], "controlSlugs": ["default-credential-elimination", "ot-asset-inventory", "ot-change-management", "ot-tamper-detection"] },
-  { "id": "rbac-role-definitions", "name": "OT RBAC Role Definitions and User-Role Assignment", "category": "operational", "description": "Document defining OT access roles (Operator, Engineer, SCADA Admin, Vendor, Security Admin), the access rights associated with each role per OT system, and the current user-to-role assignment. Reviewed quarterly for privileged roles and annually for all roles.", "format": "Controlled document (PDF/Word) + user-role matrix spreadsheet", "mandatory": true, "sections": ["IAM-R2", "SR-2.1"], "controlSlugs": ["ot-rbac-implementation", "ot-mfa-implementation"] },
-  { "id": "pam-architecture", "name": "PAM Deployment Architecture and Configuration", "category": "technical", "description": "Architecture document describing the Privileged Access Management solution for OT: PAM tool, vaulted credential register (account names only — not passwords), session recording policy, and connection to OT targets. Break-glass procedure referenced.", "format": "Architecture diagram + configuration document", "mandatory": false, "sections": ["IAM-R3", "SR-1.3"], "controlSlugs": ["ot-mfa-implementation", "ot-rbac-implementation", "default-credential-elimination"] },
-  { "id": "break-glass-procedure", "name": "Break-Glass Emergency Access Procedure", "category": "operational", "description": "Documented emergency access procedure for OT systems when normal authentication is unavailable: sealed envelope credentials, cabinet access log, two-person approval, mandatory post-use review, and credential rotation. Separate SIS break-glass procedure with safety manager approval.", "format": "Controlled procedure document (physical + electronic) — restricted distribution", "mandatory": true, "sections": ["IAM-R6", "SR-1.10"], "controlSlugs": ["ot-mfa-implementation", "default-credential-elimination"] },
-  { "id": "removable-media-policy", "name": "OT Removable Media Policy and Scanning Workstation Evidence", "category": "operational", "description": "Policy governing removable media and external devices in OT: USB whitelist, scanning workstation procedure, vendor laptop policy, and exception process. Technical evidence includes USB port lockdown configuration and scanning workstation maintenance records.", "format": "Policy document + technical configuration evidence", "mandatory": true, "sections": ["PS-R4", "SR-2.3"], "controlSlugs": ["ot-vendor-security-assessment", "ot-physical-access-control", "ot-data-encryption"] },
-  { "id": "log-retention-compliance", "name": "OT Log Retention Policy and NACSA s26 Compliance Evidence", "category": "compliance", "description": "Tiered log retention policy (90 days SIEM / 1 year archive / 7 years immutable for incident-related logs) with WORM storage configuration evidence and annual compliance audit records. Demonstrates compliance with NACSA s26(6) 7-year record-keeping obligation.", "format": "Policy document + WORM storage configuration + annual audit records", "mandatory": true, "sections": ["ML-R3", "SR-2.9", "NACSA s26"], "controlSlugs": ["ot-passive-monitoring", "nacsa-incident-notification"] },
-  { "id": "threat-hunting-reports", "name": "OT Threat Hunting Programme and Exercise Reports", "category": "operational", "description": "Quarterly threat hunt exercise reports: hypothesis, MITRE ATT&CK for ICS technique targeted, data sources searched, findings, outcome, and SIEM rule updates from hunt results. MITRE technique coverage map showing which ICS techniques are actively hunted.", "format": "Report per exercise (PDF) + technique coverage map (spreadsheet)", "mandatory": false, "sections": ["ML-R4", "SR-6.2"], "controlSlugs": ["ot-passive-monitoring", "nacsa-incident-notification"] },
-  { "id": "rto-rpo-register", "name": "OT RTO/RPO Register and Annual Test Records", "category": "operational", "description": "Register of Recovery Time Objective (RTO) and Recovery Point Objective (RPO) per OT system, tiered by operational criticality. Operations engineering sign-off on RTO targets (including plant reconstitution time). Annual RTO test results documenting actual vs target.", "format": "Spreadsheet register + annual test report (PDF)", "mandatory": true, "sections": ["BR-R4", "SR-7.4"], "controlSlugs": ["ot-backup-recovery"] },
-  { "id": "backup-integrity-hashes", "name": "OT Backup Integrity Hash Records", "category": "operational", "description": "SHA-256 hash records for all OT system backups, stored separately from backup media. SIS program checksum register (physical + electronic). Quarterly restore test records including hash verification result. Demonstrates integrity verification per BR-R3 and SR-3.4.", "format": "Hash record database/spreadsheet + SIS physical register + quarterly test records", "mandatory": true, "sections": ["BR-R3", "SR-3.4"], "controlSlugs": ["ot-backup-recovery", "sis-network-isolation", "ot-historian-integrity"] },
-  { "id": "ot-personnel-security-records", "name": "OT Personnel Security Records", "category": "operational", "description": "OT security awareness training completion records for OT personnel and SOC analysts. Background screening policy and status (individual records redacted). Joiners/movers/leavers OT access removal log demonstrating timely removal of access on departure.", "format": "Training completion register (LMS export) + access removal log + screening policy", "mandatory": true, "sections": ["PS-R3", "SR-1.3"], "controlSlugs": ["ot-rbac-implementation", "ot-physical-access-control"] },
-  { "id": "soc-ot-playbooks", "name": "OT/SOC Interface Agreement and Playbooks", "category": "operational", "description": "Agreement defining SOC responsibilities for OT events: escalation path (SOC L1 -> OT security lead -> OT operations manager -> NACSA notification coordinator), and constraint (SOC does not take active response actions in OT without operations approval). OT-specific SOC playbooks per alert type.", "format": "Controlled document (PDF/Word) + playbook set per alert type", "mandatory": false, "sections": ["ML-R5", "IR-R3"], "controlSlugs": ["ot-passive-monitoring", "nacsa-incident-notification"] },
-  { "id": "vendor-security-assessment", "name": "OT Vendor Security Assessment Records", "category": "compliance", "description": "Security assessment records for OT component vendors and service providers: vendor questionnaire responses, contractual OT security obligations, remote access policy sign-off, and annual vendor access reviews. Evidence for supply chain security requirements.", "format": "Vendor assessment form (per vendor) + contractual clause evidence + annual review records", "mandatory": false, "sections": ["SC-R1", "SR-3.2", "NACSA s18"], "controlSlugs": ["ot-vendor-security-assessment", "ot-remote-access-gateway"] },
-  { "id": "session-management-config", "name": "OT Session Management Configuration Evidence", "category": "technical", "description": "Configuration evidence for OT session timeout policy: engineering workstation timeout settings (15 min), PAM remote session timeout and termination configuration, HMI session settings with operations engineering sign-off, and concurrent session limit configuration.", "format": "Configuration screenshots or exports + operations engineering sign-off", "mandatory": false, "sections": ["IAM-R5", "SR-2.5"], "controlSlugs": ["ot-remote-access-gateway", "ot-mfa-implementation"] },
-  { "id": "ot-personnel-access-register", "name": "OT Personnel Access Register", "category": "operational", "description": "Register of all personnel with access to OT systems: name, role, access rights per system, access method, date of last access review, and date of last background screening. Reviewed quarterly against HR records.", "format": "Spreadsheet — access-controlled", "mandatory": true, "sections": ["IAM-R1", "IAM-R2", "SR-1.3"], "controlSlugs": ["ot-rbac-implementation", "default-credential-elimination", "ot-physical-access-control"] },
-  { "id": "tamper-seal-inspection-register", "name": "Tamper Seal Inspection Register", "category": "operational", "description": "Register of tamper-evident seals applied to OT equipment: seal ID, asset ID, location, application date, last inspection date, inspector name, seal status (intact/broken/replaced). Broken seals trigger security investigation. Maintained alongside maintenance visit records.", "format": "Spreadsheet / inspection app + photographic baseline records", "mandatory": true, "sections": ["PS-R2", "SR-3.4"], "controlSlugs": ["ot-tamper-detection", "ot-physical-access-control"] },
-  { "id": "ot-encryption-configuration", "name": "OT Encryption Configuration and Certificate Register", "category": "technical", "description": "Configuration evidence for encryption controls across OT: TLS/IPsec settings on remote access gateways, historian replication encryption, cipher suite configuration, certificate inventory with expiry dates, and portable media encryption enforcement evidence.", "format": "Configuration exports + certificate register spreadsheet + annual review records", "mandatory": true, "sections": ["DP-R2", "DP-R3", "SR-4.1", "SR-4.3"], "controlSlugs": ["ot-data-encryption", "ot-remote-access-gateway"] },
-  { "id": "historian-access-control-evidence", "name": "Historian Access Control and Integrity Evidence", "category": "technical", "description": "Configuration evidence for historian data integrity controls: write access restricted to SCADA data bus, RBAC configuration, access logging enabled, IDMZ proxy for IT access, bulk export controls, and anomaly detection for unexpected writes.", "format": "Configuration screenshots + access log samples + RBAC matrix", "mandatory": true, "sections": ["DP-R4", "SR-3.4", "SR-3.9"], "controlSlugs": ["ot-historian-integrity"] }
+  {
+    "id": "ot-asset-register",
+    "name": "OT Asset Register",
+    "category": "operational",
+    "description": "Comprehensive inventory of all OT hardware, software, and firmware. Minimum fields: asset ID, make/model, firmware/software version, IP/MAC, zone, owner, criticality.",
+    "format": "Spreadsheet / CMDB export / Asset management tool",
+    "mandatory": true,
+    "sections": [
+      "SR-7.8",
+      "AI-R1",
+      "NACSA s18",
+      "NACSA s21"
+    ],
+    "controlSlugs": [
+      "ot-asset-inventory",
+      "ot-patch-management",
+      "ot-passive-monitoring"
+    ]
+  },
+  {
+    "id": "zone-conduit-diagram",
+    "name": "Zone and Conduit Architecture Diagram",
+    "category": "technical",
+    "description": "Network topology diagram showing all zones, zone boundaries, conduits, inter-zone data flows, and SL-T per zone.",
+    "format": "Visio / Draw.io / PDF \u2014 version controlled",
+    "mandatory": true,
+    "sections": [
+      "NS-R1",
+      "SR-5.1",
+      "SR-5.2",
+      "NACSA s21"
+    ],
+    "controlSlugs": [
+      "idmz-implementation",
+      "sis-network-isolation"
+    ]
+  },
+  {
+    "id": "sl-assessment-report",
+    "name": "Security Level Assessment Report",
+    "category": "compliance",
+    "description": "Assessment of current SL-A (achieved) per zone against SL-T (target), based on evaluation of all 51 IEC 62443-3-3 SRs. Gap analysis and remediation roadmap.",
+    "format": "PDF report \u2014 version controlled",
+    "mandatory": true,
+    "sections": [
+      "NACSA s23",
+      "IEC 62443-3-2"
+    ],
+    "controlSlugs": [
+      "idmz-implementation",
+      "sis-network-isolation"
+    ]
+  },
+  {
+    "id": "ot-risk-assessment",
+    "name": "OT Cyber Security Risk Assessment",
+    "category": "compliance",
+    "description": "IEC 62443-3-2 compliant risk assessment covering: asset inventory, zone definition, threat analysis, consequence assessment, SL-T setting, and risk treatment plan.",
+    "format": "PDF report with supporting data \u2014 version controlled",
+    "mandatory": true,
+    "sections": [
+      "NACSA s21",
+      "SR-7.8"
+    ],
+    "controlSlugs": [
+      "ot-asset-inventory",
+      "idmz-implementation"
+    ]
+  },
+  {
+    "id": "ot-irp",
+    "name": "OT Incident Response Plan",
+    "category": "operational",
+    "description": "OT-specific incident response plan including system runbooks, NACSA notification procedure, evidence preservation guide, and operations engineering coordination protocol.",
+    "format": "PDF / DOCX \u2014 version controlled",
+    "mandatory": true,
+    "sections": [
+      "IR-R3",
+      "NACSA s26"
+    ],
+    "controlSlugs": [
+      "nacsa-incident-notification",
+      "ot-passive-monitoring"
+    ]
+  },
+  {
+    "id": "nacsa-notification-template",
+    "name": "NACSA Incident Notification Template",
+    "category": "compliance",
+    "description": "Pre-populated template for NACSA s26 initial notification (within 6 hours), 72-hour follow-up, and 30-day final report.",
+    "format": "Word template / PDF form",
+    "mandatory": true,
+    "sections": [
+      "NACSA s26"
+    ],
+    "controlSlugs": [
+      "nacsa-incident-notification"
+    ]
+  },
+  {
+    "id": "vendor-access-log",
+    "name": "Vendor Remote Access Log",
+    "category": "operational",
+    "description": "Log of all third-party remote access sessions: vendor name, personnel, date/time, duration, systems accessed, work performed, approver.",
+    "format": "Spreadsheet / Ticketing system / Access management tool",
+    "mandatory": true,
+    "sections": [
+      "RA-R3",
+      "SR-1.13"
+    ],
+    "controlSlugs": [
+      "ot-remote-access-gateway",
+      "ot-vendor-security-assessment"
+    ]
+  },
+  {
+    "id": "ot-backup-register",
+    "name": "OT Backup Register and Test Records",
+    "category": "operational",
+    "description": "Register of all OT backup configurations: system, backup type, schedule, storage location, last successful backup, last restore test, RTO target.",
+    "format": "Spreadsheet with linked test reports",
+    "mandatory": true,
+    "sections": [
+      "BR-R1",
+      "SR-7.3"
+    ],
+    "controlSlugs": [
+      "ot-backup-recovery"
+    ]
+  },
+  {
+    "id": "ot-change-log",
+    "name": "OT Change Management Log",
+    "category": "operational",
+    "description": "Record of all OT system changes: change request ID, description, approver, implementation date, post-change verification result, rollback status.",
+    "format": "Change management system / Spreadsheet",
+    "mandatory": true,
+    "sections": [
+      "CM-R2",
+      "SR-7.6"
+    ],
+    "controlSlugs": [
+      "ot-change-management",
+      "ot-patch-management"
+    ]
+  },
+  {
+    "id": "sis-program-checksum-register",
+    "name": "SIS Program Checksum Register",
+    "category": "safety",
+    "description": "Register of approved SIS program checksums/hashes per controller, established at commissioning or after each approved change. Used for integrity verification.",
+    "format": "Hardcopy in secure storage + electronic in access-controlled system",
+    "mandatory": true,
+    "sections": [
+      "SS-R3",
+      "SR-3.4"
+    ],
+    "controlSlugs": [
+      "sis-network-isolation"
+    ]
+  },
+  {
+    "id": "sis-modification-log",
+    "name": "SIS Modification Log",
+    "category": "safety",
+    "description": "Physical logbook and electronic record of all SIS modification activities: date, who, what work, pre-work program hash, post-work program hash, two-person sign-off.",
+    "format": "Physical logbook + electronic record",
+    "mandatory": true,
+    "sections": [
+      "SS-R1",
+      "SS-R2"
+    ],
+    "controlSlugs": [
+      "sis-network-isolation",
+      "ot-change-management"
+    ]
+  },
+  {
+    "id": "vulnerability-register",
+    "name": "OT Vulnerability Register",
+    "category": "operational",
+    "description": "Register of known vulnerabilities per OT asset: CVE, CVSS score, applicability, patch status, compensating control, risk acceptance, target remediation date.",
+    "format": "Spreadsheet / Vulnerability management platform",
+    "mandatory": true,
+    "sections": [
+      "PV-R1",
+      "PV-R2",
+      "NACSA s21"
+    ],
+    "controlSlugs": [
+      "ot-patch-management",
+      "ot-asset-inventory"
+    ]
+  },
+  {
+    "id": "ot-security-policy",
+    "name": "OT Cybersecurity Policy",
+    "category": "governance",
+    "description": "Board-approved OT cybersecurity policy covering: scope, objectives, roles/responsibilities, compliance requirements (IEC 62443, NACSA Act 854), and review schedule.",
+    "format": "PDF / DOCX \u2014 version controlled, board-approved",
+    "mandatory": true,
+    "sections": [
+      "NACSA s18",
+      "IEC 62443-2-1"
+    ],
+    "controlSlugs": [
+      "ot-rbac-implementation",
+      "nacsa-incident-notification"
+    ]
+  },
+  {
+    "id": "ot-network-baseline",
+    "name": "OT Network Baseline Documentation",
+    "category": "technical",
+    "description": "Documented expected communication patterns per zone: normal source/destination pairs, protocols, ports, frequency. Used as baseline for anomaly detection.",
+    "format": "Spreadsheet / Monitoring platform export",
+    "mandatory": false,
+    "sections": [
+      "SR-6.2",
+      "IR-R1"
+    ],
+    "controlSlugs": [
+      "ot-passive-monitoring",
+      "idmz-implementation"
+    ]
+  },
+  {
+    "id": "commissioning-checklist",
+    "name": "OT Asset Commissioning Security Checklist",
+    "category": "operational",
+    "description": "Checklist completed at commissioning of each new OT asset: default credentials changed, unused services disabled, network zone confirmed, backup taken, asset register updated, tamper seals applied.",
+    "format": "Checklist form \u2014 signed off by commissioning engineer and OT security",
+    "mandatory": true,
+    "sections": [
+      "IAM-R4",
+      "CM-R1",
+      "SR-1.5",
+      "SR-7.7"
+    ],
+    "controlSlugs": [
+      "default-credential-elimination",
+      "ot-asset-inventory",
+      "ot-change-management",
+      "ot-tamper-detection"
+    ]
+  },
+  {
+    "id": "rbac-role-definitions",
+    "name": "OT RBAC Role Definitions and User-Role Assignment",
+    "category": "operational",
+    "description": "Document defining OT access roles (Operator, Engineer, SCADA Admin, Vendor, Security Admin), the access rights associated with each role per OT system, and the current user-to-role assignment. Reviewed quarterly for privileged roles and annually for all roles.",
+    "format": "Controlled document (PDF/Word) + user-role matrix spreadsheet",
+    "mandatory": true,
+    "sections": [
+      "IAM-R2",
+      "SR-2.1"
+    ],
+    "controlSlugs": [
+      "ot-rbac-implementation",
+      "ot-mfa-implementation"
+    ]
+  },
+  {
+    "id": "pam-architecture",
+    "name": "PAM Deployment Architecture and Configuration",
+    "category": "technical",
+    "description": "Architecture document describing the Privileged Access Management solution for OT: PAM tool, vaulted credential register (account names only \u2014 not passwords), session recording policy, and connection to OT targets. Break-glass procedure referenced.",
+    "format": "Architecture diagram + configuration document",
+    "mandatory": false,
+    "sections": [
+      "IAM-R3",
+      "SR-1.3"
+    ],
+    "controlSlugs": [
+      "ot-mfa-implementation",
+      "ot-rbac-implementation",
+      "default-credential-elimination"
+    ]
+  },
+  {
+    "id": "break-glass-procedure",
+    "name": "Break-Glass Emergency Access Procedure",
+    "category": "operational",
+    "description": "Documented emergency access procedure for OT systems when normal authentication is unavailable: sealed envelope credentials, cabinet access log, two-person approval, mandatory post-use review, and credential rotation. Separate SIS break-glass procedure with safety manager approval.",
+    "format": "Controlled procedure document (physical + electronic) \u2014 restricted distribution",
+    "mandatory": true,
+    "sections": [
+      "IAM-R6",
+      "SR-1.10"
+    ],
+    "controlSlugs": [
+      "ot-mfa-implementation",
+      "default-credential-elimination"
+    ]
+  },
+  {
+    "id": "removable-media-policy",
+    "name": "OT Removable Media Policy and Scanning Workstation Evidence",
+    "category": "operational",
+    "description": "Policy governing removable media and external devices in OT: USB whitelist, scanning workstation procedure, vendor laptop policy, and exception process. Technical evidence includes USB port lockdown configuration and scanning workstation maintenance records.",
+    "format": "Policy document + technical configuration evidence",
+    "mandatory": true,
+    "sections": [
+      "PS-R4",
+      "SR-2.3"
+    ],
+    "controlSlugs": [
+      "ot-vendor-security-assessment",
+      "ot-physical-access-control",
+      "ot-data-encryption"
+    ]
+  },
+  {
+    "id": "log-retention-compliance",
+    "name": "OT Log Retention Policy and NACSA s26 Compliance Evidence",
+    "category": "compliance",
+    "description": "Tiered log retention policy (90 days SIEM / 1 year archive / 7 years immutable for incident-related logs) with WORM storage configuration evidence and annual compliance audit records. Demonstrates compliance with NACSA s26(6) 7-year record-keeping obligation.",
+    "format": "Policy document + WORM storage configuration + annual audit records",
+    "mandatory": true,
+    "sections": [
+      "ML-R3",
+      "SR-2.9",
+      "NACSA s26"
+    ],
+    "controlSlugs": [
+      "ot-passive-monitoring",
+      "nacsa-incident-notification"
+    ]
+  },
+  {
+    "id": "threat-hunting-reports",
+    "name": "OT Threat Hunting Programme and Exercise Reports",
+    "category": "operational",
+    "description": "Quarterly threat hunt exercise reports: hypothesis, MITRE ATT&CK for ICS technique targeted, data sources searched, findings, outcome, and SIEM rule updates from hunt results. MITRE technique coverage map showing which ICS techniques are actively hunted.",
+    "format": "Report per exercise (PDF) + technique coverage map (spreadsheet)",
+    "mandatory": false,
+    "sections": [
+      "ML-R4",
+      "SR-6.2"
+    ],
+    "controlSlugs": [
+      "ot-passive-monitoring",
+      "nacsa-incident-notification"
+    ]
+  },
+  {
+    "id": "rto-rpo-register",
+    "name": "OT RTO/RPO Register and Annual Test Records",
+    "category": "operational",
+    "description": "Register of Recovery Time Objective (RTO) and Recovery Point Objective (RPO) per OT system, tiered by operational criticality. Operations engineering sign-off on RTO targets (including plant reconstitution time). Annual RTO test results documenting actual vs target.",
+    "format": "Spreadsheet register + annual test report (PDF)",
+    "mandatory": true,
+    "sections": [
+      "BR-R4",
+      "SR-7.4"
+    ],
+    "controlSlugs": [
+      "ot-backup-recovery"
+    ]
+  },
+  {
+    "id": "backup-integrity-hashes",
+    "name": "OT Backup Integrity Hash Records",
+    "category": "operational",
+    "description": "SHA-256 hash records for all OT system backups, stored separately from backup media. SIS program checksum register (physical + electronic). Quarterly restore test records including hash verification result. Demonstrates integrity verification per BR-R3 and SR-3.4.",
+    "format": "Hash record database/spreadsheet + SIS physical register + quarterly test records",
+    "mandatory": true,
+    "sections": [
+      "BR-R3",
+      "SR-3.4"
+    ],
+    "controlSlugs": [
+      "ot-backup-recovery",
+      "sis-network-isolation",
+      "ot-historian-integrity"
+    ]
+  },
+  {
+    "id": "ot-personnel-security-records",
+    "name": "OT Personnel Security Records",
+    "category": "operational",
+    "description": "OT security awareness training completion records for OT personnel and SOC analysts. Background screening policy and status (individual records redacted). Joiners/movers/leavers OT access removal log demonstrating timely removal of access on departure.",
+    "format": "Training completion register (LMS export) + access removal log + screening policy",
+    "mandatory": true,
+    "sections": [
+      "PS-R3",
+      "SR-1.3"
+    ],
+    "controlSlugs": [
+      "ot-rbac-implementation",
+      "ot-physical-access-control"
+    ]
+  },
+  {
+    "id": "soc-ot-playbooks",
+    "name": "OT/SOC Interface Agreement and Playbooks",
+    "category": "operational",
+    "description": "Agreement defining SOC responsibilities for OT events: escalation path (SOC L1 -> OT security lead -> OT operations manager -> NACSA notification coordinator), and constraint (SOC does not take active response actions in OT without operations approval). OT-specific SOC playbooks per alert type.",
+    "format": "Controlled document (PDF/Word) + playbook set per alert type",
+    "mandatory": false,
+    "sections": [
+      "ML-R5",
+      "IR-R3"
+    ],
+    "controlSlugs": [
+      "ot-passive-monitoring",
+      "nacsa-incident-notification"
+    ]
+  },
+  {
+    "id": "vendor-security-assessment",
+    "name": "OT Vendor Security Assessment Records",
+    "category": "compliance",
+    "description": "Security assessment records for OT component vendors and service providers: vendor questionnaire responses, contractual OT security obligations, remote access policy sign-off, and annual vendor access reviews. Evidence for supply chain security requirements.",
+    "format": "Vendor assessment form (per vendor) + contractual clause evidence + annual review records",
+    "mandatory": false,
+    "sections": [
+      "SC-R1",
+      "SR-3.2",
+      "NACSA s18"
+    ],
+    "controlSlugs": [
+      "ot-vendor-security-assessment",
+      "ot-remote-access-gateway"
+    ]
+  },
+  {
+    "id": "session-management-config",
+    "name": "OT Session Management Configuration Evidence",
+    "category": "technical",
+    "description": "Configuration evidence for OT session timeout policy: engineering workstation timeout settings (15 min), PAM remote session timeout and termination configuration, HMI session settings with operations engineering sign-off, and concurrent session limit configuration.",
+    "format": "Configuration screenshots or exports + operations engineering sign-off",
+    "mandatory": false,
+    "sections": [
+      "IAM-R5",
+      "SR-2.5"
+    ],
+    "controlSlugs": [
+      "ot-remote-access-gateway",
+      "ot-mfa-implementation"
+    ]
+  },
+  {
+    "id": "ot-personnel-access-register",
+    "name": "OT Personnel Access Register",
+    "category": "operational",
+    "description": "Register of all personnel with access to OT systems: name, role, access rights per system, access method, date of last access review, and date of last background screening. Reviewed quarterly against HR records.",
+    "format": "Spreadsheet \u2014 access-controlled",
+    "mandatory": true,
+    "sections": [
+      "IAM-R1",
+      "IAM-R2",
+      "SR-1.3"
+    ],
+    "controlSlugs": [
+      "ot-rbac-implementation",
+      "default-credential-elimination",
+      "ot-physical-access-control"
+    ]
+  },
+  {
+    "id": "tamper-seal-inspection-register",
+    "name": "Tamper Seal Inspection Register",
+    "category": "operational",
+    "description": "Register of tamper-evident seals applied to OT equipment: seal ID, asset ID, location, application date, last inspection date, inspector name, seal status (intact/broken/replaced). Broken seals trigger security investigation. Maintained alongside maintenance visit records.",
+    "format": "Spreadsheet / inspection app + photographic baseline records",
+    "mandatory": true,
+    "sections": [
+      "PS-R2",
+      "SR-3.4"
+    ],
+    "controlSlugs": [
+      "ot-tamper-detection",
+      "ot-physical-access-control"
+    ]
+  },
+  {
+    "id": "ot-encryption-configuration",
+    "name": "OT Encryption Configuration and Certificate Register",
+    "category": "technical",
+    "description": "Configuration evidence for encryption controls across OT: TLS/IPsec settings on remote access gateways, historian replication encryption, cipher suite configuration, certificate inventory with expiry dates, and portable media encryption enforcement evidence.",
+    "format": "Configuration exports + certificate register spreadsheet + annual review records",
+    "mandatory": true,
+    "sections": [
+      "DP-R2",
+      "DP-R3",
+      "SR-4.1",
+      "SR-4.3"
+    ],
+    "controlSlugs": [
+      "ot-data-encryption",
+      "ot-remote-access-gateway"
+    ]
+  },
+  {
+    "id": "historian-access-control-evidence",
+    "name": "Historian Access Control and Integrity Evidence",
+    "category": "technical",
+    "description": "Configuration evidence for historian data integrity controls: write access restricted to SCADA data bus, RBAC configuration, access logging enabled, IDMZ proxy for IT access, bulk export controls, and anomaly detection for unexpected writes.",
+    "format": "Configuration screenshots + access log samples + RBAC matrix",
+    "mandatory": true,
+    "sections": [
+      "DP-R4",
+      "SR-3.4",
+      "SR-3.9"
+    ],
+    "controlSlugs": [
+      "ot-historian-integrity"
+    ]
+  },
+  {
+    "id": "iec-62443-fat-sat-checklist",
+    "name": "IEC 62443 Factory/Site Acceptance Test (FAT/SAT) Security Checklist",
+    "category": "operational",
+    "description": "Security verification checklist for IACS commissioning based on IEC 62443-4-1.",
+    "format": "Markdown / PDF",
+    "mandatory": true,
+    "sections": [
+      "SR-7.7"
+    ],
+    "controlSlugs": [
+      "default-credential-elimination",
+      "ot-tamper-detection"
+    ]
+  }
 ]
