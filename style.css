@@ -120,7 +120,7 @@
   padding: 1rem;
   text-align: center;
 }
-.stat-number {
+.stat-value {
   font-size: 1.75rem;
   font-weight: 700;
   font-family: var(--font-mono);
@@ -135,24 +135,23 @@
   letter-spacing: 0.05em;
 }
 
-/* ===== Cards (OT legacy) ===== */
-.card {
+/* ===== Control Cards ===== */
+.control-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.25rem;
   margin-bottom: 0.75rem;
 }
-.card-link { cursor: pointer; transition: all 0.2s; }
-.card-link:hover {
+.control-card-link { cursor: pointer; transition: all 0.2s; display: block; }
+.control-card-link:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-1px);
   border-color: var(--accent);
 }
-.card-title { font-weight: 600; font-size: 0.9375rem; margin-bottom: 0.25rem; color: var(--text-primary); }
-.card-sub { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
-.card-desc { font-size: var(--font-size-sm); color: var(--text-secondary); line-height: 1.6; }
-.card-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
+.control-card-title { font-weight: 600; font-size: 0.9375rem; margin-bottom: 0.25rem; color: var(--text-primary); }
+.control-card-desc { font-size: var(--font-size-sm); color: var(--text-secondary); line-height: 1.6; }
+.control-card-meta { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
 
 /* ===== Section Headings ===== */
 .page-title { font-size: var(--font-size-xl); font-weight: 700; margin-bottom: 0.25rem; }
@@ -233,9 +232,7 @@ tr:hover td { background: var(--surface-hover); }
   border-bottom-color: var(--accent);
 }
 
-/* ===== Incident Card ===== */
-.incident-card { border-left: 4px solid var(--danger); }
-.incident-card .card-title { color: var(--danger); }
+/* (incident-card styles merged into inline control-card usage) */
 
 /* ===== Attack Chain ===== */
 .attack-chain { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -260,8 +257,7 @@ tr:hover td { background: var(--surface-hover); }
 }
 
 /* ===== Grid Layouts ===== */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.control-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
 
 /* ===== Detail Panel ===== */
 .detail-body { font-size: 0.85rem; line-height: 1.6; }
@@ -336,7 +332,7 @@ tr:hover td { background: var(--surface-hover); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
-  .two-col, .three-col { grid-template-columns: 1fr; }
+  .control-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .header-inner { flex-direction: column; align-items: flex-start; gap: 0.5rem; }

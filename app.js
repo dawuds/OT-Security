@@ -157,63 +157,63 @@ async function renderOverview() {
   ];
 
   const sectors_html = sectors.sectors ? sectors.sectors.map(function(s) {
-    return '\
-    <div class="card card-link" onclick="navigate(\'sector/' + s.id + '\')">\
-      <div class="card-title">' + escHtml(s.name) + '</div>\
-      <div class="card-sub">' + escHtml(s.nacsaSectorLead || '') + '</div>\
-      <div class="card-tags">' + nacsaBadge(['NACSA']) + '</div>\
-    </div>';}).join('') : '';
+    return `
+    <a class="control-card control-card-link" href="#sector/${s.id}" style="text-decoration:none;color:inherit">
+      <div class="control-card-title">${escHtml(s.name)}</div>
+      <div class="control-card-desc">${escHtml(s.nacsaSectorLead || '')}</div>
+      <div class="control-card-meta">${nacsaBadge(['NACSA'])}</div>
+    </a>`;}).join('') : '';
 
-  setHTML('\
-    <div class="disclaimer">\
-      <strong>Educational use only.</strong> IEC 62443 content is paraphrased — obtain normative text from iec.ch.\
-      NACSA Act 854 references are indicative — verify against official Gazette.\
-    </div>\
-    <div class="page-title">OT Security Framework</div>\
-    <div class="page-sub">IEC 62443 · NIST SP 800-82 · MITRE ATT&amp;CK for ICS · NACSA Act 854 (Malaysia)</div>\
-    <div class="stats-banner">\
-      <div class="stat-card"><div class="stat-number">' + srCount + '</div><div class="stat-label">IEC 62443 SRs</div></div>\
-      <div class="stat-card"><div class="stat-number">' + domainCount + '</div><div class="stat-label">Security Domains</div></div>\
-      <div class="stat-card"><div class="stat-number">' + controlCount + '</div><div class="stat-label">Controls</div></div>\
-      <div class="stat-card"><div class="stat-number">' + incidentCount + '</div><div class="stat-label">Incidents</div></div>\
-      <div class="stat-card"><div class="stat-number">' + actorCount + '</div><div class="stat-label">Threat Actors</div></div>\
-      <div class="stat-card"><div class="stat-number">' + sectorCount + '</div><div class="stat-label">Sectors</div></div>\
-      <div class="stat-card"><div class="stat-number">4</div><div class="stat-label">Security Levels</div></div>\
-      <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">NACSA s26</div><div class="stat-label" style="font-size:0.6rem">hour notification</div></div>\
-    </div>\
-    <h2>Quick Start</h2>\
-    <div class="two-col" style="margin-bottom:1.5rem">' +
-      quickLinks.map(function(l) { return '\
-        <div class="card card-link" onclick="navigate(\'' + l.hash + '\')">\
-          <div class="card-title">' + escHtml(l.label) + '</div>\
-          <div class="card-desc">' + escHtml(l.desc) + '</div>\
-        </div>';}).join('') + '\
-    </div>\
-    <h2>Sectors &amp; Malaysia NCII</h2>\
-    <div class="three-col">' + sectors_html + '</div>\
-    <h2>Security Level Reference</h2>\
-    <div class="table-wrap"><table>\
-      <thead><tr><th>SL</th><th>Label</th><th>Threat Profile</th><th>Malaysia Context</th></tr></thead>\
-      <tbody>\
-        <tr class="sl-row-1"><td>' + slBadge(1) + '</td><td>Basic</td><td>Casual / opportunistic</td><td>Non-NCII OT environments</td></tr>\
-        <tr class="sl-row-2"><td>' + slBadge(2) + '</td><td>Enhanced</td><td>Motivated, generic IT skills</td><td>NCII baseline for most OT sectors</td></tr>\
-        <tr class="sl-row-3"><td>' + slBadge(3) + '</td><td>Advanced</td><td>OT-expert attacker</td><td>High-criticality NCII assets</td></tr>\
-        <tr class="sl-row-4"><td>' + slBadge(4) + '</td><td>Critical</td><td>Nation-state, SIS-targeting</td><td>Safety Instrumented Systems</td></tr>\
-      </tbody>\
-    </table></div>\
-    <h2>NACSA Act 854 Key Obligations for OT Operators</h2>\
-    <div class="table-wrap"><table>\
-      <thead><tr><th>Section</th><th>Obligation</th><th>OT Framework Response</th></tr></thead>\
-      <tbody>\
-        <tr><td><span class="badge badge-malaysia">s17</span></td><td>NCII designation</td><td>Asset inventory (SR-7.8) defines NCII asset scope</td></tr>\
-        <tr><td><span class="badge badge-malaysia">s18</span></td><td>Security measures</td><td>IEC 62443 SL 2 minimum; SL 3 for critical assets</td></tr>\
-        <tr><td><span class="badge badge-malaysia">s21</span></td><td>Risk assessment</td><td>IEC 62443-3-2 zone-based risk assessment methodology</td></tr>\
-        <tr><td><span class="badge badge-malaysia">s22</span></td><td>Code of practice</td><td>Sector COP mapping in cross-references</td></tr>\
-        <tr><td><span class="badge badge-malaysia">s23</span></td><td>Security audit</td><td>IEC 62443-3-3 SL assessment by NACSA-licensed auditor</td></tr>\
-        <tr><td><span class="badge badge-malaysia">s26</span></td><td>Incident notification</td><td><strong>6-hour</strong> initial notification + 72-hour + 30-day reports</td></tr>\
-      </tbody>\
-    </table></div>\
-  ');
+  setHTML(`
+    <div class="disclaimer">
+      <strong>Educational use only.</strong> IEC 62443 content is paraphrased — obtain normative text from iec.ch.
+      NACSA Act 854 references are indicative — verify against official Gazette.
+    </div>
+    <div class="page-title">OT Security Framework</div>
+    <div class="page-sub">IEC 62443 · NIST SP 800-82 · MITRE ATT&amp;CK for ICS · NACSA Act 854 (Malaysia)</div>
+    <div class="stats-banner">
+      <div class="stat-card"><div class="stat-value">${srCount}</div><div class="stat-label">IEC 62443 SRs</div></div>
+      <div class="stat-card"><div class="stat-value">${domainCount}</div><div class="stat-label">Security Domains</div></div>
+      <div class="stat-card"><div class="stat-value">${controlCount}</div><div class="stat-label">Controls</div></div>
+      <div class="stat-card"><div class="stat-value">${incidentCount}</div><div class="stat-label">Incidents</div></div>
+      <div class="stat-card"><div class="stat-value">${actorCount}</div><div class="stat-label">Threat Actors</div></div>
+      <div class="stat-card"><div class="stat-value">${sectorCount}</div><div class="stat-label">Sectors</div></div>
+      <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Security Levels</div></div>
+      <div class="stat-card"><div class="stat-value">6</div><div class="stat-label">NACSA s26</div><div class="stat-label" style="font-size:0.6rem">hour notification</div></div>
+    </div>
+    <h2>Quick Start</h2>
+    <div class="control-grid" style="margin-bottom:1.5rem">
+      ${quickLinks.map(l => `
+        <a class="control-card control-card-link" href="#${l.hash}" style="text-decoration:none;color:inherit">
+          <div class="control-card-title">${escHtml(l.label)}</div>
+          <div class="control-card-desc">${escHtml(l.desc)}</div>
+        </a>`).join('')}
+    </div>
+    <h2>Sectors &amp; Malaysia NCII</h2>
+    <div class="control-grid">${sectors_html}</div>
+    <h2>Security Level Reference</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>SL</th><th>Label</th><th>Threat Profile</th><th>Malaysia Context</th></tr></thead>
+      <tbody>
+        <tr class="sl-row-1"><td>${slBadge(1)}</td><td>Basic</td><td>Casual / opportunistic</td><td>Non-NCII OT environments</td></tr>
+        <tr class="sl-row-2"><td>${slBadge(2)}</td><td>Enhanced</td><td>Motivated, generic IT skills</td><td>NCII baseline for most OT sectors</td></tr>
+        <tr class="sl-row-3"><td>${slBadge(3)}</td><td>Advanced</td><td>OT-expert attacker</td><td>High-criticality NCII assets</td></tr>
+        <tr class="sl-row-4"><td>${slBadge(4)}</td><td>Critical</td><td>Nation-state, SIS-targeting</td><td>Safety Instrumented Systems</td></tr>
+      </tbody>
+    </table></div>
+    <h2>NACSA Act 854 Key Obligations for OT Operators</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Section</th><th>Obligation</th><th>OT Framework Response</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-malaysia">s17</span></td><td>NCII designation</td><td>Asset inventory (SR-7.8) defines NCII asset scope</td></tr>
+        <tr><td><span class="badge badge-malaysia">s18</span></td><td>Security measures</td><td>IEC 62443 SL 2 minimum; SL 3 for critical assets</td></tr>
+        <tr><td><span class="badge badge-malaysia">s21</span></td><td>Risk assessment</td><td>IEC 62443-3-2 zone-based risk assessment methodology</td></tr>
+        <tr><td><span class="badge badge-malaysia">s22</span></td><td>Code of practice</td><td>Sector COP mapping in cross-references</td></tr>
+        <tr><td><span class="badge badge-malaysia">s23</span></td><td>Security audit</td><td>IEC 62443-3-3 SL assessment by NACSA-licensed auditor</td></tr>
+        <tr><td><span class="badge badge-malaysia">s26</span></td><td>Incident notification</td><td><strong>6-hour</strong> initial notification + 72-hour + 30-day reports</td></tr>
+      </tbody>
+    </table></div>
+  `);
 }
 
 
@@ -270,9 +270,9 @@ async function renderIecOverview() {
   const conceptsHtml = data.keyConceptSummary ? Object.entries(data.keyConceptSummary).map(function(e) {
     var k = e[0], v = e[1];
     var desc = typeof v === 'string' ? v : (v.definition || JSON.stringify(v));
-    return '<div class="card">\
-      <div class="card-title">' + escHtml(k.toUpperCase()) + '</div>\
-      <div class="card-desc">' + escHtml(desc) + '</div></div>';
+    return '<div class="control-card">\
+      <div class="control-card-title">' + escHtml(k.toUpperCase()) + '</div>\
+      <div class="control-card-desc">' + escHtml(desc) + '</div></div>';
   }).join('') : '';
 
   var malaysiaNexusHtml = '';
@@ -280,7 +280,7 @@ async function renderIecOverview() {
     var nexusText = typeof data.malaysiaNexus === 'string' ? data.malaysiaNexus : (data.malaysiaNexus.summary || '');
     malaysiaNexusHtml = '\
     <h2>Malaysia NCII Nexus</h2>\
-    <div class="card"><div class="card-desc">' + escHtml(nexusText) + '</div></div>';
+    <div class="control-card"><div class="control-card-desc">' + escHtml(nexusText) + '</div></div>';
   }
 
   return '\
@@ -293,18 +293,18 @@ async function renderIecOverview() {
       <tbody>' + seriesHtml + '</tbody>\
     </table></div>\
     <h2>Key Concepts</h2>\
-    <div class="two-col">' + conceptsHtml + '</div>' + malaysiaNexusHtml;
+    <div class="control-grid">' + conceptsHtml + '</div>' + malaysiaNexusHtml;
 }
 
 async function renderIecSL() {
   const data = await load('standards/iec62443/security-levels.json');
   const levelsHtml = data.levels ? data.levels.map(function(sl) { return '\
-    <div class="card">\
+    <div class="control-card">\
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">' +
         slBadge(sl.sl) + ' ' + slDots(sl.sl) +
-        '<span class="card-title" style="margin:0">' + escHtml(sl.label) + '</span>\
+        '<span class="control-card-title" style="margin:0">' + escHtml(sl.label) + '</span>\
       </div>\
-      <div class="card-desc">' + escHtml(sl.shortDescription || sl.description || '') + '</div>\
+      <div class="control-card-desc">' + escHtml(sl.shortDescription || sl.description || '') + '</div>\
       <div class="detail-section" style="margin-top:0.75rem">\
         <div style="font-size:0.75rem;color:var(--text-secondary)"><strong>Threat Profile:</strong> ' + escHtml(sl.threatProfile || '') + '</div>\
         <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.25rem"><strong>Malaysia Context:</strong> ' + escHtml(sl.malaysiaContext || '') + '</div>' +
@@ -315,22 +315,22 @@ async function renderIecSL() {
 
   return '\
     <h2>Security Level Definitions</h2>\
-    <div class="two-col">' + levelsHtml + '</div>' +
+    <div class="control-grid">' + levelsHtml + '</div>' +
     (data.slTargetingProcess ? '\
       <h2>SL Targeting Process (IEC 62443-3-2)</h2>\
-      <div class="card-desc" style="margin-bottom:0.75rem">' + escHtml(data.slTargetingProcess.description || '') + '</div>\
+      <div class="control-card-desc" style="margin-bottom:0.75rem">' + escHtml(data.slTargetingProcess.description || '') + '</div>\
       <div class="attack-chain">' + (data.slTargetingProcess.steps || []).map(function(step) { return '<div class="attack-step"><strong>Step ' + step.step + ':</strong> ' + escHtml(step.action) + '</div>';}).join('') + '</div>' : '');
 }
 
 async function renderIecFR() {
   const data = await load('standards/iec62443/foundational-requirements.json');
   const frsHtml = data.foundationalRequirements ? data.foundationalRequirements.map(function(fr) { return '\
-    <div class="card">\
+    <div class="control-card">\
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">\
         <span class="badge badge-sl2">' + escHtml(fr.id) + '</span>\
-        <span class="card-title" style="margin:0">' + escHtml(fr.name) + '</span>\
+        <span class="control-card-title" style="margin:0">' + escHtml(fr.name) + '</span>\
       </div>\
-      <div class="card-desc">' + escHtml(fr.description) + '</div>\
+      <div class="control-card-desc">' + escHtml(fr.description) + '</div>\
       <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.5rem">' + escHtml(fr.rationale || '') + '</div>\
       <div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.35rem">\
         <span class="tag">SRs: ' + escHtml(fr.srRange || '') + '</span>\
@@ -343,7 +343,7 @@ async function renderIecFR() {
   return '\
     <h2>7 Foundational Requirements (FRs)</h2>\
     <div class="page-sub">The 7 FRs define the security property categories. Each FR contains multiple System Requirements (SRs).</div>\
-    <div class="two-col">' + frsHtml + '</div>';
+    <div class="control-grid">' + frsHtml + '</div>';
 }
 
 async function renderIecSR() {
@@ -364,7 +364,7 @@ async function renderIecSR() {
     <div class="table-wrap"><table>\
       <thead><tr><th>SR</th><th>Name</th><th>SL1</th><th>SL2</th><th>SL3</th><th>SL4</th><th>NACSA</th></tr></thead>\
       <tbody>' + srs.map(function(sr) { return '\
-        <tr class="card-link" onclick="showSRDetail(' + JSON.stringify(JSON.stringify(sr)).slice(1,-1).replace(/'/g,'&#39;') + ')" style="cursor:pointer">\
+        <tr class="control-card-link" onclick="showSRDetail(' + JSON.stringify(JSON.stringify(sr)).slice(1,-1).replace(/'/g,'&#39;') + ')" style="cursor:pointer">\
           <td><strong>' + escHtml(sr.id) + '</strong></td>\
           <td>' + escHtml(sr.name) + '</td>\
           <td style="text-align:center">' + (sr.sl1 ? '●' : '○') + '</td>\
@@ -387,14 +387,14 @@ window.showSRDetail = function(srJson) {
     var panel = document.getElementById('sr-detail-panel');
     if (!panel) return;
     panel.innerHTML = '\
-      <div class="card" style="border-color:var(--accent);margin-bottom:1.5rem">\
+      <div class="control-card" style="border-color:var(--accent);margin-bottom:1.5rem">\
         <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem">\
           <span class="badge badge-sl2">' + escHtml(sr.id) + '</span>\
-          <span class="card-title" style="margin:0">' + escHtml(sr.name) + '</span>\
+          <span class="control-card-title" style="margin:0">' + escHtml(sr.name) + '</span>\
           <button onclick="document.getElementById(\'sr-detail-panel\').innerHTML=\'\'" style="margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem">X</button>\
         </div>\
-        <div class="card-desc">' + escHtml(sr.description || '') + '</div>\
-        <div class="two-col" style="margin-top:1rem">' +
+        <div class="control-card-desc">' + escHtml(sr.description || '') + '</div>\
+        <div class="control-grid" style="margin-top:1rem">' +
           [1,2,3,4].map(function(l) { return '\
             <div>\
               <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.25rem">' + slBadge(l) + '</div>\
@@ -402,7 +402,7 @@ window.showSRDetail = function(srJson) {
             </div>';}).join('') + '\
         </div>' +
         (sr.otConsiderations ? '<div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--text-secondary)"><strong>OT Considerations:</strong> ' + escHtml(sr.otConsiderations) + '</div>' : '') + '\
-        <div class="card-tags" style="margin-top:0.75rem">' +
+        <div class="control-card-meta" style="margin-top:0.75rem">' +
           (sr.nacsa ? sr.nacsa.map(function(n){return '<span class="badge badge-malaysia">'+escHtml(n)+'</span>';}).join('') : '') +
           (sr.nistCsf ? sr.nistCsf.map(function(n){return '<span class="tag">'+escHtml(n)+'</span>';}).join('') : '') +
           (sr.mitreAttackIcs ? sr.mitreAttackIcs.map(function(m){return '<span class="tag" style="color:var(--danger)">'+escHtml(m)+'</span>';}).join('') : '') + '\
@@ -416,9 +416,9 @@ async function renderNist() {
   const data = await load('standards/nist-800-82/index.json');
   // data.chapters[].keyContent (not .summary)
   const chapHtml = data.chapters ? data.chapters.map(function(c) { return '\
-    <div class="card">\
-      <div class="card-title">Chapter ' + escHtml(String(c.chapter)) + ' — ' + escHtml(c.title) + '</div>\
-      <div class="card-desc">' + escHtml(c.keyContent || c.summary || '') + '</div>' +
+    <div class="control-card">\
+      <div class="control-card-title">Chapter ' + escHtml(String(c.chapter)) + ' — ' + escHtml(c.title) + '</div>\
+      <div class="control-card-desc">' + escHtml(c.keyContent || c.summary || '') + '</div>' +
       (c.keyTopics ? tagList(c.keyTopics) : '') +
     '</div>';}).join('') : '';
 
@@ -428,8 +428,8 @@ async function renderNist() {
     <div class="detail-body" style="margin-bottom:1rem">' + escHtml(data.scope || data.overview || '') + '</div>' +
     (data.keyChangesRev3 ? '<h2>Key Changes in Rev 3</h2><div class="attack-chain">' + data.keyChangesRev3.map(function(c){return '<div class="attack-step">'+escHtml(c)+'</div>';}).join('') + '</div>' : '') + '\
     <h2>Chapters</h2>\
-    <div class="two-col">' + chapHtml + '</div>' +
-    (data.relationToIEC62443 ? '<h2>Relation to IEC 62443</h2><div class="card"><div class="card-desc">' + escHtml(data.relationToIEC62443) + '</div></div>' : '');
+    <div class="control-grid">' + chapHtml + '</div>' +
+    (data.relationToIEC62443 ? '<h2>Relation to IEC 62443</h2><div class="control-card"><div class="control-card-desc">' + escHtml(data.relationToIEC62443) + '</div></div>' : '');
 }
 
 async function renderMitre() {
@@ -439,9 +439,9 @@ async function renderMitre() {
   ]);
 
   const tacticsHtml = idx.tactics ? idx.tactics.map(function(t) { return '\
-    <div class="card">\
-      <div class="card-title">' + escHtml(t.id) + ' — ' + escHtml(t.name) + '</div>\
-      <div class="card-desc">' + escHtml(t.description || '') + '</div>\
+    <div class="control-card">\
+      <div class="control-card-title">' + escHtml(t.id) + ' — ' + escHtml(t.name) + '</div>\
+      <div class="control-card-desc">' + escHtml(t.description || '') + '</div>\
     </div>';}).join('') : '';
 
   const techsHtml = techniques.techniques ? techniques.techniques.map(function(t) { return '\
@@ -465,7 +465,7 @@ async function renderMitre() {
     <h2>MITRE ATT&amp;CK for ICS</h2>\
     <div class="detail-body" style="margin-bottom:1rem">' + escHtml(idx.description || idx.overview || '') + '</div>\
     <h2>Tactics (' + (idx.tactics ? idx.tactics.length : 0) + ')</h2>\
-    <div class="three-col">' + tacticsHtml + '</div>' +
+    <div class="control-grid">' + tacticsHtml + '</div>' +
     (incidentsHtml ? '\
     <h2>Known Incident Mappings</h2>\
     <div class="table-wrap"><table>\
@@ -506,28 +506,35 @@ async function renderControls(sub) {
   var html = Object.entries(grouped).map(function(e) {
     var domId = e[0], ctrls = e[1];
     var domainInfo = domainMap[domId];
-    return '<h2 style="margin-top:1.25rem">' + escHtml(domainInfo ? domainInfo.name : domId) + '</h2>\
-    <div class="control-grid">' + ctrls.map(function(c) { return '\
-      <div class="control-card" onclick="navigate(\'control/' + c.slug + '\')">\
-        <div class="control-card-header">\
-          <span class="control-id">' + escHtml(c.slug) + '</span>' +
-          typeBadge(c.type) +
-        '</div>\
-        <h3 class="control-card-title">' + escHtml(c.name) + '</h3>\
-        <p class="control-card-desc">' + escHtml(c.description || '') + '</p>\
-        <div class="control-card-meta">' +
-          slBadge(c.slMin) +
-          (c.nacsa ? c.nacsa.map(function(n){return '<span class="badge badge-malaysia">'+escHtml(n)+'</span>';}).join('') : '') +
-          (c.nistCsf ? c.nistCsf.slice(0,2).map(function(n){return '<span class="tag">'+escHtml(n)+'</span>';}).join('') : '') +
-        '</div>\
-      </div>';}).join('') +
-    '</div>';
+    return `
+          <div class="accordion-item">
+            <button class="accordion-trigger" data-accordion>
+              <span class="accordion-trigger-left">
+                <span>${escHtml(domainInfo ? domainInfo.name : domId)}</span>
+                <span style="color:var(--text-muted);font-weight:400;font-size:0.8125rem">(${ctrls.length})</span>
+              </span>
+              <span class="chevron">\u25B6</span>
+            </button>
+            <div class="accordion-content">
+              <p style="font-size:0.8125rem;color:var(--text-secondary);margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border)">${escHtml(domainInfo ? domainInfo.description || '' : '')}</p>
+              <ul class="clause-list">
+                ${ctrls.map(function(c) { return `
+                  <li><a class="clause-link" href="#control/${c.slug}">
+                    <span class="clause-title">${escHtml(c.name)}</span>
+                    ${typeBadge(c.type)}
+                    <span style="font-size:0.75rem;color:var(--text-muted)">SL ${c.slMin || '—'}</span>
+                  </a></li>`;}).join('')}
+              </ul>
+            </div>
+          </div>`;
   }).join('');
 
-  setHTML('\
-    <div class="page-title">Controls</div>\
-    <div class="page-sub">' + allControls.length + ' controls · IEC 62443 · NACSA Act 854 · NIST CSF 2.0 mapped</div>' +
-    html
+  setHTML(`
+    <div class="page-title">Controls</div>
+    <div class="page-sub">${allControls.length} controls · IEC 62443 · NACSA Act 854 · NIST CSF 2.0 mapped</div>
+    <div class="accordion">
+      ${html}
+    </div>`
   );
 }
 
@@ -702,20 +709,20 @@ async function renderIncidents() {
 
   // Fields: id, name, year, sector, country, attribution, summary, attackChain, physicalConsequence, detectability, preventiveControls, iec62443SRs
   return incidents.map(function(inc) { return '\
-    <div class="card incident-card" style="margin-bottom:1rem">\
+    <div class="control-card" style="margin-bottom:1rem;border-left:4px solid var(--danger)">\
       <div style="display:flex;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem">\
         <div>\
-          <div class="card-title" style="font-size:1rem">' + escHtml(inc.name) + '</div>\
-          <div class="card-sub">' + escHtml(String(inc.year || '')) + ' · ' + escHtml(inc.sector || '') + ' · ' + escHtml(inc.country || '') + '</div>\
+          <div class="control-card-title" style="font-size:1rem;color:var(--danger)">' + escHtml(inc.name) + '</div>\
+          <div class="control-card-desc">' + escHtml(String(inc.year || '')) + ' · ' + escHtml(inc.sector || '') + ' · ' + escHtml(inc.country || '') + '</div>\
         </div>\
       </div>\
       <div class="detail-body" style="margin-bottom:0.75rem">' + escHtml(inc.summary || '') + '</div>' +
-      (inc.physicalConsequence ? '<div class="card" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);margin-bottom:0.75rem"><div style="font-size:0.75rem;font-weight:700;color:var(--danger);text-transform:uppercase;margin-bottom:0.25rem">Physical Consequence</div><div style="font-size:0.85rem">' + escHtml(inc.physicalConsequence) + '</div></div>' : '') +
+      (inc.physicalConsequence ? '<div class="control-card" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);margin-bottom:0.75rem"><div style="font-size:0.75rem;font-weight:700;color:var(--danger);text-transform:uppercase;margin-bottom:0.25rem">Physical Consequence</div><div style="font-size:0.85rem">' + escHtml(inc.physicalConsequence) + '</div></div>' : '') +
       (inc.detectability ? '<div style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)"><strong>Detectability:</strong> ' + escHtml(inc.detectability) + '</div>' : '') +
       (inc.attackChain ? '<h3 style="margin-bottom:0.5rem">Attack Chain</h3><div class="attack-chain" style="margin-bottom:0.75rem">' + inc.attackChain.map(function(step){return '<div class="attack-step"><strong>' + escHtml(step.stage) + ':</strong> ' + (step.technique ? '<span class="tag" style="color:var(--danger);margin:0 0.35rem">' + escHtml(step.technique) + '</span>' : '') + escHtml(step.description || '') + '</div>';}).join('') + '</div>' : '') +
       (inc.preventiveControls ? '<h3 style="margin-bottom:0.5rem">Preventive Controls</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.5rem;margin-bottom:0.75rem">' + inc.preventiveControls.map(function(pc){return '<div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.8rem"><strong style="color:var(--success)">' + escHtml(pc.control || pc) + '</strong>' + (pc.howItHelps ? '<div style="color:var(--text-secondary);margin-top:0.25rem">' + escHtml(pc.howItHelps) + '</div>' : '') + '</div>';}).join('') + '</div>' : '') +
       (inc.keyLesson ? '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.85rem"><strong style="color:var(--warning)">Key Lesson:</strong> ' + escHtml(inc.keyLesson) + '</div>' : '') +
-      (inc.iec62443SRs ? '<div class="card-tags" style="margin-top:0.75rem">' + inc.iec62443SRs.map(function(s){return '<span class="badge badge-sl2">'+escHtml(s)+'</span>';}).join('') + '</div>' : '') +
+      (inc.iec62443SRs ? '<div class="control-card-meta" style="margin-top:0.75rem">' + inc.iec62443SRs.map(function(s){return '<span class="badge badge-sl2">'+escHtml(s)+'</span>';}).join('') + '</div>' : '') +
     '</div>';}).join('');
 }
 
@@ -727,21 +734,21 @@ async function renderActors() {
   return actors.map(function(a) {
     var slRef = a.iec62443SLReference || 2;
     return '\
-    <div class="card" style="margin-bottom:0.75rem;border-left:3px solid var(--accent)">\
+    <div class="control-card" style="margin-bottom:0.75rem;border-left:3px solid var(--accent)">\
       <div style="display:flex;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.5rem">\
         <div>\
-          <div class="card-title">' + escHtml(a.name) + (a.alternateNames ? ' <span style="font-size:0.75rem;color:var(--text-muted)">(' + a.alternateNames.join(', ') + ')</span>' : '') + '</div>\
-          <div class="card-sub">' + escHtml(a.attribution || '') + '</div>\
+          <div class="control-card-title">' + escHtml(a.name) + (a.alternateNames ? ' <span style="font-size:0.75rem;color:var(--text-muted)">(' + a.alternateNames.join(', ') + ')</span>' : '') + '</div>\
+          <div class="control-card-desc">' + escHtml(a.attribution || '') + '</div>\
         </div>\
         <div style="margin-left:auto;display:flex;gap:0.35rem;flex-wrap:wrap">' +
           slBadge(slRef) +
           '<span class="tag">' + escHtml(a.actorType || '') + '</span>' +
         '</div>\
       </div>\
-      <div class="card-desc">' + escHtml(a.capability || '') + '</div>' +
+      <div class="control-card-desc">' + escHtml(a.capability || '') + '</div>' +
       '<div style="font-size:0.8rem;margin-top:0.5rem"><strong>Objective:</strong> ' + escHtml(a.primaryObjective || '') + '</div>' +
       (a.demonstratedCapability ? '<div style="margin-top:0.5rem"><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem">Demonstrated Capability</div><ul style="font-size:0.8rem;padding-left:1.25rem;margin:0">' + a.demonstratedCapability.map(function(d){return '<li>'+escHtml(d)+'</li>';}).join('') + '</ul></div>' : '') +
-      '<div class="two-col" style="margin-top:0.75rem">' +
+      '<div class="control-grid" style="margin-top:0.75rem">' +
         (a.sectors ? '<div><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem">Targeted Sectors</div>' + tagList(a.sectors) + '</div>' : '') +
         (a.primaryTechniques ? '<div><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem">Primary Techniques</div>' + tagList(a.primaryTechniques) + '</div>' : '') +
       '</div>' +
@@ -757,21 +764,21 @@ async function renderSectors(sub) {
   const sectors = data.sectors || [];
 
   const html = sectors.map(function(s) {
-    return '\
-    <div class="card card-link" onclick="navigate(\'sector/' + s.id + '\')">\
-      <div class="card-title">' + escHtml(s.name) + '</div>\
-      <div class="card-sub">NACSA Sector: ' + escHtml(String(s.nacsaSectorNumber || '')) + ' · Lead: ' + escHtml(s.nacsaSectorLead || '') + '</div>\
-      <div class="card-desc">' + escHtml((s.description || '').substring(0, 200)) + (s.description && s.description.length > 200 ? '...' : '') + '</div>\
-      <div class="card-tags">\
-        <span class="badge badge-malaysia">Act 854</span>' +
-        (s.keyOtRisks ? s.keyOtRisks.slice(0,2).map(function(r){return '<span class="tag">'+escHtml(r)+'</span>';}).join('') : '') +
-      '</div>\
-    </div>';}).join('');
+    return `
+    <a class="control-card control-card-link" href="#sector/${s.id}" style="text-decoration:none;color:inherit">
+      <div class="control-card-title">${escHtml(s.name)}</div>
+      <div class="control-card-desc">NACSA Sector: ${escHtml(String(s.nacsaSectorNumber || ''))} · Lead: ${escHtml(s.nacsaSectorLead || '')}</div>
+      <div class="control-card-desc">${escHtml((s.description || '').substring(0, 200))}${s.description && s.description.length > 200 ? '...' : ''}</div>
+      <div class="control-card-meta">
+        <span class="badge badge-malaysia">Act 854</span>
+        ${(s.keyOtRisks ? s.keyOtRisks.slice(0,2).map(function(r){return '<span class="tag">'+escHtml(r)+'</span>';}).join('') : '')}
+      </div>
+    </a>`;}).join('');
 
-  setHTML('\
-    <div class="page-title">Sectors</div>\
-    <div class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</div>\
-    <div class="two-col">' + html + '</div>'
+  setHTML(`
+    <div class="page-title">Sectors</div>
+    <div class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</div>
+    <div class="control-grid">${html}</div>`
   );
 }
 
@@ -789,16 +796,16 @@ async function renderSectorById(id) {
     <nav class="breadcrumbs"><a href="#sectors">Sectors</a><span class="sep">/</span><span class="current">' + escHtml(sector.name) + '</span></nav>\
     <div class="page-title">' + escHtml(sector.name) + '</div>\
     <div class="page-sub">NACSA Sector: ' + escHtml(String(sector.nacsaSectorNumber || '')) + ' · Lead Agency: ' + escHtml(sector.nacsaSectorLead || '') + '</div>\
-    <div class="card" style="margin-bottom:1rem"><div class="card-desc">' + escHtml(sector.description || '') + '</div></div>\
-    <div class="two-col">\
-      <div class="card"><h3>OT Environments</h3>' + tagList(sector.otEnvironments || []) + '</div>\
-      <div class="card"><h3>Primary Standards</h3>' + tagList(sector.primaryStandards || []) + '</div>\
+    <div class="control-card" style="margin-bottom:1rem"><div class="control-card-desc">' + escHtml(sector.description || '') + '</div></div>\
+    <div class="control-grid">\
+      <div class="control-card"><h3>OT Environments</h3>' + tagList(sector.otEnvironments || []) + '</div>\
+      <div class="control-card"><h3>Primary Standards</h3>' + tagList(sector.primaryStandards || []) + '</div>\
     </div>\
-    <div class="two-col" style="margin-top:0.75rem">\
-      <div class="card"><h3>Key OT Risks</h3><ul style="padding-left:1.25rem;font-size:0.8rem">' + (sector.keyOtRisks || []).map(function(r){return '<li style="margin-bottom:0.25rem">'+escHtml(r)+'</li>';}).join('') + '</ul></div>\
-      <div class="card"><h3>SL-T by Zone</h3><div class="table-wrap" style="margin:0"><table><thead><tr><th>Zone</th><th>SL Target</th></tr></thead><tbody>' + slZoneHtml + '</tbody></table></div></div>\
+    <div class="control-grid" style="margin-top:0.75rem">\
+      <div class="control-card"><h3>Key OT Risks</h3><ul style="padding-left:1.25rem;font-size:0.8rem">' + (sector.keyOtRisks || []).map(function(r){return '<li style="margin-bottom:0.25rem">'+escHtml(r)+'</li>';}).join('') + '</ul></div>\
+      <div class="control-card"><h3>SL-T by Zone</h3><div class="table-wrap" style="margin:0"><table><thead><tr><th>Zone</th><th>SL Target</th></tr></thead><tbody>' + slZoneHtml + '</tbody></table></div></div>\
     </div>' +
-    (sector.nacsaCopReference ? '<div class="card" style="margin-top:0.75rem;border-color:var(--accent)"><h3>NACSA Code of Practice Reference</h3><div class="detail-body">' + escHtml(sector.nacsaCopReference) + '</div></div>' : '') +
+    (sector.nacsaCopReference ? '<div class="control-card" style="margin-top:0.75rem;border-color:var(--accent)"><h3>NACSA Code of Practice Reference</h3><div class="detail-body">' + escHtml(sector.nacsaCopReference) + '</div></div>' : '') +
     (sector.regulatoryOverlap ? '<h2 style="margin-top:1rem">Regulatory Overlap</h2><div class="attack-chain">' + (Array.isArray(sector.regulatoryOverlap) ? sector.regulatoryOverlap.map(function(r){return '<div class="attack-step">'+escHtml(r)+'</div>';}).join('') : '<div class="attack-step">' + escHtml(String(sector.regulatoryOverlap)) + '</div>') + '</div>' : '')
   );
 }
@@ -834,24 +841,24 @@ async function renderPurdue() {
   if (!data.levels) return '<div class="empty-state"><div class="empty-state-text">No data</div></div>';
 
   const levelsHtml = data.levels.map(function(l) { return '\
-    <div class="card" style="border-left:3px solid var(--accent2)">\
+    <div class="control-card" style="border-left:3px solid var(--accent2)">\
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">\
         <span class="badge badge-sl2">Level ' + escHtml(String(l.level)) + '</span>\
-        <span class="card-title" style="margin:0">' + escHtml(l.name) + '</span>' +
+        <span class="control-card-title" style="margin:0">' + escHtml(l.name) + '</span>' +
         (l.securityCharacteristics && l.securityCharacteristics.targetSL ? slBadge(l.securityCharacteristics.targetSL) : '') +
       '</div>\
-      <div class="card-desc">' + escHtml(l.description || '') + '</div>' +
+      <div class="control-card-desc">' + escHtml(l.description || '') + '</div>' +
       (l.typicalComponents ? '<div style="margin-top:0.75rem"><div style="font-size:0.7rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.35rem">Typical Components</div>' + tagList(l.typicalComponents.map(function(c){return typeof c === 'string' ? c : c.type || c.name || JSON.stringify(c);})) + '</div>' : '') +
       (l.securityCharacteristics ? '<div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text-secondary)"><div><strong>Primary Controls:</strong> ' + escHtml((l.securityCharacteristics.primaryControls || []).join(', ')) + '</div><div style="margin-top:0.25rem"><strong>Key Vulnerabilities:</strong> ' + escHtml(Array.isArray(l.securityCharacteristics.vulnerabilities) ? l.securityCharacteristics.vulnerabilities.join(', ') : (l.securityCharacteristics.vulnerabilities || '')) + '</div></div>' : '') +
     '</div>';}).join('');
 
   return '\
     <h2>Purdue Model — Levels 0-5</h2>\
-    <div class="card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)">\
-      <div class="card-title">IDMZ — Industrial Demilitarized Zone (Level 3.5)</div>\
-      <div class="card-desc">The IDMZ is the critical architectural element separating OT (Levels 0-3) from IT (Level 4+).</div>\
+    <div class="control-card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)">\
+      <div class="control-card-title">IDMZ — Industrial Demilitarized Zone (Level 3.5)</div>\
+      <div class="control-card-desc">The IDMZ is the critical architectural element separating OT (Levels 0-3) from IT (Level 4+).</div>\
     </div>\
-    <div class="two-col">' + levelsHtml + '</div>';
+    <div class="control-grid">' + levelsHtml + '</div>';
 }
 
 async function renderZones() {
@@ -860,32 +867,32 @@ async function renderZones() {
   const zonesHtml = data.referenceZones ? data.referenceZones.map(function(z) {
     var slNum = String(z.slTarget || z.targetSL || 2);
     return '\
-    <div class="card">\
+    <div class="control-card">\
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap">\
         <span class="badge badge-sl' + slNum + '">' + escHtml(z.id) + '</span> ' +
         slBadge(z.slTarget || z.targetSL) + ' ' + slDots(z.slTarget || z.targetSL) +
-        '<span class="card-title" style="margin:0">' + escHtml(z.name) + '</span>\
+        '<span class="control-card-title" style="margin:0">' + escHtml(z.name) + '</span>\
       </div>\
-      <div class="card-desc">' + escHtml(z.description || '') + '</div>' +
+      <div class="control-card-desc">' + escHtml(z.description || '') + '</div>' +
       (z.typicalAssets ? '<div style="margin-top:0.5rem">' + tagList(z.typicalAssets) + '</div>' : '') +
       (z.keyControls ? '<div style="margin-top:0.5rem"><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem">Key Controls</div>' + tagList(z.keyControls) + '</div>' : '') +
       (z.nacsaRelevance ? '<div style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-secondary)"><strong>NACSA:</strong> ' + escHtml(z.nacsaRelevance) + '</div>' : '') +
     '</div>';}).join('') : '';
 
   const conduitsHtml = data.referenceConduits ? data.referenceConduits.map(function(c) { return '\
-    <div class="card">\
-      <div class="card-title">' + escHtml(c.id) + ' — ' + escHtml(c.name) + '</div>\
-      <div class="card-sub">' + escHtml(c.from) + ' → ' + escHtml(c.to) + ' · Min SL: ' + slBadge(c.slRequired) + '</div>\
-      <div class="card-desc">' + escHtml(c.description || '') + '</div>' +
+    <div class="control-card">\
+      <div class="control-card-title">' + escHtml(c.id) + ' — ' + escHtml(c.name) + '</div>\
+      <div class="control-card-desc">' + escHtml(c.from) + ' → ' + escHtml(c.to) + ' · Min SL: ' + slBadge(c.slRequired) + '</div>\
+      <div class="control-card-desc">' + escHtml(c.description || '') + '</div>' +
       (c.permittedFlows ? '<div style="margin-top:0.5rem"><span style="font-size:0.7rem;color:var(--success)">Permitted:</span> ' + tagList(c.permittedFlows) + '</div>' : '') +
       (c.prohibitedFlows ? '<div style="margin-top:0.35rem"><span style="font-size:0.7rem;color:var(--danger)">Prohibited:</span> ' + tagList(c.prohibitedFlows) + '</div>' : '') +
     '</div>';}).join('') : '';
 
   return '\
     <h2>Reference Zones</h2>\
-    <div class="two-col">' + zonesHtml + '</div>\
+    <div class="control-grid">' + zonesHtml + '</div>\
     <h2 style="margin-top:1.5rem">Reference Conduits</h2>\
-    <div class="two-col">' + conduitsHtml + '</div>';
+    <div class="control-grid">' + conduitsHtml + '</div>';
 }
 
 async function renderAssets() {
@@ -893,10 +900,10 @@ async function renderAssets() {
   if (!data.assetTypes) return '<div class="empty-state"><div class="empty-state-text">No data</div></div>';
 
   const assetHtml = data.assetTypes.map(function(a) { return '\
-    <div class="card">\
+    <div class="control-card">\
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">\
         <span class="badge badge-sl2">' + escHtml(a.id) + '</span>\
-        <span class="card-title" style="margin:0">' + escHtml(a.name) + '</span>\
+        <span class="control-card-title" style="margin:0">' + escHtml(a.name) + '</span>\
       </div>' +
       (a.purdueLevel ? '<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem">Purdue Level ' + escHtml(String(a.purdueLevel)) + '</div>' : '') +
       (a.vendors ? '<div style="margin-top:0.5rem"><span style="font-size:0.7rem;color:var(--text-muted)">Vendors:</span> ' + tagList(a.vendors) + '</div>' : '') +
@@ -907,7 +914,7 @@ async function renderAssets() {
   return '\
     <h2>OT Asset Type Profiles</h2>\
     <div class="page-sub">Security profiles for each OT asset category.</div>\
-    <div class="three-col">' + assetHtml + '</div>';
+    <div class="control-grid">' + assetHtml + '</div>';
 }
 
 
@@ -945,11 +952,11 @@ async function renderRiskMethodology() {
 
   var dimHtml = '';
   if (data.impactDimensions && data.impactDimensions.dimensions) {
-    dimHtml = '<h2>Impact Dimensions</h2><div class="two-col">' + data.impactDimensions.dimensions.map(function(d) { return '\
-      <div class="card">\
-        <div class="card-title">' + escHtml(d.name) + '</div>\
-        <div class="card-sub">Weight: ' + escHtml(d.weight || '') + '</div>\
-        <div class="card-desc">' + escHtml(d.description || '') + '</div>' +
+    dimHtml = '<h2>Impact Dimensions</h2><div class="control-grid">' + data.impactDimensions.dimensions.map(function(d) { return '\
+      <div class="control-card">\
+        <div class="control-card-title">' + escHtml(d.name) + '</div>\
+        <div class="control-card-desc">Weight: ' + escHtml(d.weight || '') + '</div>\
+        <div class="control-card-desc">' + escHtml(d.description || '') + '</div>' +
         (d.examples ? tagList(d.examples) : '') +
       '</div>';}).join('') + '</div>';
   }
@@ -964,8 +971,8 @@ async function renderRiskMethodology() {
   return '\
     <div class="disclaimer">' + escHtml(data.verificationNote || '') + '</div>\
     <h2>' + escHtml(data.title || 'Risk Assessment Methodology') + '</h2>\
-    <div class="card" style="margin-bottom:1rem"><div class="card-desc">' + escHtml(data.description || '') + '</div></div>' +
-    (data.keyPrinciple ? '<div class="card" style="border-color:var(--warning);margin-bottom:1rem"><div class="card-desc"><strong>Key Principle:</strong> ' + escHtml(data.keyPrinciple) + '</div></div>' : '') +
+    <div class="control-card" style="margin-bottom:1rem"><div class="control-card-desc">' + escHtml(data.description || '') + '</div></div>' +
+    (data.keyPrinciple ? '<div class="control-card" style="border-color:var(--warning);margin-bottom:1rem"><div class="control-card-desc"><strong>Key Principle:</strong> ' + escHtml(data.keyPrinciple) + '</div></div>' : '') +
     (data.standardsAlignment ? '<div style="margin-bottom:1rem">' + tagList(data.standardsAlignment) + '</div>' : '') +
     dimHtml +
     processHtml;
@@ -1000,10 +1007,10 @@ async function renderRiskMatrix() {
 
   var bandsHtml = '';
   if (data.bands && data.bands.length) {
-    bandsHtml = '<h2>Risk Band Actions</h2><div class="two-col">' + data.bands.map(function(b) { return '\
-      <div class="card" style="border-left:3px solid ' + (b.color || '#ccc') + '">\
-        <div class="card-title">' + escHtml(b.band) + ' (' + escHtml(b.scoreRange || '') + ')</div>\
-        <div class="card-desc">' + escHtml(b.action || '') + '</div>\
+    bandsHtml = '<h2>Risk Band Actions</h2><div class="control-grid">' + data.bands.map(function(b) { return '\
+      <div class="control-card" style="border-left:3px solid ' + (b.color || '#ccc') + '">\
+        <div class="control-card-title">' + escHtml(b.band) + ' (' + escHtml(b.scoreRange || '') + ')</div>\
+        <div class="control-card-desc">' + escHtml(b.action || '') + '</div>\
         <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.35rem">Review: ' + escHtml(b.reviewCadence || '') + ' · Escalation: ' + escHtml(b.escalation || '') + '</div>' +
         (b.otNote ? '<div style="font-size:0.75rem;color:var(--warning);margin-top:0.25rem"><strong>OT Note:</strong> ' + escHtml(b.otNote) + '</div>' : '') +
       '</div>';}).join('') + '</div>';
@@ -1038,12 +1045,12 @@ async function renderRiskTreatment() {
   const data = await load('risk-management/treatment-options.json');
   var strategies = data.strategies || [];
 
-  var safetyHtml = data.safetyConstraint ? '<div class="card" style="border-color:var(--danger);margin-bottom:1rem;background:rgba(239,68,68,0.05)"><div class="card-title" style="color:var(--danger)">Safety Constraint</div><div class="card-desc">' + escHtml(data.safetyConstraint.rule || '') + '</div><div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem">' + escHtml(data.safetyConstraint.rationale || '') + '</div></div>' : '';
+  var safetyHtml = data.safetyConstraint ? '<div class="control-card" style="border-color:var(--danger);margin-bottom:1rem;background:rgba(239,68,68,0.05)"><div class="control-card-title" style="color:var(--danger)">Safety Constraint</div><div class="control-card-desc">' + escHtml(data.safetyConstraint.rule || '') + '</div><div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem">' + escHtml(data.safetyConstraint.rationale || '') + '</div></div>' : '';
 
   var stratHtml = strategies.map(function(s) { return '\
-    <div class="card" style="margin-bottom:0.75rem">\
-      <div class="card-title">' + escHtml(s.name) + '</div>\
-      <div class="card-desc">' + escHtml(s.description || '') + '</div>\
+    <div class="control-card" style="margin-bottom:0.75rem">\
+      <div class="control-card-title">' + escHtml(s.name) + '</div>\
+      <div class="control-card-desc">' + escHtml(s.description || '') + '</div>\
       <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.35rem"><strong>When to Use:</strong> ' + escHtml(s.whenToUse || '') + '</div>' +
       (s.otExamples ? '<div style="margin-top:0.75rem"><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem">OT Examples</div>' + s.otExamples.map(function(ex) { return '<div style="padding:0.35rem 0;border-top:1px solid var(--border);font-size:0.8rem"><strong>' + escHtml(ex.risk || '') + ':</strong> ' + escHtml(ex.mitigation || '') + '</div>'; }).join('') + '</div>' : '') +
     '</div>';}).join('');
@@ -1067,7 +1074,7 @@ async function renderRiskChecklist() {
     var cat = e[0], catItems = e[1];
     html += '<h3 style="margin-top:1rem">' + escHtml(cat) + '</h3>';
     html += catItems.map(function(item) { return '\
-      <div class="card" style="margin-bottom:0.5rem">\
+      <div class="control-card" style="margin-bottom:0.5rem">\
         <div style="display:flex;align-items:flex-start;gap:0.5rem">\
           <div>\
             <div style="font-size:0.85rem;font-weight:600">' + escHtml(item.id) + ': ' + escHtml(item.item) + (item.mandatory ? ' <span class="badge badge-mandatory">Mandatory</span>' : '') + '</div>\
@@ -1118,14 +1125,14 @@ async function renderRefNacsa() {
   return '<h2>' + escHtml(data.title || 'IEC 62443 to NACSA') + '</h2>\
     <div class="disclaimer">' + escHtml(data.verificationNote || '') + '</div>' +
     mappings.map(function(m) { return '\
-    <div class="card" style="margin-bottom:0.75rem">\
+    <div class="control-card" style="margin-bottom:0.75rem">\
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">\
         <span class="badge badge-malaysia">' + escHtml(m.nacsaSection) + '</span>\
-        <span class="card-title" style="margin:0">' + escHtml(m.nacsaTitle || '') + '</span>\
+        <span class="control-card-title" style="margin:0">' + escHtml(m.nacsaTitle || '') + '</span>\
       </div>\
-      <div class="card-desc"><strong>Obligation:</strong> ' + escHtml(m.nacsaObligation || '') + '</div>\
+      <div class="control-card-desc"><strong>Obligation:</strong> ' + escHtml(m.nacsaObligation || '') + '</div>\
       <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem"><strong>IEC 62443 Alignment:</strong> ' + escHtml(m.iec62443Alignment || '') + '</div>' +
-      (m.relevantSRs && m.relevantSRs.length ? '<div class="card-tags" style="margin-top:0.5rem">' + m.relevantSRs.map(function(sr){return '<span class="badge badge-sl2">'+escHtml(sr)+'</span>';}).join('') + '</div>' : '') +
+      (m.relevantSRs && m.relevantSRs.length ? '<div class="control-card-meta" style="margin-top:0.5rem">' + m.relevantSRs.map(function(sr){return '<span class="badge badge-sl2">'+escHtml(sr)+'</span>';}).join('') + '</div>' : '') +
       (m.notes ? '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;border-top:1px solid var(--border);padding-top:0.5rem">' + escHtml(m.notes) + '</div>' : '') +
     '</div>';}).join('');
 }
@@ -1155,9 +1162,9 @@ async function renderRefNist80082() {
   return '<h2>' + escHtml(data.title || 'IEC 62443 to NIST 800-82') + '</h2>\
     <div class="disclaimer">' + escHtml(data.verificationNote || '') + '</div>' +
     mappings.map(function(m) { return '\
-    <div class="card" style="margin-bottom:0.75rem">\
-      <div class="card-title">' + escHtml(m.iec62443FR || '') + ' — ' + escHtml(m.frTitle || '') + '</div>\
-      <div class="card-desc">' + escHtml(m.frDescription || '') + '</div>\
+    <div class="control-card" style="margin-bottom:0.75rem">\
+      <div class="control-card-title">' + escHtml(m.iec62443FR || '') + ' — ' + escHtml(m.frTitle || '') + '</div>\
+      <div class="control-card-desc">' + escHtml(m.frDescription || '') + '</div>\
       <div style="font-size:0.8rem;margin-top:0.5rem"><strong>NIST 800-82:</strong> ' + escHtml(m.nist80082Chapter || '') + '</div>' +
       (m.nist80082ControlFamilies ? '<div style="margin-top:0.35rem">' + tagList(m.nist80082ControlFamilies) + '</div>' : '') +
       (m.nist80082OTGuidance ? '<div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem">' + escHtml(m.nist80082OTGuidance) + '</div>' : '') +
@@ -1191,9 +1198,9 @@ async function renderRefSectorCop() {
   return '<h2>' + escHtml(data.title || 'Sector to NACSA CoP') + '</h2>\
     <div class="disclaimer">' + escHtml(data.verificationNote || '') + '</div>' +
     mappings.map(function(m) { return '\
-    <div class="card" style="margin-bottom:0.75rem">\
-      <div class="card-title">' + escHtml(m.nacsaSector || m.sector || '') + '</div>\
-      <div class="card-sub">Sector Lead: ' + escHtml(m.sectorLead || '') + ' · CoP: ' + escHtml(m.nacsaCop || '') + '</div>\
+    <div class="control-card" style="margin-bottom:0.75rem">\
+      <div class="control-card-title">' + escHtml(m.nacsaSector || m.sector || '') + '</div>\
+      <div class="control-card-desc">Sector Lead: ' + escHtml(m.sectorLead || '') + ' · CoP: ' + escHtml(m.nacsaCop || '') + '</div>\
       <div style="font-size:0.8rem;margin-top:0.5rem"><strong>SL Recommendation:</strong> ' + escHtml(m.iec62443SLRecommendation || '') + '</div>' +
       (m.otSpecificOverlays ? '<div style="margin-top:0.5rem"><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem">OT-Specific Overlays</div><ul style="font-size:0.8rem;padding-left:1.25rem;margin:0">' + m.otSpecificOverlays.map(function(o){return '<li>'+escHtml(o)+'</li>';}).join('') + '</ul></div>' : '') +
       (m.keyOtStandards ? '<div style="margin-top:0.5rem">' + tagList(m.keyOtStandards) + '</div>' : '') +
@@ -1250,14 +1257,14 @@ async function renderSearch(sub) {
     }
   });
 
-  var html = results.map(function(r) { return '\
-    <div class="card card-link" onclick="navigate(\'' + r.hash + '\')" style="margin-bottom:0.5rem">\
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem">\
-        <span class="tag">' + escHtml(r.type) + '</span>\
-        <span class="card-title" style="margin:0">' + escHtml(r.name) + '</span>\
-      </div>\
-      <div class="card-desc">' + escHtml(r.desc) + '</div>\
-    </div>';}).join('');
+  var html = results.map(function(r) { return `
+    <a class="control-card control-card-link" href="#${r.hash}" style="margin-bottom:0.5rem;text-decoration:none;color:inherit">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem">
+        <span class="tag">${escHtml(r.type)}</span>
+        <span class="control-card-title" style="margin:0">${escHtml(r.name)}</span>
+      </div>
+      <div class="control-card-desc">${escHtml(r.desc)}</div>
+    </a>`;}).join('');
 
   setHTML('\
     <div class="page-title">Search Results</div>\
