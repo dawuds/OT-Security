@@ -615,5 +615,311 @@
     "mitreAttackIcs": [
       "T0882"
     ]
+  },
+  {
+    "slug": "ot-password-policy",
+    "name": "OT Password-Based Authentication Policy",
+    "domain": "identity-access-management",
+    "type": "preventive",
+    "slMin": 1,
+    "sourceType": "constructed-indicative",
+    "description": "Establish and enforce password policies tailored to OT environments, covering complexity, rotation, lockout, and shared-account management. OT password policies must balance security with operational availability — overly aggressive lockout on an operator HMI can impede emergency response.",
+    "sections": [
+      "IAM-R5"
+    ],
+    "iec62443SRs": [
+      "SR-1.7"
+    ],
+    "keyActivities": [
+      "Define OT password complexity requirements (minimum 12 characters, mix of character types) for all human-interactive accounts",
+      "Implement account lockout after 5 failed attempts with automatic unlock after 15 minutes — do not permanently lock operator accounts",
+      "Enforce password rotation every 180 days for privileged accounts; 365 days for operator accounts with compensating controls",
+      "Eliminate shared/group passwords — assign individual accounts where technically feasible; document shared account exceptions with compensating controls (session recording, physical access log)",
+      "Store all OT passwords in PAM vault — prohibit written/posted passwords in control rooms"
+    ],
+    "maturity": {
+      "basic": "Password complexity enforced on domain-joined OT assets; standalone devices still use simple or shared passwords",
+      "mature": "Password policy enforced across all OT assets; shared account exceptions documented with compensating controls; PAM vault for all credentials; lockout tuned per device criticality",
+      "advanced": "Passwordless authentication (smart card, certificate) for privileged OT access; automated credential rotation via PAM; continuous monitoring for password policy violations; breach-password detection integrated"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-01",
+      "PR.AA-02"
+    ],
+    "mitreAttackIcs": [
+      "T0859",
+      "T0812"
+    ]
+  },
+  {
+    "slug": "ot-device-authentication",
+    "name": "OT Device-to-Device Authentication",
+    "domain": "identity-access-management",
+    "type": "preventive",
+    "slMin": 2,
+    "sourceType": "constructed-indicative",
+    "description": "Authenticate OT devices before permitting communication — PLC-to-PLC, PLC-to-historian, SCADA-to-RTU, and engineering workstation-to-controller. Prevents rogue device injection and man-in-the-middle attacks on industrial protocols.",
+    "sections": [
+      "IAM-R6"
+    ],
+    "iec62443SRs": [
+      "SR-1.2"
+    ],
+    "keyActivities": [
+      "Inventory all device-to-device communication paths in the OT environment",
+      "Enable protocol-level authentication where supported (OPC UA mutual TLS, Modbus/TCP with TLS wrapper, DNP3 Secure Authentication)",
+      "Deploy certificate-based device identity for new installations — OT PKI or vendor-managed certificates",
+      "Configure allowlists on PLCs and controllers to accept connections only from known source IP/MAC pairs as compensating control where protocol-level auth is unavailable",
+      "Monitor for unauthenticated device connections via passive OT network monitoring"
+    ],
+    "maturity": {
+      "basic": "IP/MAC allowlisting on critical controllers; legacy protocols unauthenticated with network segmentation as compensating control",
+      "mature": "Protocol-level authentication enabled where supported (OPC UA, DNP3-SA); certificate-based identity for new deployments; unauthenticated connections monitored and alerted",
+      "advanced": "OT PKI with automated certificate lifecycle; mutual TLS for all inter-zone device communication; hardware root of trust for device identity; rogue device detection within 5 minutes"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-01",
+      "PR.AA-03"
+    ],
+    "mitreAttackIcs": [
+      "T0830",
+      "T0848"
+    ]
+  },
+  {
+    "slug": "ot-account-lifecycle",
+    "name": "OT Account Lifecycle Management",
+    "domain": "identity-access-management",
+    "type": "preventive",
+    "slMin": 2,
+    "sourceType": "constructed-indicative",
+    "description": "Manage the full lifecycle of OT accounts — provisioning, periodic review, role change, and deprovisioning. Orphaned accounts on OT systems are a persistent attack vector because OT devices are rarely rebuilt or reimaged, accumulating stale accounts over decades of operation.",
+    "sections": [
+      "IAM-R7"
+    ],
+    "iec62443SRs": [
+      "SR-1.3",
+      "SR-1.4"
+    ],
+    "keyActivities": [
+      "Define OT account provisioning procedure requiring manager approval and documented business justification",
+      "Integrate OT account provisioning with HR onboarding/offboarding where feasible; manual process with SLA for standalone OT systems",
+      "Disable accounts within 24 hours of personnel departure or role change — same-day for privileged accounts",
+      "Conduct quarterly review of all OT accounts on SCADA, DCS, historian, engineering workstations, and domain controllers",
+      "Identify and remediate orphaned accounts on standalone OT devices (PLCs, HMIs, network switches) during annual maintenance"
+    ],
+    "maturity": {
+      "basic": "Account provisioning via request; deprovisioning ad hoc; annual account review on domain-joined assets",
+      "mature": "Formal provisioning/deprovisioning procedure with SLA; quarterly account review across all OT systems; orphaned accounts identified and removed; vendor/contractor accounts time-limited by default",
+      "advanced": "Automated provisioning/deprovisioning integrated with HR system; continuous account monitoring — alert on dormant accounts; just-in-time access for all privileged OT accounts; zero standing privileges for vendor accounts"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-01",
+      "PR.AA-05"
+    ],
+    "mitreAttackIcs": [
+      "T0859",
+      "T0078"
+    ]
+  },
+  {
+    "slug": "ot-input-validation",
+    "name": "OT Input Validation and Command Integrity",
+    "domain": "data-protection",
+    "type": "preventive",
+    "slMin": 2,
+    "sourceType": "constructed-indicative",
+    "description": "Validate all inputs to OT systems — setpoint commands, configuration uploads, firmware images, and inter-system data transfers. Prevents command injection, out-of-range setpoint manipulation, and malicious firmware upload that could cause physical process disruption or safety incidents.",
+    "sections": [
+      "DP-R5"
+    ],
+    "iec62443SRs": [
+      "SR-3.5"
+    ],
+    "keyActivities": [
+      "Configure setpoint range limits on PLCs and DCS — reject commands outside safe operating envelope",
+      "Enable rate-of-change limits on critical process variables to prevent sudden unsafe state transitions",
+      "Validate firmware images via vendor-signed hash before upload to any OT device",
+      "Implement application-layer firewalling (OT-aware DPI) to inspect and validate industrial protocol commands at zone boundaries",
+      "Log all rejected or out-of-range commands for security investigation"
+    ],
+    "maturity": {
+      "basic": "Setpoint limits configured on safety-critical loops; firmware validated manually before upload",
+      "mature": "Setpoint and rate-of-change limits on all critical process variables; OT-aware DPI at zone boundaries; firmware signing enforced; rejected commands logged and reviewed",
+      "advanced": "Machine learning-based command anomaly detection; automated blocking of anomalous setpoint changes; cryptographic firmware signing with hardware root of trust; all industrial protocol commands validated at zone boundary"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.DS-06",
+      "PR.DS-01"
+    ],
+    "mitreAttackIcs": [
+      "T0836",
+      "T0855"
+    ]
+  },
+  {
+    "slug": "ot-access-control-enforcement",
+    "name": "OT Access Control Enforcement and Non-Repudiation",
+    "domain": "identity-access-management",
+    "type": "detective",
+    "slMin": 2,
+    "sourceType": "constructed-indicative",
+    "description": "Enforce access control decisions at the system level and provide non-repudiation — every action in the OT environment is attributable to a specific individual. Critical for incident investigation, regulatory compliance, and deterrence of insider threats in operational technology environments.",
+    "sections": [
+      "IAM-R8"
+    ],
+    "iec62443SRs": [
+      "SR-2.12"
+    ],
+    "keyActivities": [
+      "Configure audit logging on all OT systems to capture user identity, action performed, timestamp, and source address",
+      "Eliminate shared/generic accounts on SCADA, DCS, and historian — each operator has individual credentials",
+      "Forward OT audit logs to centralised SIEM or OT log collector with tamper-resistant storage",
+      "Implement session recording for all privileged OT access (engineering workstation, SCADA admin, remote access)",
+      "Review OT audit logs weekly for anomalous access patterns — privilege escalation, off-hours access, unusual command sequences"
+    ],
+    "maturity": {
+      "basic": "Audit logging enabled on major OT systems; shared accounts still in use on some HMIs; logs stored locally",
+      "mature": "Individual accounts on all SCADA/DCS/historian systems; audit logs forwarded to SIEM; session recording for privileged access; weekly log review",
+      "advanced": "Full non-repudiation across all OT access — no shared accounts; cryptographically signed audit logs; automated anomaly detection on access patterns; real-time alerting on privilege escalation; forensic-grade log retention (12+ months)"
+    },
+    "nacsa": [
+      "s18",
+      "s26"
+    ],
+    "nistCsf": [
+      "PR.AA-06",
+      "DE.AE-03"
+    ],
+    "mitreAttackIcs": [
+      "T0859"
+    ]
+  },
+  {
+    "slug": "ot-session-management",
+    "name": "OT Session Management",
+    "domain": "identity-access-management",
+    "type": "preventive",
+    "slMin": 2,
+    "sourceType": "constructed-indicative",
+    "description": "Manage active sessions on OT systems — enforce timeouts, limit concurrent sessions, and lock inactive sessions. Unattended logged-in sessions on engineering workstations and SCADA terminals are a direct path to OT compromise without requiring credential theft.",
+    "sections": [
+      "IAM-R9"
+    ],
+    "iec62443SRs": [
+      "SR-2.5",
+      "SR-2.7"
+    ],
+    "keyActivities": [
+      "Configure automatic session lock after 15 minutes of inactivity on engineering workstations and SCADA admin consoles",
+      "Define session timeout exceptions for operator HMI terminals with documented operational justification and compensating controls (physical access control, camera coverage)",
+      "Limit concurrent sessions per user — maximum 1 active session for privileged accounts; prevent credential sharing detection",
+      "Enforce automatic session termination for remote access after 8 hours maximum duration — require re-authentication",
+      "Log all session events (login, logout, lock, timeout, concurrent session denial) to SIEM"
+    ],
+    "maturity": {
+      "basic": "Screen lock configured on engineering workstations; remote access timeout enabled; operator HMIs may remain logged in",
+      "mature": "Session lock on all non-operator OT systems; concurrent session limits for privileged accounts; remote access session duration limit; operator HMI exemptions documented with compensating controls",
+      "advanced": "Adaptive session timeouts based on risk context; continuous session monitoring with anomaly detection; automatic session termination on suspicious activity; zero persistent sessions for privileged accounts"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.AA-05",
+      "PR.AA-06"
+    ],
+    "mitreAttackIcs": [
+      "T0859",
+      "T0822"
+    ]
+  },
+  {
+    "slug": "ot-emergency-power",
+    "name": "Emergency Power for Critical OT Systems",
+    "domain": "backup-recovery",
+    "type": "preventive",
+    "slMin": 2,
+    "sourceType": "constructed-indicative",
+    "description": "Provide uninterruptible and emergency power to critical OT systems — safety instrumented systems, SCADA servers, communication infrastructure, and security systems. Power loss can cause uncontrolled process shutdowns, loss of visibility, and disable security controls simultaneously.",
+    "sections": [
+      "BR-R3"
+    ],
+    "iec62443SRs": [
+      "SR-7.5"
+    ],
+    "keyActivities": [
+      "Deploy UPS on all critical OT systems — SIS controllers, SCADA servers, network infrastructure, historian, and security appliances",
+      "Size UPS to provide minimum 30 minutes runtime for orderly shutdown or 4 hours for ride-through until generator start",
+      "Install generator backup for OT control rooms and server rooms with automatic transfer switch (ATS)",
+      "Test UPS under load quarterly; test generator with ATS semi-annually; document results",
+      "Define and test graceful OT shutdown procedure for extended power loss scenarios"
+    ],
+    "maturity": {
+      "basic": "UPS on SCADA servers and SIS controllers; generator available but manual start; untested shutdown procedure",
+      "mature": "UPS on all critical OT systems sized for 30+ minutes; generator with ATS; quarterly UPS load test; semi-annual generator test; documented graceful shutdown procedure",
+      "advanced": "Redundant UPS with N+1 configuration; dual-feed power to critical OT racks; automated power monitoring with predictive battery failure alerting; annual full-facility power loss exercise including OT graceful shutdown and recovery"
+    },
+    "nacsa": [
+      "s18"
+    ],
+    "nistCsf": [
+      "PR.IR-01",
+      "PR.IR-02"
+    ],
+    "mitreAttackIcs": [
+      "T0816"
+    ]
+  },
+  {
+    "slug": "ot-disabled-services",
+    "name": "OT Unnecessary Service and Port Elimination",
+    "domain": "configuration-management",
+    "type": "preventive",
+    "slMin": 1,
+    "sourceType": "constructed-indicative",
+    "description": "Minimise the attack surface of OT systems by disabling unused services, closing unnecessary ports, and removing unneeded software. OT devices often ship with services enabled by default (web servers, SNMP, Telnet, FTP) that are never used operationally but provide attack vectors.",
+    "sections": [
+      "CM-R3"
+    ],
+    "iec62443SRs": [
+      "SR-7.7"
+    ],
+    "keyActivities": [
+      "Inventory all enabled services and open ports on each OT asset class (PLC, HMI, SCADA server, historian, network device)",
+      "Define a hardening baseline per asset class — list of required services and ports; disable or block everything else",
+      "Disable unnecessary services on OT devices: Telnet, FTP, unused web servers, SNMP v1/v2, unused industrial protocol listeners",
+      "Apply host-based firewall rules on Windows/Linux OT servers to block all non-essential inbound ports",
+      "Validate hardening baseline compliance after each maintenance activity and during quarterly reviews"
+    ],
+    "maturity": {
+      "basic": "Known unnecessary services disabled on major OT servers; no formal baseline; ad hoc approach",
+      "mature": "Hardening baseline defined per OT asset class; applied to all new deployments; quarterly compliance check; deviation documented with business justification",
+      "advanced": "Automated hardening compliance monitoring; alert on any new service or open port; hardening baseline version-controlled and updated with each firmware/OS release; zero unnecessary services across entire OT environment"
+    },
+    "nacsa": [
+      "s18",
+      "s21"
+    ],
+    "nistCsf": [
+      "PR.PS-01",
+      "PR.PS-02"
+    ],
+    "mitreAttackIcs": [
+      "T0866",
+      "T0883"
+    ]
   }
 ]

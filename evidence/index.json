@@ -491,6 +491,94 @@
             "No awareness that key switch is a security control"
           ],
           "howToVerify": "Physical inspection of all SIS controller key switches; verify key holder identity"
+        },
+        {
+          "id": "E-SS-04",
+          "name": "SIL verification records and functional safety assessment evidence",
+          "mandatory": true,
+          "artifactSlugs": ["sis-program-checksum-register", "sis-modification-log"],
+          "whatGoodLooksLike": [
+            "Safety Integrity Level (SIL) assessment records for each Safety Instrumented Function (SIF) per IEC 61511",
+            "SIL verification calculations (PFDavg or PFH) documented and within target for assigned SIL level",
+            "SIL verification reviewed after any SIS modification — recalculation triggered by hardware or logic changes",
+            "Independent functional safety assessment (FSA) completed within last 5 years or after major SIS modification",
+            "SIL capability certificates from SIS component manufacturers on file"
+          ],
+          "commonGaps": [
+            "SIL level assigned at design but PFDavg never recalculated after component ageing or replacement",
+            "SIL verification performed at commissioning but not reviewed after SIS logic changes",
+            "No independent FSA — self-assessment only",
+            "SIL capability certificates missing for replacement components — assumed equivalent to original",
+            "Cyber security threats not considered in SIL verification — only random hardware failures modelled"
+          ],
+          "howToVerify": "Review SIL verification calculations for sample SIFs. Verify PFDavg within target. Check recalculation triggered after last SIS modification. Request FSA report. Verify SIL certificates for installed components.",
+          "sourceType": "constructed-indicative"
+        },
+        {
+          "id": "E-SS-05",
+          "name": "SIS bypass and override monitoring records",
+          "mandatory": true,
+          "artifactSlugs": ["sis-modification-log"],
+          "whatGoodLooksLike": [
+            "All SIS bypasses (inhibits, overrides, forced I/O) logged with: timestamp, SIF affected, reason, authoriser, expected duration, removal confirmation",
+            "Active bypass register reviewed at shift handover — all active bypasses visible to control room operators",
+            "Maximum bypass duration defined per SIF criticality — automatic escalation if exceeded",
+            "No permanent bypasses — any bypass exceeding maximum duration triggers management review and formal risk acceptance",
+            "Bypass alarm configured in DCS/SCADA — control room alerted whenever SIF is bypassed"
+          ],
+          "commonGaps": [
+            "Bypasses applied by field engineers without logging or authorisation",
+            "Bypass register exists but not reviewed at shift handover — operators unaware of active bypasses",
+            "Permanent bypasses in place for nuisance trips — no formal risk acceptance or compensating measures",
+            "Bypass count and duration not tracked — no visibility of bypass trends over time",
+            "Bypass alarm suppressed or normalised — treated as routine rather than safety-critical condition"
+          ],
+          "howToVerify": "Review bypass log for last 12 months. Verify all entries have authoriser and removal confirmation. Check for any active bypasses exceeding maximum duration. Verify bypass alarm is configured and not suppressed. Review shift handover procedure for bypass register review requirement.",
+          "sourceType": "constructed-indicative"
+        },
+        {
+          "id": "E-SS-06",
+          "name": "SIS proof testing records and test procedure documentation",
+          "mandatory": true,
+          "artifactSlugs": ["sis-program-checksum-register", "sis-modification-log"],
+          "whatGoodLooksLike": [
+            "Proof test procedures documented for each SIF covering full loop (sensor, logic solver, final element)",
+            "Proof test intervals defined per SIF based on SIL verification calculations — tests performed within defined interval",
+            "Test records include: date, SIF tested, tester identity, pass/fail result, any deficiencies found and remediation actions",
+            "Proof test coverage (diagnostic coverage) documented — partial stroke testing credited only where validated",
+            "Overdue proof tests tracked and escalated — no SIF operating beyond defined test interval without management approval"
+          ],
+          "commonGaps": [
+            "Proof tests performed on sensors and logic but final elements (shutdown valves) not tested end-to-end",
+            "Test intervals defined at design but not adhered to — tests frequently overdue without escalation",
+            "Test records capture pass/fail but not deficiencies found during testing",
+            "Partial stroke testing counted as full proof test without validation of diagnostic coverage",
+            "Proof test interval extended without recalculating impact on PFDavg and SIL achievement"
+          ],
+          "howToVerify": "Review proof test schedule. Verify tests performed within defined intervals for sample SIFs. Review test records for completeness. Check whether final element testing is included. Verify any overdue tests have management approval and risk assessment.",
+          "sourceType": "constructed-indicative"
+        },
+        {
+          "id": "E-SS-07",
+          "name": "SIS integrity monitoring and cyber security anomaly detection records",
+          "mandatory": false,
+          "artifactSlugs": ["sis-program-checksum-register", "ot-network-baseline"],
+          "whatGoodLooksLike": [
+            "Continuous or periodic automated integrity monitoring of SIS logic solver programs — hash comparison against verified baseline",
+            "Any SIS communication anomaly detected by OT monitoring platform (if data diode permits outbound monitoring)",
+            "SIS controller diagnostic logs reviewed periodically for unexpected events (firmware changes, configuration downloads, communication errors)",
+            "SIS engineering workstation access logged and monitored — any connection to SIS controller generates alert",
+            "Annual SIS cyber security review aligned with IEC 62443 and IEC 61511 Clause 8"
+          ],
+          "commonGaps": [
+            "SIS integrity checked only during maintenance visits — no continuous monitoring",
+            "SIS assumed secure due to air gap — no monitoring of SIS engineering workstation activity",
+            "SIS controller diagnostic logs not reviewed — would not detect firmware modification between maintenance visits",
+            "No cyber security content in SIS integrity monitoring — only process safety parameters monitored",
+            "IEC 61511 Clause 8 (SIS cyber security) not addressed in functional safety management plan"
+          ],
+          "howToVerify": "Review SIS integrity monitoring configuration. Verify hash comparison frequency. Check SIS engineering workstation access logs. Review SIS controller diagnostic log review records. Confirm IEC 61511 Clause 8 addressed in safety management plan.",
+          "sourceType": "constructed-indicative"
         }
       ]
     },
@@ -691,6 +779,90 @@
             "Restore test covers file-level restore but does not verify historian data integrity post-restore"
           ],
           "howToVerify": "Review historian backup configuration. Verify hash records exist for recent backups. Check backup storage access controls. Request most recent restore test report and verify integrity check was performed."
+        },
+        {
+          "id": "E-DP-04",
+          "name": "Encryption at rest configuration for OT servers, historians, and backup media",
+          "mandatory": true,
+          "artifactSlugs": ["ot-backup-register", "ot-asset-register"],
+          "whatGoodLooksLike": [
+            "Full-disk encryption (BitLocker, LUKS) enabled on all OT servers, engineering workstations, and historian servers",
+            "Portable media encryption technically enforced — unencrypted USB writes blocked",
+            "Backup media encrypted with keys stored separately from backup media",
+            "Encryption status documented per asset in asset register"
+          ],
+          "commonGaps": [
+            "Encryption enabled on IT-managed OT servers but not on standalone SCADA/DCS workstations",
+            "USB encryption policy exists but not technically enforced — reliance on user compliance",
+            "Backup tapes or NAS shares unencrypted — accessible to anyone with network or physical access",
+            "Encryption enabled at OS level but vendor application stores credentials in plaintext config files"
+          ],
+          "howToVerify": "Review encryption configuration on sample OT servers and workstations. Verify BitLocker/LUKS status. Test USB port with unencrypted media. Check backup media encryption. Review vendor application credential storage.",
+          "sourceType": "constructed-indicative"
+        },
+        {
+          "id": "E-DP-05",
+          "name": "Encryption in transit configuration for inter-zone and remote OT communications",
+          "mandatory": true,
+          "artifactSlugs": ["zone-conduit-diagram", "ot-network-baseline"],
+          "whatGoodLooksLike": [
+            "TLS 1.2 or higher enforced on all inter-zone communications (historian replication, remote access, IDMZ services)",
+            "Weak cipher suites disabled (RC4, DES, 3DES, TLS 1.0/1.1, NULL ciphers) — verified by configuration review or scan",
+            "OPC UA Security Mode set to SignAndEncrypt where OPC UA is deployed",
+            "Unencrypted legacy protocols (Modbus TCP, DNP3 without SAv5, EtherNet/IP without CIP Security) documented with compensating controls (network isolation, DPI monitoring)"
+          ],
+          "commonGaps": [
+            "TLS configured for remote access but historian replication between OT and IT runs over plain TCP",
+            "TLS 1.0/1.1 still enabled for backward compatibility with legacy OT applications",
+            "OPC UA deployed with SecurityMode None — no signing or encryption",
+            "Legacy protocol flows assumed secure because on OT network — no compensating controls documented"
+          ],
+          "howToVerify": "Review TLS configuration on IDMZ services, remote access gateway, and historian replication. Run cipher suite check against OT web services. Verify OPC UA security mode. Review compensating controls for legacy protocol flows.",
+          "sourceType": "constructed-indicative"
+        },
+        {
+          "id": "E-DP-06",
+          "name": "Cryptographic key management procedures and certificate lifecycle records",
+          "mandatory": false,
+          "artifactSlugs": ["ot-asset-register"],
+          "whatGoodLooksLike": [
+            "Key management procedure documents key generation, distribution, storage, rotation, revocation, and destruction for OT environments",
+            "TLS certificates tracked in register with expiry dates and renewal owner assigned",
+            "Certificate expiry monitoring configured — alert minimum 30 days before expiry",
+            "Encryption keys for backup media stored separately from media with documented custodian",
+            "HSM or equivalent key protection for highest-criticality OT systems"
+          ],
+          "commonGaps": [
+            "No key management procedure — keys managed ad hoc by individual engineers",
+            "Self-signed certificates with no expiry tracking — service outages from expired certificates",
+            "Encryption keys stored alongside encrypted backups — defeating purpose of encryption",
+            "Key rotation never performed — same keys since initial deployment",
+            "Certificate and key management handled by IT without OT awareness of OT-specific certificate locations"
+          ],
+          "howToVerify": "Review key management procedure. Request certificate register and verify expiry dates. Check certificate monitoring alerts. Verify backup encryption key storage is separate from backup media. Review key rotation records.",
+          "sourceType": "constructed-indicative"
+        },
+        {
+          "id": "E-DP-07",
+          "name": "OT data classification scheme with OT-specific categories and handling procedures",
+          "mandatory": true,
+          "artifactSlugs": ["ot-asset-register", "rbac-role-definitions"],
+          "whatGoodLooksLike": [
+            "OT-specific data classification scheme extending corporate classification with categories: PLC/DCS programs (confidential), safety system logic (confidential — safety-critical), setpoint databases (restricted), historian process data (restricted), network architecture diagrams (confidential), engineering drawings (confidential)",
+            "Handling procedures per classification level: storage, transmission, sharing, disposal",
+            "Data owners assigned for each OT data category",
+            "Classification labels applied to OT documentation and file shares",
+            "Annual review of classification scheme completed"
+          ],
+          "commonGaps": [
+            "Corporate IT classification scheme used without OT-specific categories — PLC programs not recognised as confidential",
+            "No handling procedures — data classified but no rules for how each class must be stored or transmitted",
+            "Engineering drawings and network diagrams shared via email without classification marking",
+            "Data ownership unclear — IT assumes OT team manages it, OT team assumes IT manages it",
+            "Historian data exported to IT reporting systems without classification or access controls applied at destination"
+          ],
+          "howToVerify": "Review OT data classification scheme. Verify PLC programs and safety system logic classified as confidential. Check handling procedures exist per class. Verify classification labels on sample OT documents. Review data owner assignments.",
+          "sourceType": "constructed-indicative"
         }
       ]
     },

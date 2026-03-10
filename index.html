@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="base.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,25 +30,22 @@
   <nav class="nav" id="site-nav">
     <div class="nav-inner">
       <a href="#" class="nav-link active" data-view="overview">Overview</a>
-      <a href="#standards" class="nav-link" data-view="standards">Standards</a>
-      <a href="#architecture" class="nav-link" data-view="architecture">Architecture</a>
-      <a href="#requirements" class="nav-link" data-view="requirements">Requirements</a>
+      <a href="#framework" class="nav-link" data-view="framework">Framework</a>
       <a href="#controls" class="nav-link" data-view="controls">Controls</a>
-      <a href="#evidence" class="nav-link" data-view="evidence">Evidence</a>
-      <a href="#artifacts" class="nav-link" data-view="artifacts">Artifacts</a>
+      <a href="#risk" class="nav-link" data-view="risk">Risk Management</a>
       <a href="#threats" class="nav-link" data-view="threats">Threats</a>
       <a href="#sectors" class="nav-link" data-view="sectors">Sectors</a>
-      <a href="#risk-management" class="nav-link" data-view="risk-management">Risk Mgmt</a>
-      <a href="#framework" class="nav-link" data-view="framework">Framework</a>
-      <a href="#cross-ref" class="nav-link" data-view="cross-ref">Cross-Refs</a>
-    
-      <div class="nav-actions" style="display: flex; gap: 0.5rem; margin-left: auto;">
-        <button onclick="exportToPDF()" class="btn-export">PDF</button>
-        <button onclick="exportToCSV()" class="btn-export">CSV</button>
+      <a href="#architecture" class="nav-link" data-view="architecture">Architecture</a>
+      <a href="#reference" class="nav-link" data-view="reference">Reference</a>
+
+      <div class="nav-actions">
+        <button class="btn-export" id="btn-pdf">PDF</button>
+        <button class="btn-export" id="btn-csv">CSV</button>
       </div>
 </div>
   </nav>
-  <div id="main">
+  <div id="app">
+    <noscript>This application requires JavaScript to run. Please enable JavaScript in your browser settings.</noscript>
     <div class="loading">
       <div class="spinner"></div>
       <span>Loading OT Security data...</span>

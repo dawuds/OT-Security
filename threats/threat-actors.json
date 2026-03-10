@@ -67,8 +67,9 @@
       "iec62443SLReference": 2
     },
     {
-      "id": "TA-006", "name": "CHERNOVITE / APT (Industroyer2 capability)",
-      "attribution": "Russia-linked — Sandworm sub-group",
+      "id": "TA-006", "name": "Sandworm (Industroyer2 operations)",
+      "alternateNames": ["CHERNOVITE (Dragos tracking name)", "Voodoo Bear"],
+      "attribution": "Russia — GRU, Sandworm sub-group responsible for Industroyer2 deployment",
       "actorType": "Nation-state",
       "capability": "SL 4",
       "sectors": ["Energy — specifically power grid"],
