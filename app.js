@@ -516,7 +516,7 @@ async function renderControls(sub) {
               <span class="chevron">\u25B6</span>
             </button>
             <div class="accordion-content">
-              <p style="font-size:0.8125rem;color:var(--text-secondary);margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border)">${escHtml(domainInfo ? domainInfo.description || '' : '')}</p>
+              ${domainInfo && domainInfo.description ? '<p style="font-size:0.8125rem;color:var(--text-secondary);margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border)">' + escHtml(domainInfo.description) + '</p>' : ''}
               <ul class="clause-list">
                 ${ctrls.map(function(c) { return `
                   <li><a class="clause-link" href="#control/${c.slug}">
@@ -1341,6 +1341,25 @@ function exportToCSV() {
 
 // --- INIT ---
 window.addEventListener('hashchange', route);
+document.addEventListener('click', function(e) {
+  // Accordion toggle (data-accordion pattern)
+  var trigger = e.target.closest('[data-accordion]');
+  if (trigger) {
+    var item = trigger.closest('.accordion-item');
+    if (item) item.classList.toggle('open');
+    return;
+  }
+  // Accordion toggle (aria-expanded pattern for audit package)
+  var accTrigger = e.target.closest('.accordion-trigger[aria-expanded]');
+  if (accTrigger) {
+    var expanded = accTrigger.getAttribute('aria-expanded') === 'true';
+    accTrigger.setAttribute('aria-expanded', !expanded);
+    var content = accTrigger.nextElementSibling;
+    if (content) content.hidden = expanded;
+    return;
+  }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
   // Wire export buttons
   var pdfBtn = document.getElementById('btn-pdf');

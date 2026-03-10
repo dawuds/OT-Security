@@ -305,6 +305,18 @@ tr:hover td { background: var(--surface-hover); }
 .accordion-item.open > .accordion-body { display: block; }
 .accordion-item.open > .accordion-header .accordion-arrow { transform: rotate(90deg); }
 
+/* Accordion content: hidden by default, shown when .open */
+.accordion-content { display: none; padding: 0 1rem 0.75rem; }
+.accordion-item.open > .accordion-content { display: block; }
+
+/* Audit-package accordions use aria-expanded pattern */
+.accordion-content[role="region"] { display: block; }
+.accordion-trigger[aria-expanded="false"] + .accordion-content[role="region"] { display: none; }
+
+/* Chevron indicator */
+.chevron { font-size: 0.625rem; transition: transform 0.2s; color: var(--text-muted); }
+.accordion-item.open > .accordion-trigger .chevron { transform: rotate(90deg); }
+
 /* ===== Legacy Audit Package Overrides ===== */
 .audit-package-section { margin-bottom: 1rem; }
 .audit-package-section h3 { margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
