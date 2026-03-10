@@ -1267,9 +1267,80 @@ async function renderSearch(sub) {
 }
 
 
+// === Export Functions ===
+
+function exportToPDF() {
+  document.body.classList.add('printing');
+  window.print();
+  document.body.classList.remove('printing');
+}
+
+function exportToCSV() {
+  var view = parseHash().view;
+  var data = [];
+  var filename = 'export-' + view + '-' + new Date().toISOString().slice(0,10) + '.csv';
+
+  if (view === 'controls') {
+    var controls = cache.get('controls/library.json');
+    if (controls) {
+      var list = Array.isArray(controls) ? controls : [];
+      data = list.map(function(c) {
+        return {
+          ID: c.slug || '',
+          Name: c.name || '',
+          Domain: c.domain || '',
+          Description: (c.description || '').replace(/\n/g, ' ')
+        };
+      });
+    }
+  } else if (view === 'risk') {
+    var reg = cache.get('risk-management/risk-register.json');
+    if (reg) {
+      var risks = reg.risks || [];
+      data = risks.map(function(r) {
+        return {
+          ID: r.id || '',
+          Risk: r.title || '',
+          Impact: r.impact || '',
+          Likelihood: r.likelihood || '',
+          Category: r.category || ''
+        };
+      });
+    }
+  } else {
+    alert('CSV export only supported for Controls and Risk Register views.');
+    return;
+  }
+
+  if (!data.length) { alert('No data found to export.'); return; }
+
+  var headers = Object.keys(data[0]);
+  var csvContent = [
+    headers.join(',')
+  ].concat(data.map(function(row) {
+    return headers.map(function(h) {
+      return '"' + (row[h] || '').toString().replace(/"/g, '""') + '"';
+    }).join(',');
+  })).join('\n');
+
+  var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 // --- INIT ---
 window.addEventListener('hashchange', route);
 document.addEventListener('DOMContentLoaded', function() {
+  // Wire export buttons
+  var pdfBtn = document.getElementById('btn-pdf');
+  var csvBtn = document.getElementById('btn-csv');
+  if (pdfBtn) pdfBtn.addEventListener('click', exportToPDF);
+  if (csvBtn) csvBtn.addEventListener('click', exportToCSV);
+
   route();
 
   var searchInput = document.getElementById('search-input');
