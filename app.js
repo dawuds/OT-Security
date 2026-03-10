@@ -65,7 +65,13 @@ async function route() {
 function updateNav(view) {
   document.querySelectorAll('.nav-link').forEach(function(el) {
     var dv = el.dataset.view;
-    el.classList.toggle('active', dv === view || (view === 'overview' && dv === 'overview') || (view === 'control' && dv === 'controls'));
+    el.classList.toggle('active',
+      dv === view ||
+      (view === 'overview' && dv === 'overview') ||
+      (view === 'control' && dv === 'controls') ||
+      (dv === 'framework' && (view === 'sectors' || view === 'sector')) ||
+      (dv === 'reference' && view === 'architecture')
+    );
   });
 }
 
@@ -79,9 +85,9 @@ async function render(view, sub) {
     case 'risk':         return renderRiskManagement(sub);
     case 'threats':      return renderThreats(sub);
     case 'threat':       return renderThreatDetail(sub);
-    case 'sectors':      return renderSectors(sub);
+    case 'sectors':      return renderFramework('_sectors');
     case 'sector':       return renderSectorById(sub);
-    case 'architecture': return renderArchitecture(sub);
+    case 'architecture': return sub ? renderArchitecture(sub) : renderReference('_architecture');
     case 'reference':    return renderReference(sub);
     case 'search':       return renderSearch(sub);
     default:             return renderOverview();
@@ -219,6 +225,9 @@ async function renderOverview() {
 
 // --- FRAMEWORK ---
 async function renderFramework(sub) {
+  // Handle sectors sub-tab
+  const showSectors = (sub === '_sectors');
+
   const srData = await load('standards/iec62443/system-requirements.json');
   const srTotal = (srData.systemRequirements || srData.requirements || []).length;
   const tabs = [
@@ -228,8 +237,9 @@ async function renderFramework(sub) {
     { id: 'iec-sr',       label: 'System Requirements (' + srTotal + ' SRs)' },
     { id: 'nist',         label: 'NIST SP 800-82' },
     { id: 'mitre',        label: 'MITRE ATT&CK for ICS' },
+    { id: 'sectors',      label: 'Sectors' },
   ];
-  const active = sub || 'iec-overview';
+  const active = showSectors ? 'sectors' : (sub || 'iec-overview');
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
     return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'framework/' + t.id + '\')">' + t.label + '</button>';
@@ -242,12 +252,34 @@ async function renderFramework(sub) {
   else if (active === 'iec-sr')   content = await renderIecSR();
   else if (active === 'nist')     content = await renderNist();
   else if (active === 'mitre')    content = await renderMitre();
+  else if (active === 'sectors')  content = await renderSectorsContent();
 
   setHTML('\
     <div class="page-title">Framework</div>\
-    <div class="page-sub">IEC 62443 · NIST SP 800-82 Rev 3 · MITRE ATT&amp;CK for ICS</div>' +
+    <div class="page-sub">IEC 62443 · NIST SP 800-82 Rev 3 · MITRE ATT&amp;CK for ICS · Sectors</div>' +
     tabsHtml + content
   );
+}
+
+async function renderSectorsContent() {
+  const data = await load('sectors/index.json');
+  const sectors = data.sectors || [];
+
+  var html = sectors.map(function(s) {
+    return '\
+    <a class="control-card control-card-link" href="#sector/' + s.id + '" style="text-decoration:none;color:inherit">\
+      <div class="control-card-title">' + escHtml(s.name) + '</div>\
+      <div class="control-card-desc">NACSA Sector: ' + escHtml(String(s.nacsaSectorNumber || '')) + ' · Lead: ' + escHtml(s.nacsaSectorLead || '') + '</div>\
+      <div class="control-card-desc">' + escHtml((s.description || '').substring(0, 200)) + (s.description && s.description.length > 200 ? '...' : '') + '</div>\
+      <div class="control-card-meta">\
+        <span class="badge badge-malaysia">Act 854</span>' +
+        (s.keyOtRisks ? s.keyOtRisks.slice(0,2).map(function(r){return '<span class="tag">'+escHtml(r)+'</span>';}).join('') : '') +
+      '</div>\
+    </a>';}).join('');
+
+  return '\
+    <div class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</div>\
+    <div class="control-grid">' + html + '</div>';
 }
 
 async function renderIecOverview() {
@@ -1091,14 +1123,21 @@ async function renderRiskChecklist() {
 
 // --- REFERENCE (cross-references) ---
 async function renderReference(sub) {
+  // Handle architecture sub-routes
+  const showArch = (sub === '_architecture');
+  if (sub === 'purdue' || sub === 'zones' || sub === 'assets') {
+    return renderArchitecture(sub);
+  }
+
   const tabs = [
-    { id: 'nacsa',      label: 'IEC 62443 to NACSA' },
-    { id: 'nist-csf',   label: 'IEC 62443 to NIST CSF' },
-    { id: 'nist80082',  label: 'IEC 62443 to NIST 800-82' },
-    { id: 'mitre-ctrl', label: 'MITRE to Controls' },
-    { id: 'sector-cop', label: 'Sector to NACSA CoP' },
+    { id: 'nacsa',        label: 'IEC 62443 to NACSA' },
+    { id: 'nist-csf',     label: 'IEC 62443 to NIST CSF' },
+    { id: 'nist80082',    label: 'IEC 62443 to NIST 800-82' },
+    { id: 'mitre-ctrl',   label: 'MITRE to Controls' },
+    { id: 'sector-cop',   label: 'Sector to NACSA CoP' },
+    { id: 'architecture', label: 'Architecture' },
   ];
-  const active = sub || 'nacsa';
+  const active = showArch ? 'architecture' : (sub || 'nacsa');
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
     return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'reference/' + t.id + '\')">' + t.label + '</button>';
@@ -1110,12 +1149,29 @@ async function renderReference(sub) {
   else if (active === 'nist80082') content = await renderRefNist80082();
   else if (active === 'mitre-ctrl') content = await renderRefMitreCtrl();
   else if (active === 'sector-cop') content = await renderRefSectorCop();
+  else if (active === 'architecture') content = await renderArchitectureContent();
 
   setHTML('\
     <div class="page-title">Reference</div>\
-    <div class="page-sub">Cross-reference mappings between IEC 62443, NACSA, NIST, and MITRE frameworks</div>' +
+    <div class="page-sub">Cross-reference mappings between IEC 62443, NACSA, NIST, MITRE, and architecture</div>' +
     tabsHtml + content
   );
+}
+
+async function renderArchitectureContent() {
+  const archTabs = [
+    { id: 'purdue', label: 'Purdue Model' },
+    { id: 'zones',  label: 'Zones & Conduits' },
+    { id: 'assets', label: 'Asset Types' },
+  ];
+
+  var archTabsHtml = '<div class="sub-tabs">' + archTabs.map(function(t) {
+    return '<button class="sub-tab' + (t.id === 'purdue' ? ' active' : '') + '" onclick="navigate(\'reference/' + t.id + '\')">' + t.label + '</button>';
+  }).join('') + '</div>';
+
+  var archContent = await renderPurdue();
+
+  return archTabsHtml + archContent;
 }
 
 async function renderRefNacsa() {

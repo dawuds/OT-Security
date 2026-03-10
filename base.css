@@ -726,6 +726,33 @@ code, pre { font-family: var(--font-mono); font-size: var(--font-size-sm); }
 }
 .empty-state-text { color: var(--text-muted); font-size: var(--font-size-sm); }
 
+/* ---------- Scroll Hint for Nav Overflow ---------- */
+@media (max-width: 1024px) {
+  .nav-inner {
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent);
+    mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent);
+  }
+}
+
+/* ---------- Keyboard Focus Indicators (WCAG 2.1 AA) ---------- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+  padding: 1rem 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
 /* ---------- Noscript Fallback ---------- */
 noscript {
   display: block;
