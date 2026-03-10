@@ -92,6 +92,116 @@
       "evidenceItems": ["IoT network architecture diagram (dedicated VLAN isolation)", "IoT device asset register (with firmware versions)", "Default credential audit results", "IoT firmware update records", "Network access control configuration for IoT VLAN", "PDPA assessment for IoT data collection (where applicable)"],
       "slMapping": { "sl1": "IoT on dedicated VLAN; default credentials changed; device inventory maintained", "sl2": "IoT gateway in IDMZ; no direct IoT-to-BMS controller paths; firmware update process; network access control", "sl3": "Rogue device detection on IoT VLAN; automated firmware vulnerability scanning; PDPA compliance for occupancy data; quarterly inventory review" },
       "mitreAttackIcs": ["T0855", "T0883", "T0856"]
+    },
+    {
+      "id": "BA-R6",
+      "name": "Elevator and escalator control system security",
+      "description": "Elevator control systems are increasingly network-connected for destination dispatch optimisation, remote monitoring, predictive maintenance, and integration with PACS (access-controlled floors). Compromise could strand passengers between floors, override safety interlocks, or enable unauthorised floor access. Escalator drive controllers can be manipulated to cause sudden stops or speed changes that endanger passengers. Elevator safety circuits (overspeed governors, door interlocks, buffer switches) must operate independently of network-connected control systems.",
+      "applicableZones": ["Elevator and escalator control", "General commercial BMS"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-2.1", "Lifts Act 1984 (Act 295)", "OSHA 1994 (Act 514)", "NACSA Act 854 s18"], "summary": "Lifts Act 1984 and DOSH regulations mandate safety requirements for elevators. Safety circuits must not be compromisable via network. Remote monitoring connections must not create safety vulnerabilities.", "owner": "Facilities Manager / Elevator Maintenance Contractor / OT Security" },
+      "technical": { "summary": "Elevator controllers on dedicated BMS sub-segment. Safety circuits (overspeed, door interlock, buffer) hardware-based and independent of network. Remote monitoring via read-only gateway. PACS-elevator integration via defined interface only.", "actions": ["Elevator controllers on dedicated BMS VLAN — not on same segment as general BMS controllers", "Safety circuits (overspeed governor, door interlocks, final limit switch, buffer switches) must be hardware-based and independent of any network-connected control system — no software override possible via network", "Destination dispatch system: access controlled; floor assignment changes logged; PACS integration via defined read-only interface for access-controlled floors", "Remote monitoring: vendor remote monitoring via read-only data export through IDMZ gateway; no remote command capability to elevator controller from internet", "Elevator controller firmware updates: vendor-approved only; tested on single elevator before fleet deployment; scheduled during low-traffic periods", "Escalator drive controllers: emergency stop circuits hardware-wired; speed control parameters protected from unauthorised network modification"] },
+      "governance": { "summary": "Elevator OT security reviewed as part of Lifts Act compliance inspection. Vendor access documented.", "actions": ["Annual elevator cybersecurity review aligned with Lifts Act inspection schedule", "Elevator vendor remote access log maintained and reviewed quarterly", "Elevator safety circuit independence verified during annual safety inspection"] },
+      "evidenceItems": ["Elevator controller network architecture", "Safety circuit independence evidence (hardware safety documentation)", "Remote monitoring gateway configuration (read-only verification)", "Elevator vendor access log", "Destination dispatch access control configuration"],
+      "slMapping": { "sl2": "Elevator controllers on dedicated VLAN; safety circuits hardware-independent; remote monitoring read-only; vendor access logged", "sl3": "PACS-elevator integration via defined interface; firmware update testing on single unit first; annual cybersecurity review; escalator emergency stop hardware-wired", "sl4": "Continuous monitoring of elevator controller communications; cryptographic integrity of elevator controller firmware; anomaly detection on destination dispatch patterns" },
+      "mitreAttackIcs": ["T0855", "T0856", "T0836"]
+    },
+    {
+      "id": "BA-R7",
+      "name": "Lighting control and emergency lighting security",
+      "description": "Modern intelligent lighting systems use DALI, KNX, or IP-based protocols for schedule-based control, occupancy-based dimming, and daylight harvesting. Emergency lighting is a life-safety system that must illuminate evacuation routes during power failure or fire. Compromise of lighting control could cause darkness (safety hazard, panic), energy waste, or disable emergency lighting during an emergency. Smart lighting systems with occupancy sensors can also be used for surveillance (tracking building occupancy patterns).",
+      "applicableZones": ["General commercial BMS", "Energy management systems"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "Uniform Building By-Laws 1984 (UBBL)", "Fire Services Act 1988 (Act 341)", "NACSA Act 854 s18"], "summary": "Emergency lighting is mandated by UBBL and Fire Services Act. Emergency lighting must operate independently of BMS and lighting control systems. Occupancy sensor data may have PDPA implications.", "owner": "Facilities Manager / Electrical Engineer / OT Security" },
+      "technical": { "summary": "General lighting control on BMS network. Emergency lighting on independent system with battery backup — not dependent on BMS or lighting control network. DALI/KNX protocols have no inherent security — compensating controls via network isolation.", "actions": ["General lighting control system (DALI/KNX/IP) on dedicated BMS VLAN or sub-segment", "Emergency lighting: completely independent system with dedicated battery backup; must operate regardless of BMS, lighting control, or mains power status; not controllable from BMS", "Emergency lighting central monitoring: monitoring connection read-only; BMS may receive emergency lighting status but cannot command emergency lighting", "DALI/KNX protocol security: these protocols have no authentication; compensating controls are physical access restriction to DALI/KNX bus wiring and network isolation", "IP-based lighting gateways: change default credentials; restrict management access to BMS engineering VLAN; firmware updates applied regularly", "Occupancy sensor data: if used for analytics beyond lighting control, assess PDPA compliance; minimise data retention"] },
+      "governance": { "summary": "Emergency lighting security reviewed with fire safety compliance. Lighting control default credentials audited.", "actions": ["Emergency lighting independence verified during annual fire safety inspection", "Lighting control default credential audit annually", "Occupancy sensor data use reviewed for PDPA compliance"] },
+      "evidenceItems": ["Lighting control network architecture", "Emergency lighting independence documentation", "Emergency lighting battery test records", "Lighting controller default credential audit", "Occupancy sensor PDPA assessment (if applicable)"],
+      "slMapping": { "sl1": "Lighting control on BMS VLAN; emergency lighting independent; default credentials changed", "sl2": "IP lighting gateways secured; emergency lighting monitoring read-only; DALI/KNX physical access restricted; firmware updates current", "sl3": "Occupancy sensor PDPA compliance; emergency lighting independence formally verified; lighting control anomaly monitoring" },
+      "mitreAttackIcs": ["T0855", "T0856", "T0880"]
+    },
+    {
+      "id": "BA-R8",
+      "name": "BMS integration platform and central server security",
+      "description": "The central BMS integration platform (Honeywell EBI, Siemens Desigo CC, Johnson Controls Metasys, Schneider EcoStruxure) is the highest-value target in building automation. It aggregates control of all building subsystems — HVAC, fire alarm, PACS, elevator, lighting, energy — into a unified management interface. Compromise of the central BMS server potentially gives an attacker access to all integrated subsystems. BMS web and mobile interfaces are increasingly common, expanding the attack surface to include web application vulnerabilities.",
+      "applicableZones": ["General commercial BMS", "Data centre BMS", "Energy management systems"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-1.1", "IEC 62443-3-3 SR-3.1", "NACSA Act 854 s18", "NACSA Act 854 s23"], "summary": "Central BMS server is the primary OT asset for building automation security. For NCII-designated buildings, BMS server integrity is a core NACSA obligation. BMS web interfaces are subject to web application security requirements.", "owner": "BMS Administrator / Facilities Manager / IT Security / OT Security" },
+      "technical": { "summary": "Central BMS server on dedicated server segment. BMS web interface behind reverse proxy with MFA. Role-based access control with least privilege. Integration with subsystems via defined BACnet/OPC interfaces only. BMS database encrypted and backed up.", "actions": ["Central BMS server on dedicated network segment — not on general IT server infrastructure", "BMS web interface: behind reverse proxy in IDMZ; HTTPS enforced; multi-factor authentication for all BMS web access; session timeout configured", "BMS mobile application: if used, same authentication requirements as web interface; mobile device management (MDM) required for devices accessing BMS", "Role-based access control: least privilege principle; operators see/control only their assigned building systems; supervisors approve setpoint changes outside normal ranges; administrators manage user accounts and system configuration", "BMS database: encrypted at rest; daily backup to separate storage; backup integrity verified monthly", "BMS-to-subsystem integration: defined BACnet/OPC interfaces only; BMS cannot override safety system logic (fire alarm, elevator safety circuits)", "BMS audit trail: all operator actions logged with user ID, timestamp, action, old value, new value; audit trail retained per organisational policy (minimum 12 months)", "BMS server hardening: remove unnecessary services; disable unused BACnet services; restrict management ports to authorised workstations"] },
+      "governance": { "summary": "Central BMS security reviewed annually. BMS access control reviewed quarterly. BMS included in building security audit scope.", "actions": ["Annual BMS server security assessment — vulnerability scan and configuration review", "BMS user access review quarterly — remove stale accounts; verify role assignments", "BMS change management: any changes to BMS server configuration, integration interfaces, or user roles require change management approval", "BMS vendor support access: documented; time-limited; monitored"] },
+      "evidenceItems": ["BMS server network architecture diagram", "BMS web interface security configuration (reverse proxy, MFA, HTTPS)", "BMS role-based access control matrix", "BMS database backup and encryption configuration", "BMS audit trail configuration and sample", "BMS user access review records", "BMS server vulnerability scan report"],
+      "slMapping": { "sl2": "BMS server on dedicated segment; HTTPS and MFA for web access; RBAC; database encrypted and backed up; audit trail enabled", "sl3": "Reverse proxy in IDMZ; mobile access via MDM; subsystem integration restricted to defined interfaces; quarterly access review; annual security assessment", "sl4": "Continuous BMS server integrity monitoring; real-time anomaly detection on operator commands; cryptographic integrity of BMS configuration; automated detection of configuration drift" },
+      "mitreAttackIcs": ["T0855", "T0806", "T0836", "T0856"]
+    }
+  ],
+  "subsectors": [
+    {
+      "id": "hvac-systems",
+      "name": "HVAC Systems",
+      "description": "Heating, Ventilation, and Air Conditioning systems control environmental conditions for occupant comfort, clean room compliance, and equipment cooling. Critical for data centres, hospitals, and semiconductor fabs.",
+      "otSystems": ["Air Handling Unit (AHU) controllers", "Chiller plant controllers", "Cooling tower controllers", "Variable Air Volume (VAV) controllers", "Heat recovery systems", "Humidification/dehumidification systems"],
+      "iec62443Zones": {
+        "Data centre cooling": "SL 2-3",
+        "Hospital HVAC": "SL 2-3",
+        "General commercial HVAC": "SL 1-2"
+      },
+      "securityLevels": ["Dedicated BMS VLAN for HVAC controllers", "Independent temperature monitoring for critical spaces", "Setpoint change logging and alerting", "Fail-safe to last-known-good on communication loss"]
+    },
+    {
+      "id": "fire-life-safety",
+      "name": "Fire and Life Safety Systems",
+      "description": "Fire detection, alarm, and suppression systems are life-safety critical. False activation causes evacuation disruption; failure during real fire is catastrophic. Systems must operate autonomously regardless of BMS status.",
+      "otSystems": ["Fire alarm control panels (FACP)", "Smoke/heat detectors", "Manual call points", "Sprinkler control valves", "Gas suppression systems (FM-200, Novec, CO2)", "Smoke management/pressurisation systems", "Emergency voice communication systems (EVAC)"],
+      "iec62443Zones": {
+        "Fire alarm system": "SL 2",
+        "Gas suppression control": "SL 2-3",
+        "Smoke management": "SL 2"
+      },
+      "securityLevels": ["Physically separate network from BMS", "Read-only BMS interface for monitoring only", "Autonomous operation independent of BMS", "Physical key access for programming"]
+    },
+    {
+      "id": "access-control",
+      "name": "Physical Access Control Systems",
+      "description": "Card readers, biometric scanners, door controllers, and turnstiles. PACS compromise enables physical access bypass. Integration with BMS and IT identity systems creates cross-domain attack paths.",
+      "otSystems": ["Door controllers", "Card readers (proximity, smart card)", "Biometric readers (fingerprint, facial recognition)", "Turnstiles and gates", "Intercom/video intercom", "Visitor management kiosks"],
+      "iec62443Zones": {
+        "PACS controllers": "SL 2-3",
+        "Biometric processing": "SL 2-3",
+        "Visitor management": "SL 2"
+      },
+      "securityLevels": ["Dedicated PACS network segment", "PACS-IT integration via IDMZ only", "Biometric data encrypted at rest and in transit", "Door fail-safe behaviour defined per zone"]
+    },
+    {
+      "id": "elevator-escalator",
+      "name": "Elevator and Escalator Control",
+      "description": "Elevator and escalator control systems manage vertical transportation in buildings. Modern elevator systems are network-connected for destination dispatch, remote monitoring, and predictive maintenance. Compromise could strand passengers, cause safety incidents, or disrupt building operations.",
+      "otSystems": ["Elevator controllers", "Destination dispatch systems", "Door operators", "Safety circuits (overspeed governors, buffers)", "Escalator drive controllers", "Remote monitoring gateways"],
+      "iec62443Zones": {
+        "Elevator controller network": "SL 2",
+        "Destination dispatch system": "SL 2",
+        "Escalator control": "SL 1-2"
+      },
+      "securityLevels": ["Elevator controller on dedicated VLAN", "Safety circuits hardware-independent of network", "Remote monitoring via read-only gateway", "Vendor maintenance access controlled and logged"]
+    },
+    {
+      "id": "lighting-control",
+      "name": "Lighting Control Systems",
+      "description": "Intelligent lighting control systems manage lighting schedules, occupancy-based dimming, daylight harvesting, and emergency lighting. DALI, KNX, and IP-based lighting protocols are common. Emergency lighting is life-safety critical and must operate independently.",
+      "otSystems": ["DALI lighting controllers", "KNX lighting actuators", "IP-based lighting gateways", "Occupancy sensors", "Daylight sensors", "Emergency lighting central monitoring"],
+      "iec62443Zones": {
+        "General lighting control": "SL 1",
+        "Emergency lighting": "SL 2"
+      },
+      "securityLevels": ["Lighting network on dedicated VLAN", "Emergency lighting independent of BMS", "Default credentials changed on all controllers"]
+    },
+    {
+      "id": "bms-integration",
+      "name": "BMS Integration Platform",
+      "description": "The central BMS integration platform aggregates all building subsystems (HVAC, fire, access, elevator, lighting, energy) into a unified management interface. This is the highest-value target in building automation as compromise provides control over all integrated subsystems.",
+      "otSystems": ["Central BMS server (Honeywell EBI, Siemens Desigo CC, Johnson Controls Metasys)", "BMS graphics workstations", "BMS mobile/web interface", "Integration middleware (BACnet router, OPC server)", "Energy management and analytics platform", "Alarm management system"],
+      "iec62443Zones": {
+        "Central BMS server": "SL 2-3",
+        "BMS workstations": "SL 2",
+        "BMS web interface": "SL 2",
+        "Energy management": "SL 2"
+      },
+      "securityLevels": ["BMS servers in dedicated network segment", "BMS web interface with HTTPS and MFA", "Role-based access control", "Integration with subsystems via defined interfaces only", "No direct internet access to BMS server"]
     }
   ],
   "sectorSpecificThreats": [

@@ -1,0 +1,375 @@
+{
+  "$schema": "ot-security-v1",
+  "title": "Security Level Gap Assessment Framework",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "SL gap assessment framework constructed from IEC 62443-3-3 foundational requirements and system requirements. Security level descriptions are paraphrased. Obtain normative text from IEC. Assessment criteria are indicative guidance, not certification requirements.",
+  "description": "Interactive tool for assessing the gap between current Security Level (SL-A, achieved) and target Security Level (SL-T) per IEC 62443-3-3. The assessment covers all 7 Foundational Requirements (FR1-FR7) and provides specific criteria for each SL 1-4 level.",
+  "assessmentMethodology": {
+    "standard": "IEC 62443-3-3",
+    "approach": "For each Foundational Requirement, assess the current achieved Security Level (SL-A) against the target Security Level (SL-T). The gap between SL-A and SL-T identifies required security improvements. SL-T is determined by IEC 62443-3-2 risk assessment (zone-based).",
+    "slDefinitions": {
+      "SL 0": "No specific requirements or security protection necessary",
+      "SL 1": "Protection against casual or coincidental violation",
+      "SL 2": "Protection against intentional violation using simple means with low resources, generic skills, and low motivation",
+      "SL 3": "Protection against intentional violation using sophisticated means with moderate resources, IACS-specific skills, and moderate motivation",
+      "SL 4": "Protection against intentional violation using sophisticated means with extended resources, IACS-specific skills, and high motivation"
+    },
+    "steps": [
+      "1. Define zones and conduits per IEC 62443-3-2",
+      "2. Determine SL-T (target) for each zone based on risk assessment",
+      "3. Assess SL-A (achieved) for each zone against each FR using criteria below",
+      "4. Identify gaps where SL-A < SL-T",
+      "5. Define remediation plan to close gaps with prioritisation",
+      "6. Reassess periodically (minimum annually per NACSA Act 854 s23)"
+    ]
+  },
+  "foundationalRequirements": [
+    {
+      "id": "FR1",
+      "name": "Identification and Authentication Control",
+      "description": "Identify and authenticate all users (humans, software processes, and devices) before allowing access to the IACS.",
+      "iec62443Reference": "IEC 62443-3-3 SR 1.1 - SR 1.13",
+      "srCount": 13,
+      "requirements": {
+        "SL1": [
+          "Unique user identification for all human users",
+          "Password-based authentication for interactive access",
+          "Default credentials changed on all devices",
+          "Account lockout after repeated failed attempts"
+        ],
+        "SL2": [
+          "All SL 1 requirements plus:",
+          "Multi-factor authentication for remote and privileged access",
+          "Unique identification for software processes and devices",
+          "Centralised authentication where architecturally feasible",
+          "Password complexity and rotation policies enforced",
+          "Authenticator management (secure storage, revocation)"
+        ],
+        "SL3": [
+          "All SL 2 requirements plus:",
+          "Multi-factor authentication for all interactive access (not just remote)",
+          "Hardware-based authenticators for critical system access",
+          "Certificate-based device authentication",
+          "Federated identity management across OT zones",
+          "Continuous authentication / session revalidation for critical operations"
+        ],
+        "SL4": [
+          "All SL 3 requirements plus:",
+          "Multi-factor authentication with at least one physical factor for all access",
+          "Biometric or hardware token authentication for safety system access",
+          "Mutual authentication between all communicating entities",
+          "Cryptographic device identity with hardware root of trust",
+          "Real-time authentication anomaly detection"
+        ]
+      },
+      "assessmentCriteria": [
+        { "criterion": "Are all human users uniquely identified?", "slTarget": 1 },
+        { "criterion": "Are default credentials eliminated on all devices?", "slTarget": 1 },
+        { "criterion": "Is MFA enforced for remote access?", "slTarget": 2 },
+        { "criterion": "Are software processes and devices uniquely identified?", "slTarget": 2 },
+        { "criterion": "Is MFA enforced for ALL interactive access?", "slTarget": 3 },
+        { "criterion": "Is certificate-based device authentication deployed?", "slTarget": 3 },
+        { "criterion": "Is mutual authentication used between all entities?", "slTarget": 4 },
+        { "criterion": "Is hardware root of trust used for device identity?", "slTarget": 4 }
+      ]
+    },
+    {
+      "id": "FR2",
+      "name": "Use Control",
+      "description": "Enforce assigned privileges of an authenticated user (human, software process, or device) to perform the requested action on the IACS and monitor the use of these privileges.",
+      "iec62443Reference": "IEC 62443-3-3 SR 2.1 - SR 2.12",
+      "srCount": 12,
+      "requirements": {
+        "SL1": [
+          "Authorisation enforcement for all user access",
+          "Role-based access control (RBAC) defined",
+          "Least privilege principle applied",
+          "Wireless access restricted and controlled"
+        ],
+        "SL2": [
+          "All SL 1 requirements plus:",
+          "Granular role definitions (operator, engineer, supervisor, administrator)",
+          "Portable and mobile device restrictions",
+          "Session lock after inactivity timeout",
+          "Auditing of privilege use for security-relevant actions",
+          "Explicit authorisation for remote access sessions"
+        ],
+        "SL3": [
+          "All SL 2 requirements plus:",
+          "Dual authorisation for critical operations (e.g., SIS modification)",
+          "Supervisor approval required for safety-relevant changes",
+          "Time-limited privilege elevation",
+          "Comprehensive audit trail of all privilege use",
+          "Access control decisions logged and analysable"
+        ],
+        "SL4": [
+          "All SL 3 requirements plus:",
+          "Multi-person authorisation for highest-criticality operations",
+          "Real-time monitoring and alerting on privilege escalation",
+          "Automated enforcement of separation of duties",
+          "Privilege use analytics and anomaly detection",
+          "Hardware-enforced access control where feasible"
+        ]
+      },
+      "assessmentCriteria": [
+        { "criterion": "Is RBAC defined and enforced?", "slTarget": 1 },
+        { "criterion": "Is least privilege applied?", "slTarget": 1 },
+        { "criterion": "Are session lock timeouts configured?", "slTarget": 2 },
+        { "criterion": "Are privilege-use actions audited?", "slTarget": 2 },
+        { "criterion": "Is dual authorisation required for safety changes?", "slTarget": 3 },
+        { "criterion": "Is there comprehensive audit trail of all privilege use?", "slTarget": 3 },
+        { "criterion": "Is multi-person authorisation enforced for critical operations?", "slTarget": 4 },
+        { "criterion": "Is automated separation of duties enforced?", "slTarget": 4 }
+      ]
+    },
+    {
+      "id": "FR3",
+      "name": "System Integrity",
+      "description": "Ensure the integrity of the IACS to prevent unauthorised manipulation.",
+      "iec62443Reference": "IEC 62443-3-3 SR 3.1 - SR 3.9",
+      "srCount": 9,
+      "requirements": {
+        "SL1": [
+          "Communication integrity for critical control messages",
+          "Malware protection on Windows/Linux-based OT systems",
+          "Input validation on all IACS interfaces",
+          "Deterministic output on error conditions (fail-safe)"
+        ],
+        "SL2": [
+          "All SL 1 requirements plus:",
+          "Cryptographic integrity verification for software and firmware updates",
+          "Application whitelisting on HMI and engineering workstations",
+          "Session integrity protection",
+          "OT-vendor-approved antimalware with OT-safe configuration",
+          "Integrity monitoring for critical system files and configurations"
+        ],
+        "SL3": [
+          "All SL 2 requirements plus:",
+          "Cryptographic communication integrity for all control protocols where supported",
+          "Automated integrity verification of controller programs",
+          "Code signing for all deployed software",
+          "Hardware-based integrity measurement (TPM where available)",
+          "Real-time file integrity monitoring with alerting"
+        ],
+        "SL4": [
+          "All SL 3 requirements plus:",
+          "End-to-end cryptographic integrity for all communications",
+          "Hardware root of trust for boot integrity (secure boot)",
+          "Continuous automated integrity verification of all IACS components",
+          "Tamper-evident hardware for critical controllers",
+          "Supply chain integrity verification with cryptographic provenance"
+        ]
+      },
+      "assessmentCriteria": [
+        { "criterion": "Is malware protection deployed on OT workstations?", "slTarget": 1 },
+        { "criterion": "Is input validation applied on IACS interfaces?", "slTarget": 1 },
+        { "criterion": "Is application whitelisting deployed?", "slTarget": 2 },
+        { "criterion": "Are software updates cryptographically verified?", "slTarget": 2 },
+        { "criterion": "Is automated controller program integrity verification deployed?", "slTarget": 3 },
+        { "criterion": "Is code signing enforced for all software?", "slTarget": 3 },
+        { "criterion": "Is secure boot / hardware root of trust used?", "slTarget": 4 },
+        { "criterion": "Is continuous automated integrity verification operational?", "slTarget": 4 }
+      ]
+    },
+    {
+      "id": "FR4",
+      "name": "Data Confidentiality",
+      "description": "Ensure the confidentiality of information on communication channels and in data repositories to prevent unauthorised disclosure.",
+      "iec62443Reference": "IEC 62443-3-3 SR 4.1 - SR 4.3",
+      "srCount": 3,
+      "requirements": {
+        "SL1": [
+          "Information confidentiality awareness (classification policy)",
+          "Identification of confidential OT data (process recipes, configurations, IP)"
+        ],
+        "SL2": [
+          "All SL 1 requirements plus:",
+          "Encryption of data at rest for sensitive OT data (recipes, configurations)",
+          "Encryption of data in transit for remote access and IDMZ traversal",
+          "Secure disposal of OT storage media"
+        ],
+        "SL3": [
+          "All SL 2 requirements plus:",
+          "Encryption of data in transit for all cross-zone communications",
+          "Key management procedures established",
+          "Data loss prevention controls for OT intellectual property",
+          "Encrypted backups of OT configurations and programs"
+        ],
+        "SL4": [
+          "All SL 3 requirements plus:",
+          "End-to-end encryption for all OT communications where protocol supports it",
+          "Hardware security modules (HSM) for key storage",
+          "Cryptographic protection against data exfiltration",
+          "Residual information protection (secure memory clearing)"
+        ]
+      },
+      "assessmentCriteria": [
+        { "criterion": "Is confidential OT data identified and classified?", "slTarget": 1 },
+        { "criterion": "Is remote access traffic encrypted?", "slTarget": 2 },
+        { "criterion": "Is sensitive data at rest encrypted?", "slTarget": 2 },
+        { "criterion": "Are all cross-zone communications encrypted?", "slTarget": 3 },
+        { "criterion": "Is key management formally established?", "slTarget": 3 },
+        { "criterion": "Are HSMs used for key storage?", "slTarget": 4 },
+        { "criterion": "Is end-to-end encryption deployed for all OT communications?", "slTarget": 4 }
+      ]
+    },
+    {
+      "id": "FR5",
+      "name": "Restricted Data Flow",
+      "description": "Segment the IACS environment via zones and conduits to limit unnecessary data flow.",
+      "iec62443Reference": "IEC 62443-3-3 SR 5.1 - SR 5.4",
+      "srCount": 4,
+      "requirements": {
+        "SL1": [
+          "Network segmentation between OT and IT (at minimum a firewall)",
+          "Documented network architecture diagram",
+          "Basic firewall rules between OT and IT"
+        ],
+        "SL2": [
+          "All SL 1 requirements plus:",
+          "Zone and conduit model defined per IEC 62443-3-2",
+          "IDMZ implemented between OT and IT",
+          "Deny-by-default firewall rules at zone boundaries",
+          "No direct IT-to-OT network paths",
+          "Documented and approved data flows for each conduit"
+        ],
+        "SL3": [
+          "All SL 2 requirements plus:",
+          "Data diode for OT-to-IT data export (critical zones)",
+          "Deep packet inspection (DPI) at zone boundaries for OT protocols",
+          "Microsegmentation within OT (separate VLANs per functional area)",
+          "Network traffic baselining and anomaly detection",
+          "Regular review of all zone boundary firewall rules"
+        ],
+        "SL4": [
+          "All SL 3 requirements plus:",
+          "Hardware-enforced unidirectional gateways for all OT-to-IT data flows",
+          "OT-aware intrusion prevention at all zone boundaries",
+          "Automated network topology verification against documented architecture",
+          "Zero-trust network architecture principles within OT",
+          "Real-time detection of any unauthorised cross-zone traffic"
+        ]
+      },
+      "assessmentCriteria": [
+        { "criterion": "Is OT network segmented from IT?", "slTarget": 1 },
+        { "criterion": "Is there a documented network architecture?", "slTarget": 1 },
+        { "criterion": "Is an IDMZ implemented?", "slTarget": 2 },
+        { "criterion": "Are deny-by-default firewall rules at zone boundaries?", "slTarget": 2 },
+        { "criterion": "Are data diodes used for critical OT-to-IT flows?", "slTarget": 3 },
+        { "criterion": "Is deep packet inspection deployed for OT protocols?", "slTarget": 3 },
+        { "criterion": "Are hardware-enforced unidirectional gateways deployed?", "slTarget": 4 },
+        { "criterion": "Is automated network topology verification operational?", "slTarget": 4 }
+      ]
+    },
+    {
+      "id": "FR6",
+      "name": "Timely Response to Events",
+      "description": "Respond to security violations by notifying the proper authority, reporting needed evidence of the violation, and taking timely corrective action.",
+      "iec62443Reference": "IEC 62443-3-3 SR 6.1 - SR 6.2",
+      "srCount": 2,
+      "requirements": {
+        "SL1": [
+          "Audit log capability for security-relevant events",
+          "Logs protected from unauthorised modification",
+          "Basic log review process established"
+        ],
+        "SL2": [
+          "All SL 1 requirements plus:",
+          "Continuous audit logging of security events across all IACS components",
+          "Centralised log collection (syslog or SIEM)",
+          "Alerting on critical security events",
+          "Log retention policy defined (minimum per NACSA requirements)",
+          "Incident response procedure for OT security events"
+        ],
+        "SL3": [
+          "All SL 2 requirements plus:",
+          "OT-specific SIEM with ICS/OT correlation rules",
+          "Automated alerting with escalation procedures",
+          "Forensic-grade audit logging (timestamps, event correlation)",
+          "Regular log analysis and threat hunting in OT environment",
+          "Integration with NACSA s26 notification procedure (6-hour initial notification)"
+        ],
+        "SL4": [
+          "All SL 3 requirements plus:",
+          "Real-time security event correlation across all IACS zones",
+          "Automated incident response for predefined attack patterns",
+          "Continuous monitoring with 24/7 OT SOC capability",
+          "Machine learning anomaly detection on OT network traffic",
+          "Evidence preservation automation for cyber-physical incidents"
+        ]
+      },
+      "assessmentCriteria": [
+        { "criterion": "Is audit logging enabled for security events?", "slTarget": 1 },
+        { "criterion": "Are logs protected from modification?", "slTarget": 1 },
+        { "criterion": "Is centralised log collection (SIEM) deployed?", "slTarget": 2 },
+        { "criterion": "Is an OT incident response procedure defined?", "slTarget": 2 },
+        { "criterion": "Is OT-specific SIEM with ICS rules deployed?", "slTarget": 3 },
+        { "criterion": "Is NACSA s26 notification procedure integrated?", "slTarget": 3 },
+        { "criterion": "Is 24/7 OT SOC capability operational?", "slTarget": 4 },
+        { "criterion": "Is automated incident response deployed?", "slTarget": 4 }
+      ]
+    },
+    {
+      "id": "FR7",
+      "name": "Resource Availability",
+      "description": "Ensure the availability of the IACS against the degradation or denial of essential services.",
+      "iec62443Reference": "IEC 62443-3-3 SR 7.1 - SR 7.8",
+      "srCount": 8,
+      "requirements": {
+        "SL1": [
+          "Denial of Service (DoS) protection at network boundaries",
+          "Backup and recovery procedures for critical IACS components",
+          "IACS component inventory maintained",
+          "Defined emergency procedures for OT system failure"
+        ],
+        "SL2": [
+          "All SL 1 requirements plus:",
+          "Network-level DoS protection (rate limiting, traffic filtering)",
+          "Redundancy for critical control systems (controller failover)",
+          "Tested backup and recovery with defined RTO/RPO",
+          "Comprehensive IACS asset inventory with configuration baselines",
+          "OT-specific disaster recovery plan",
+          "Patch and vulnerability management programme"
+        ],
+        "SL3": [
+          "All SL 2 requirements plus:",
+          "DDoS mitigation at network perimeter",
+          "High availability for all safety-critical control systems",
+          "Automated failover for critical SCADA/DCS",
+          "Regular disaster recovery testing (minimum annually)",
+          "Proactive vulnerability assessment and remediation",
+          "Spare parts and configuration backup for rapid recovery"
+        ],
+        "SL4": [
+          "All SL 3 requirements plus:",
+          "Diversity in control system redundancy (different vendors/platforms)",
+          "Automated attack mitigation and service recovery",
+          "Continuous availability monitoring with predictive failure detection",
+          "Zero-downtime patching capability where feasible",
+          "Cyber-resilience testing including destructive testing"
+        ]
+      },
+      "assessmentCriteria": [
+        { "criterion": "Is DoS protection at network boundaries?", "slTarget": 1 },
+        { "criterion": "Are backup/recovery procedures defined and tested?", "slTarget": 1 },
+        { "criterion": "Is a comprehensive asset inventory maintained?", "slTarget": 2 },
+        { "criterion": "Is redundancy provided for critical controllers?", "slTarget": 2 },
+        { "criterion": "Is high availability for safety-critical systems?", "slTarget": 3 },
+        { "criterion": "Is DR testing performed at least annually?", "slTarget": 3 },
+        { "criterion": "Is vendor diversity in control system redundancy?", "slTarget": 4 },
+        { "criterion": "Is continuous availability monitoring with predictive failure?", "slTarget": 4 }
+      ]
+    }
+  ],
+  "gapAssessmentTemplate": {
+    "description": "Template for conducting SL gap assessment per zone. For each zone, assess current SL-A against target SL-T for each Foundational Requirement.",
+    "columns": ["Zone Name", "FR", "FR Name", "SL-T (Target)", "SL-A (Achieved)", "Gap", "Priority", "Remediation Action", "Timeline", "Status"],
+    "priorityScale": {
+      "Critical": "SL-A = 0 and SL-T >= 2, or safety-related gap",
+      "High": "Gap >= 2 SL levels",
+      "Medium": "Gap = 1 SL level",
+      "Low": "SL-A meets SL-T but improvement opportunities exist"
+    },
+    "statusOptions": ["Not Started", "In Progress", "Implemented", "Verified", "Accepted Risk"]
+  }
+}

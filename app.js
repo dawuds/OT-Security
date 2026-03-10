@@ -235,6 +235,7 @@ async function renderFramework(sub) {
     { id: 'iec-sl',       label: 'Security Levels' },
     { id: 'iec-fr',       label: 'Foundational Requirements' },
     { id: 'iec-sr',       label: 'System Requirements (' + srTotal + ' SRs)' },
+    { id: 'purdue-interactive', label: 'Purdue Model' },
     { id: 'nist',         label: 'NIST SP 800-82' },
     { id: 'mitre',        label: 'MITRE ATT&CK for ICS' },
     { id: 'sectors',      label: 'Sectors' },
@@ -250,6 +251,7 @@ async function renderFramework(sub) {
   else if (active === 'iec-sl')   content = await renderIecSL();
   else if (active === 'iec-fr')   content = await renderIecFR();
   else if (active === 'iec-sr')   content = await renderIecSR();
+  else if (active === 'purdue-interactive') content = await renderPurdueInteractive();
   else if (active === 'nist')     content = await renderNist();
   else if (active === 'mitre')    content = await renderMitre();
   else if (active === 'sectors')  content = await renderSectorsContent();
@@ -815,7 +817,10 @@ async function renderSectors(sub) {
 }
 
 async function renderSectorById(id) {
-  const data = await load('sectors/index.json');
+  const [data, sectorReqs] = await Promise.all([
+    load('sectors/index.json'),
+    load('sectors/requirements/' + id + '.json').catch(function() { return null; })
+  ]);
   const sectors = data.sectors || [];
   const sector = sectors.find(function(s) { return s.id === id; });
   if (!sector) { setHTML('<div class="error-state"><h2>Sector not found</h2><button onclick="navigate(\'sectors\')">Back</button></div>'); return; }
@@ -823,6 +828,80 @@ async function renderSectorById(id) {
   var slZoneHtml = sector.targetSLByZone ? Object.entries(sector.targetSLByZone).map(function(e) {
     return '<tr><td>' + escHtml(e[0]) + '</td><td>' + slBadge(e[1]) + '</td></tr>';
   }).join('') : '';
+
+  // Subsectors from requirements file
+  var subsectorsHtml = '';
+  if (sectorReqs && sectorReqs.subsectors && sectorReqs.subsectors.length) {
+    subsectorsHtml = '<h2 style="margin-top:1.5rem">Subsectors</h2><div class="accordion">' +
+      sectorReqs.subsectors.map(function(sub) {
+        var subZonesHtml = sub.iec62443Zones ? Object.entries(sub.iec62443Zones).map(function(e) {
+          return '<tr><td style="font-size:0.75rem">' + escHtml(e[0]) + '</td><td>' + slBadge(e[1]) + '</td></tr>';
+        }).join('') : '';
+
+        var nacsaReqsHtml = (sub.nacsaRequirements || []).map(function(r) {
+          return '<li style="font-size:0.75rem;margin-bottom:0.2rem">' + escHtml(r) + '</li>';
+        }).join('');
+
+        return '<div class="accordion-item">\
+          <button class="accordion-trigger" data-accordion>\
+            <span class="accordion-trigger-left">\
+              <span>' + escHtml(sub.name) + '</span>\
+            </span>\
+            <span class="chevron">&#9654;</span>\
+          </button>\
+          <div class="accordion-content">\
+            <div class="control-card-desc" style="margin-bottom:0.75rem">' + escHtml(sub.description || '') + '</div>\
+            <div class="control-grid">\
+              <div>\
+                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">OT Systems</div>' +
+                tagList(sub.otSystems || []) +
+              '</div>\
+              <div>\
+                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">IEC 62443 Zone Assignments</div>\
+                <div class="table-wrap" style="margin:0"><table style="font-size:0.75rem"><thead><tr><th>Zone</th><th>SL</th></tr></thead><tbody>' + subZonesHtml + '</tbody></table></div>\
+              </div>\
+            </div>' +
+            (nacsaReqsHtml ? '<div style="margin-top:0.75rem"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">NACSA Requirements</div><ul style="padding-left:1.25rem;margin:0">' + nacsaReqsHtml + '</ul></div>' : '') +
+          '</div>\
+        </div>';
+      }).join('') + '</div>';
+  }
+
+  // Requirements from requirements file
+  var reqsHtml = '';
+  if (sectorReqs && sectorReqs.requirements && sectorReqs.requirements.length) {
+    reqsHtml = '<h2 style="margin-top:1.5rem">Sector Requirements (' + sectorReqs.requirements.length + ')</h2><div class="accordion">' +
+      sectorReqs.requirements.map(function(req) {
+        var techActionsHtml = (req.technical && req.technical.actions) ? req.technical.actions.map(function(a) {
+          return '<li style="font-size:0.75rem;margin-bottom:0.2rem">' + escHtml(a) + '</li>';
+        }).join('') : '';
+
+        var govActionsHtml = (req.governance && req.governance.actions) ? req.governance.actions.map(function(a) {
+          return '<li style="font-size:0.75rem;margin-bottom:0.2rem">' + escHtml(a) + '</li>';
+        }).join('') : '';
+
+        var slMapHtml = req.slMapping ? Object.entries(req.slMapping).map(function(e) {
+          return '<div style="padding:0.35rem 0;border-top:1px solid var(--border);font-size:0.75rem"><strong>' + escHtml(e[0].toUpperCase()) + ':</strong> ' + escHtml(e[1]) + '</div>';
+        }).join('') : '';
+
+        return '<div class="accordion-item">\
+          <button class="accordion-trigger" data-accordion>\
+            <span class="accordion-trigger-left">\
+              <span class="badge badge-sl2" style="margin-right:0.5rem">' + escHtml(req.id) + '</span>\
+              <span>' + escHtml(req.name) + '</span>\
+            </span>\
+            <span class="chevron">&#9654;</span>\
+          </button>\
+          <div class="accordion-content">\
+            <div class="control-card-desc" style="margin-bottom:0.75rem">' + escHtml(req.description || '') + '</div>' +
+            (req.technical ? '<div style="margin-bottom:0.75rem"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">Technical Controls</div><div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.35rem">' + escHtml(req.technical.summary || '') + '</div>' + (techActionsHtml ? '<ul style="padding-left:1.25rem;margin:0">' + techActionsHtml + '</ul>' : '') + '</div>' : '') +
+            (req.governance ? '<div style="margin-bottom:0.75rem"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">Governance</div>' + (govActionsHtml ? '<ul style="padding-left:1.25rem;margin:0">' + govActionsHtml + '</ul>' : '') + '</div>' : '') +
+            (slMapHtml ? '<div style="margin-bottom:0.75rem"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">Security Level Mapping</div>' + slMapHtml + '</div>' : '') +
+            (req.mitreAttackIcs ? '<div class="control-card-meta">' + req.mitreAttackIcs.map(function(m){return '<span class="tag" style="color:var(--danger)">'+escHtml(m)+'</span>';}).join('') + '</div>' : '') +
+          '</div>\
+        </div>';
+      }).join('') + '</div>';
+  }
 
   setHTML('\
     <nav class="breadcrumbs"><a href="#sectors">Sectors</a><span class="sep">/</span><span class="current">' + escHtml(sector.name) + '</span></nav>\
@@ -837,6 +916,8 @@ async function renderSectorById(id) {
       <div class="control-card"><h3>Key OT Risks</h3><ul style="padding-left:1.25rem;font-size:0.8rem">' + (sector.keyOtRisks || []).map(function(r){return '<li style="margin-bottom:0.25rem">'+escHtml(r)+'</li>';}).join('') + '</ul></div>\
       <div class="control-card"><h3>SL-T by Zone</h3><div class="table-wrap" style="margin:0"><table><thead><tr><th>Zone</th><th>SL Target</th></tr></thead><tbody>' + slZoneHtml + '</tbody></table></div></div>\
     </div>' +
+    subsectorsHtml +
+    reqsHtml +
     (sector.nacsaCopReference ? '<div class="control-card" style="margin-top:0.75rem;border-color:var(--accent)"><h3>NACSA Code of Practice Reference</h3><div class="detail-body">' + escHtml(sector.nacsaCopReference) + '</div></div>' : '') +
     (sector.regulatoryOverlap ? '<h2 style="margin-top:1rem">Regulatory Overlap</h2><div class="attack-chain">' + (Array.isArray(sector.regulatoryOverlap) ? sector.regulatoryOverlap.map(function(r){return '<div class="attack-step">'+escHtml(r)+'</div>';}).join('') : '<div class="attack-step">' + escHtml(String(sector.regulatoryOverlap)) + '</div>') + '</div>' : '')
   );
@@ -958,6 +1039,7 @@ async function renderRiskManagement(sub) {
     { id: 'register',    label: 'Risk Register' },
     { id: 'treatment',   label: 'Treatment Options' },
     { id: 'checklist',   label: 'Assessment Checklist' },
+    { id: 'sl-gap',      label: 'SL Gap Assessment' },
   ];
   const active = sub || 'methodology';
 
@@ -971,6 +1053,7 @@ async function renderRiskManagement(sub) {
   else if (active === 'register') content = await renderRiskRegister();
   else if (active === 'treatment') content = await renderRiskTreatment();
   else if (active === 'checklist') content = await renderRiskChecklist();
+  else if (active === 'sl-gap') content = await renderSLGapAssessment();
 
   setHTML('\
     <div class="page-title">Risk Management</div>\
@@ -1262,6 +1345,401 @@ async function renderRefSectorCop() {
       (m.keyOtStandards ? '<div style="margin-top:0.5rem">' + tagList(m.keyOtStandards) + '</div>' : '') +
     '</div>';}).join('');
 }
+
+
+// --- PURDUE MODEL INTERACTIVE ---
+async function renderPurdueInteractive() {
+  const data = await load('sectors/purdue-model.json');
+  if (!data || !data.levels) return '<div class="empty-state"><div class="empty-state-text">No Purdue model data available.</div></div>';
+
+  var levelIcons = {
+    sensor: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>',
+    controller: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="6" y1="8" x2="6" y2="16"/><line x1="10" y1="8" x2="10" y2="16"/><circle cx="16" cy="12" r="2"/></svg>',
+    monitor: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+    server: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>',
+    shield: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    building: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20"/><rect x="8" y="6" width="3" height="3"/><rect x="13" y="6" width="3" height="3"/><rect x="8" y="12" width="3" height="3"/><rect x="13" y="12" width="3" height="3"/><rect x="10" y="18" width="4" height="4"/></svg>',
+    cloud: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>'
+  };
+
+  // Render stacked levels from top (Level 5) to bottom (Level 0)
+  var sortedLevels = data.levels.slice().sort(function(a, b) { return b.level - a.level; });
+
+  var diagramHtml = sortedLevels.map(function(l) {
+    var icon = levelIcons[l.icon] || '';
+    var levelLabel = l.level === 3.5 ? '3.5' : String(l.level);
+    var isDMZ = l.level === 3.5;
+    var isOT = l.level <= 3 && l.level !== 3.5;
+    var isIT = l.level >= 4;
+
+    var zoneLabel = isOT ? 'OT Zone' : (isDMZ ? 'DMZ' : 'IT Zone');
+    var zoneBadgeClass = isOT ? 'badge-sl3' : (isDMZ ? 'badge-sl2' : 'badge-sl1');
+
+    var devicesHtml = (l.typicalDevices || []).map(function(d) {
+      return '<span class="tag" style="font-size:0.65rem;margin:1px">' + escHtml(d) + '</span>';
+    }).join('');
+
+    var protocolsHtml = (l.allowedProtocols || []).map(function(p) {
+      return '<span class="tag" style="font-size:0.6rem;margin:1px;background:rgba(56,189,248,0.1);color:var(--accent)">' + escHtml(p) + '</span>';
+    }).join('');
+
+    var secReqsHtml = (l.securityRequirements || []).map(function(r) {
+      return '<li style="font-size:0.75rem;margin-bottom:0.15rem">' + escHtml(r) + '</li>';
+    }).join('');
+
+    return '\
+    <div class="purdue-level" data-purdue-level="' + levelLabel + '" style="border-left:4px solid ' + (l.color || 'var(--accent)') + ';margin-bottom:0;cursor:pointer;position:relative;background:var(--bg-card);border:1px solid var(--border);border-left:4px solid ' + (l.color || 'var(--accent)') + ';border-radius:8px;padding:1rem;transition:all 0.2s" onclick="togglePurdueDetail(this)">\
+      <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">\
+        <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;background:' + (l.color || 'var(--accent)') + '15;color:' + (l.color || 'var(--accent)') + '">' + icon + '</div>\
+        <div style="flex:1;min-width:200px">\
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">\
+            <span style="font-weight:700;font-size:0.9rem;color:' + (l.color || 'var(--accent)') + '">Level ' + escHtml(levelLabel) + '</span>\
+            <span style="font-weight:700;font-size:0.9rem">' + escHtml(l.name) + '</span>\
+            <span class="badge ' + zoneBadgeClass + '" style="font-size:0.6rem">' + zoneLabel + '</span>\
+          </div>\
+          <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.15rem">' + escHtml(l.subtitle || '') + '</div>\
+        </div>\
+        <div style="display:flex;align-items:center;gap:0.5rem">\
+          <span style="font-size:0.7rem;color:var(--text-muted)">' + escHtml(l.defaultSL || '') + '</span>\
+          <span class="chevron" style="transition:transform 0.2s;color:var(--text-muted)">&#9654;</span>\
+        </div>\
+      </div>\
+      <div class="purdue-detail" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">\
+        <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.75rem">' + escHtml(l.description || '') + '</div>\
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem">\
+          <div>\
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.5rem">Typical Devices</div>\
+            <div style="display:flex;flex-wrap:wrap;gap:2px">' + devicesHtml + '</div>\
+          </div>\
+          <div>\
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.5rem">Allowed Protocols</div>\
+            <div style="display:flex;flex-wrap:wrap;gap:2px">' + protocolsHtml + '</div>\
+          </div>\
+        </div>\
+        <div style="margin-top:0.75rem">\
+          <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:0.5rem">Security Requirements</div>\
+          <ul style="padding-left:1.25rem;margin:0;color:var(--text-secondary)">' + secReqsHtml + '</ul>\
+        </div>\
+        <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-muted)"><strong>IEC 62443 Zone:</strong> ' + escHtml(l.isoZone || '') + '</div>\
+      </div>\
+    </div>' +
+    (isDMZ ? '<div style="text-align:center;padding:0.25rem 0;font-size:0.7rem;font-weight:700;color:var(--warning);letter-spacing:0.15em;text-transform:uppercase">--- IT / OT BOUNDARY ---</div>' : '');
+  }).join('');
+
+  // Data flow rules
+  var flowRulesHtml = (data.dataFlowRules || []).map(function(r) {
+    var color = r.allowed ? 'var(--success)' : 'var(--danger)';
+    var icon = r.allowed ? '&#10003;' : '&#10007;';
+    return '<tr style="font-size:0.8rem">\
+      <td style="color:' + color + ';font-weight:700;text-align:center">' + icon + '</td>\
+      <td>' + escHtml(r.from) + '</td>\
+      <td>' + escHtml(r.to) + '</td>\
+      <td style="font-size:0.75rem">' + escHtml(r.condition) + '</td>\
+    </tr>';
+  }).join('');
+
+  return '\
+    <h2>Interactive Purdue Model</h2>\
+    <div class="page-sub">Click any level to expand details. Stacked from Internet (Level 5) down to Process (Level 0).</div>\
+    <div class="disclaimer">The Purdue Model / ISA-95 reference architecture defines hierarchical security zones for OT environments. The IDMZ (Level 3.5) is the critical IT/OT boundary.</div>\
+    <div style="display:flex;flex-direction:column;gap:2px;margin:1rem 0">' + diagramHtml + '</div>\
+    <h2 style="margin-top:1.5rem">Data Flow Rules</h2>\
+    <div class="page-sub">Permitted and prohibited data flows between Purdue levels.</div>\
+    <div class="table-wrap"><table>\
+      <thead><tr><th></th><th>From</th><th>To</th><th>Condition</th></tr></thead>\
+      <tbody>' + flowRulesHtml + '</tbody>\
+    </table></div>';
+}
+
+window.togglePurdueDetail = function(el) {
+  var detail = el.querySelector('.purdue-detail');
+  var chevron = el.querySelector('.chevron');
+  if (detail) {
+    var isOpen = detail.style.display !== 'none';
+    detail.style.display = isOpen ? 'none' : 'block';
+    if (chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+  }
+};
+
+
+// --- SL GAP ASSESSMENT ---
+async function renderSLGapAssessment() {
+  const data = await load('sectors/sl-assessment.json');
+  if (!data || !data.foundationalRequirements) return '<div class="empty-state"><div class="empty-state-text">No SL assessment data available.</div></div>';
+
+  var frs = data.foundationalRequirements;
+
+  // FR overview cards
+  var frOverviewHtml = frs.map(function(fr) {
+    return '\
+    <div class="control-card" style="border-left:3px solid var(--accent2)">\
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">\
+        <span class="badge badge-sl2">' + escHtml(fr.id) + '</span>\
+        <span class="control-card-title" style="margin:0">' + escHtml(fr.name) + '</span>\
+        <span class="tag" style="font-size:0.6rem">' + fr.srCount + ' SRs</span>\
+      </div>\
+      <div class="control-card-desc">' + escHtml(fr.description) + '</div>\
+      <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.35rem">' + escHtml(fr.iec62443Reference) + '</div>\
+    </div>';
+  }).join('');
+
+  // Interactive assessment form
+  var assessmentFormHtml = '\
+    <div id="sl-gap-tool" style="margin-top:1rem">\
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;align-items:flex-end">\
+        <div style="flex:1;min-width:200px">\
+          <label style="font-size:0.75rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.25rem">Zone Name</label>\
+          <input type="text" id="sl-zone-name" placeholder="e.g., Process Control Zone A" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);color:var(--text-primary);font-size:0.85rem">\
+        </div>\
+        <div style="min-width:120px">\
+          <label style="font-size:0.75rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.25rem">Target SL (SL-T)</label>\
+          <select id="sl-target-level" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);color:var(--text-primary);font-size:0.85rem">\
+            <option value="1">SL 1 — Basic</option>\
+            <option value="2" selected>SL 2 — Enhanced</option>\
+            <option value="3">SL 3 — Advanced</option>\
+            <option value="4">SL 4 — Critical</option>\
+          </select>\
+        </div>\
+      </div>';
+
+  // Assessment criteria table per FR
+  assessmentFormHtml += '<div id="sl-assessment-criteria">';
+  frs.forEach(function(fr) {
+    assessmentFormHtml += '\
+      <div class="sl-fr-section" style="margin-bottom:1.5rem">\
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:2px solid var(--accent2)">\
+          <span class="badge badge-sl2">' + escHtml(fr.id) + '</span>\
+          <span style="font-weight:700">' + escHtml(fr.name) + '</span>\
+        </div>\
+        <div class="table-wrap"><table style="font-size:0.8rem">\
+          <thead><tr><th style="width:50%">Criterion</th><th style="width:15%;text-align:center">Required At</th><th style="width:15%;text-align:center">Achieved?</th><th style="width:20%;text-align:center">Gap Status</th></tr></thead>\
+          <tbody>';
+
+    (fr.assessmentCriteria || []).forEach(function(c, idx) {
+      var criterionId = fr.id + '-c' + idx;
+      assessmentFormHtml += '\
+        <tr data-sl-criterion="' + c.slTarget + '" data-fr="' + fr.id + '">\
+          <td>' + escHtml(c.criterion) + '</td>\
+          <td style="text-align:center">' + slBadge(c.slTarget) + '</td>\
+          <td style="text-align:center">\
+            <select class="sl-achieved-select" data-criterion-id="' + criterionId + '" onchange="updateSLGapStatus(this)" style="padding:0.25rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:var(--bg-card);color:var(--text-primary);font-size:0.75rem">\
+              <option value="">--</option>\
+              <option value="yes">Yes</option>\
+              <option value="partial">Partial</option>\
+              <option value="no">No</option>\
+              <option value="na">N/A</option>\
+            </select>\
+          </td>\
+          <td style="text-align:center" class="sl-gap-cell" id="gap-' + criterionId + '">--</td>\
+        </tr>';
+    });
+
+    assessmentFormHtml += '</tbody></table></div></div>';
+  });
+  assessmentFormHtml += '</div>';
+
+  // SL requirements detail per FR
+  var slDetailHtml = frs.map(function(fr) {
+    return '\
+    <div class="accordion-item">\
+      <button class="accordion-trigger" data-accordion>\
+        <span class="accordion-trigger-left">\
+          <span class="badge badge-sl2" style="margin-right:0.5rem">' + escHtml(fr.id) + '</span>\
+          <span>' + escHtml(fr.name) + ' — SL 1-4 Requirements</span>\
+        </span>\
+        <span class="chevron">&#9654;</span>\
+      </button>\
+      <div class="accordion-content">\
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0.75rem">' +
+          ['SL1','SL2','SL3','SL4'].map(function(sl, i) {
+            var reqs = fr.requirements[sl] || [];
+            return '<div style="padding:0.75rem;border-radius:6px;border:1px solid var(--border)">\
+              <div style="margin-bottom:0.5rem">' + slBadge(i+1) + '</div>\
+              <ul style="padding-left:1rem;margin:0;font-size:0.75rem;color:var(--text-secondary)">' +
+                reqs.map(function(r) { return '<li style="margin-bottom:0.2rem">' + escHtml(r) + '</li>'; }).join('') +
+              '</ul></div>';
+          }).join('') +
+        '</div>\
+      </div>\
+    </div>';
+  }).join('');
+
+  // Gap summary section
+  assessmentFormHtml += '\
+    <div style="margin-top:1.5rem;padding:1rem;border:2px solid var(--accent);border-radius:8px;background:rgba(56,189,248,0.03)">\
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">\
+        <span style="font-weight:700;font-size:1rem">Gap Assessment Summary</span>\
+        <button onclick="calculateSLGapSummary()" style="padding:0.35rem 0.75rem;border:1px solid var(--accent);border-radius:6px;background:rgba(56,189,248,0.1);color:var(--accent);font-size:0.8rem;cursor:pointer;font-weight:600">Calculate Summary</button>\
+        <button onclick="exportSLGapCSV()" style="padding:0.35rem 0.75rem;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);color:var(--text-secondary);font-size:0.8rem;cursor:pointer">Export CSV</button>\
+      </div>\
+      <div id="sl-gap-summary" style="font-size:0.85rem;color:var(--text-secondary)">Click "Calculate Summary" after completing the assessment above.</div>\
+    </div>';
+
+  assessmentFormHtml += '</div>';
+
+  // Priority scale reference
+  var priorityHtml = data.gapAssessmentTemplate ? '\
+    <h2 style="margin-top:1.5rem">Gap Priority Scale</h2>\
+    <div class="control-grid">' +
+    Object.entries(data.gapAssessmentTemplate.priorityScale).map(function(e) {
+      var colors = { Critical: 'var(--danger)', High: '#F97316', Medium: 'var(--warning)', Low: 'var(--success)' };
+      return '<div class="control-card" style="border-left:3px solid ' + (colors[e[0]] || 'var(--text-muted)') + '">\
+        <div class="control-card-title" style="color:' + (colors[e[0]] || 'var(--text-muted)') + '">' + escHtml(e[0]) + '</div>\
+        <div class="control-card-desc">' + escHtml(e[1]) + '</div>\
+      </div>';
+    }).join('') + '</div>' : '';
+
+  return '\
+    <h2>SL Gap Assessment Tool</h2>\
+    <div class="page-sub">Assess current Security Level (SL-A) against target (SL-T) per IEC 62443-3-3 Foundational Requirements.</div>\
+    <div class="disclaimer">' + escHtml(data.verificationNote || '') + '</div>\
+    <h2>7 Foundational Requirements</h2>\
+    <div class="control-grid">' + frOverviewHtml + '</div>\
+    <h2 style="margin-top:1.5rem">SL Requirements Detail (SL 1-4)</h2>\
+    <div class="accordion">' + slDetailHtml + '</div>\
+    <h2 style="margin-top:1.5rem">Interactive Gap Assessment</h2>\
+    <div class="page-sub">Select a target SL and assess each criterion. The tool calculates gaps between your target and achieved levels.</div>' +
+    assessmentFormHtml +
+    priorityHtml;
+}
+
+window.updateSLGapStatus = function(selectEl) {
+  var criterionId = selectEl.getAttribute('data-criterion-id');
+  var gapCell = document.getElementById('gap-' + criterionId);
+  if (!gapCell) return;
+
+  var val = selectEl.value;
+  var row = selectEl.closest('tr');
+  var requiredSL = parseInt(row.getAttribute('data-sl-criterion') || '1');
+  var targetSL = parseInt(document.getElementById('sl-target-level').value || '2');
+
+  if (val === '') { gapCell.innerHTML = '--'; gapCell.style.color = 'var(--text-muted)'; return; }
+  if (val === 'na') { gapCell.innerHTML = '<span class="badge" style="background:var(--bg-main);color:var(--text-muted)">N/A</span>'; return; }
+  if (requiredSL > targetSL) {
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(34,197,94,0.1);color:var(--success)">Not Required</span>';
+    return;
+  }
+
+  if (val === 'yes') {
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(34,197,94,0.1);color:var(--success)">Met</span>';
+  } else if (val === 'partial') {
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(245,158,11,0.1);color:var(--warning)">Partial Gap</span>';
+  } else {
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(239,68,68,0.1);color:var(--danger)">Gap</span>';
+  }
+};
+
+window.calculateSLGapSummary = function() {
+  var zoneName = document.getElementById('sl-zone-name').value || 'Unnamed Zone';
+  var targetSL = parseInt(document.getElementById('sl-target-level').value || '2');
+  var selects = document.querySelectorAll('.sl-achieved-select');
+
+  var totalCriteria = 0;
+  var met = 0;
+  var partial = 0;
+  var gap = 0;
+  var na = 0;
+  var unanswered = 0;
+  var frScores = {};
+
+  selects.forEach(function(s) {
+    var row = s.closest('tr');
+    var requiredSL = parseInt(row.getAttribute('data-sl-criterion') || '1');
+    var frId = row.getAttribute('data-fr');
+
+    if (requiredSL > targetSL) return; // Not required for this SL target
+    totalCriteria++;
+
+    if (!frScores[frId]) frScores[frId] = { met: 0, partial: 0, gap: 0, na: 0, unanswered: 0, total: 0 };
+    frScores[frId].total++;
+
+    if (s.value === '') { unanswered++; frScores[frId].unanswered++; }
+    else if (s.value === 'yes') { met++; frScores[frId].met++; }
+    else if (s.value === 'partial') { partial++; frScores[frId].partial++; }
+    else if (s.value === 'na') { na++; frScores[frId].na++; }
+    else { gap++; frScores[frId].gap++; }
+  });
+
+  var applicableCriteria = totalCriteria - na;
+  var score = applicableCriteria > 0 ? Math.round((met / applicableCriteria) * 100) : 0;
+
+  var frTableHtml = Object.entries(frScores).map(function(e) {
+    var frId = e[0], s = e[1];
+    var frApplicable = s.total - s.na;
+    var frPct = frApplicable > 0 ? Math.round((s.met / frApplicable) * 100) : 0;
+    var barColor = frPct >= 80 ? 'var(--success)' : (frPct >= 50 ? 'var(--warning)' : 'var(--danger)');
+    return '<tr>\
+      <td><strong>' + escHtml(frId) + '</strong></td>\
+      <td style="text-align:center;color:var(--success)">' + s.met + '</td>\
+      <td style="text-align:center;color:var(--warning)">' + s.partial + '</td>\
+      <td style="text-align:center;color:var(--danger)">' + s.gap + '</td>\
+      <td style="width:120px"><div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden"><div style="background:' + barColor + ';width:' + frPct + '%;height:100%"></div></div><div style="font-size:0.65rem;text-align:center;color:var(--text-muted);margin-top:2px">' + frPct + '%</div></td>\
+    </tr>';
+  }).join('');
+
+  var overallColor = score >= 80 ? 'var(--success)' : (score >= 50 ? 'var(--warning)' : 'var(--danger)');
+
+  var summaryDiv = document.getElementById('sl-gap-summary');
+  summaryDiv.innerHTML = '\
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.75rem;margin-bottom:1rem">\
+      <div style="text-align:center;padding:0.75rem;border-radius:8px;border:1px solid var(--border)">\
+        <div style="font-size:1.5rem;font-weight:700;color:' + overallColor + '">' + score + '%</div>\
+        <div style="font-size:0.7rem;color:var(--text-muted)">Overall Compliance</div>\
+      </div>\
+      <div style="text-align:center;padding:0.75rem;border-radius:8px;border:1px solid var(--border)">\
+        <div style="font-size:1.5rem;font-weight:700;color:var(--success)">' + met + '</div>\
+        <div style="font-size:0.7rem;color:var(--text-muted)">Met</div>\
+      </div>\
+      <div style="text-align:center;padding:0.75rem;border-radius:8px;border:1px solid var(--border)">\
+        <div style="font-size:1.5rem;font-weight:700;color:var(--warning)">' + partial + '</div>\
+        <div style="font-size:0.7rem;color:var(--text-muted)">Partial</div>\
+      </div>\
+      <div style="text-align:center;padding:0.75rem;border-radius:8px;border:1px solid var(--border)">\
+        <div style="font-size:1.5rem;font-weight:700;color:var(--danger)">' + gap + '</div>\
+        <div style="font-size:0.7rem;color:var(--text-muted)">Gap</div>\
+      </div>\
+      <div style="text-align:center;padding:0.75rem;border-radius:8px;border:1px solid var(--border)">\
+        <div style="font-size:1.5rem;font-weight:700;color:var(--text-muted)">' + unanswered + '</div>\
+        <div style="font-size:0.7rem;color:var(--text-muted)">Unanswered</div>\
+      </div>\
+    </div>\
+    <div style="font-size:0.85rem;margin-bottom:0.75rem"><strong>Zone:</strong> ' + escHtml(zoneName) + ' &middot; <strong>Target SL:</strong> SL ' + targetSL + ' &middot; <strong>Applicable Criteria:</strong> ' + applicableCriteria + ' of ' + totalCriteria + '</div>\
+    <div class="table-wrap"><table style="font-size:0.8rem">\
+      <thead><tr><th>FR</th><th style="text-align:center">Met</th><th style="text-align:center">Partial</th><th style="text-align:center">Gap</th><th>Compliance</th></tr></thead>\
+      <tbody>' + frTableHtml + '</tbody>\
+    </table></div>';
+};
+
+window.exportSLGapCSV = function() {
+  var zoneName = document.getElementById('sl-zone-name').value || 'Unnamed Zone';
+  var targetSL = document.getElementById('sl-target-level').value || '2';
+  var rows = [['Zone', 'FR', 'Criterion', 'Required SL', 'Target SL', 'Achieved', 'Gap Status']];
+  var selects = document.querySelectorAll('.sl-achieved-select');
+
+  selects.forEach(function(s) {
+    var row = s.closest('tr');
+    var frId = row.getAttribute('data-fr') || '';
+    var requiredSL = row.getAttribute('data-sl-criterion') || '';
+    var criterion = row.querySelector('td').textContent || '';
+    var achieved = s.value || '';
+    var gapCell = document.getElementById('gap-' + s.getAttribute('data-criterion-id'));
+    var gapStatus = gapCell ? gapCell.textContent.trim() : '';
+
+    rows.push([zoneName, frId, criterion, 'SL ' + requiredSL, 'SL ' + targetSL, achieved, gapStatus]);
+  });
+
+  var csv = rows.map(function(r) {
+    return r.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',');
+  }).join('\n');
+
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', 'sl-gap-assessment-' + new Date().toISOString().slice(0,10) + '.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 
 // --- SEARCH ---

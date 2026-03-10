@@ -93,6 +93,90 @@
       "evidenceItems": ["Quality network architecture diagram", "Electronic batch record audit trail configuration", "Electronic signature configuration (21 CFR Part 11 compliance where applicable)", "Calibration data integrity controls", "Data integrity risk assessment report"],
       "slMapping": { "sl2": "Quality instruments on dedicated network; electronic batch records with audit trail; calibration data protected", "sl3": "21 CFR Part 11 compliant electronic signatures; SCADA historian integrity protection; annual data integrity risk assessment", "sl4": "Cryptographic integrity of quality records; real-time anomaly detection on measurement data; automated reconciliation between instrument readings and batch records" },
       "mitreAttackIcs": ["T0836", "T0855", "T0831"]
+    },
+    {
+      "id": "MF-R6",
+      "name": "Semiconductor fabrication equipment security",
+      "description": "Semiconductor fab equipment (CVD, etch, lithography, CMP, ion implantation) executes process recipes that define wafer fabrication steps. These recipes are extremely valuable IP — a single advanced process node recipe set represents billions in R&D investment. Equipment is increasingly network-connected for factory automation (SEMI standards). Compromise could destroy wafer lots, steal process IP, or disrupt production. SEMI E187 defines cybersecurity requirements for semiconductor manufacturing equipment.",
+      "applicableZones": ["Process control (safety-critical chemical manufacturing)", "Quality control automation"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-3.4", "SEMI E187 (semiconductor equipment cybersecurity)", "NACSA Act 854 s18", "NACSA Act 854 s22"], "summary": "Semiconductor fab equipment is OT. Process recipes are trade secrets — both IP protection and process integrity require OT security. SEMI E187 provides equipment-level cybersecurity requirements.", "owner": "Fab Engineering Manager / OT Security / IT Security" },
+      "technical": { "summary": "Fab equipment on dedicated process network segments by bay/area. AMHS (Automated Material Handling) on separate network. Equipment vendor remote access via IDMZ jump server only. Process recipe management system with version control and access restriction.", "actions": ["Fab equipment network segmented by process area (lithography, etch, CVD, CMP) on dedicated VLANs", "AMHS (Automated Material Handling System) on separate VLAN from process equipment — AMHS compromise must not affect process control", "Process recipe management: version-controlled recipe library with access restricted to authorised process engineers; all recipe changes logged with engineer ID, timestamp, and approval", "Equipment vendor remote access: IDMZ jump server with MFA; all sessions recorded; vendor access time-limited and requires fab engineering approval", "SEMI E187 compliance: require cybersecurity capability assessment for all new equipment purchases; include cybersecurity requirements in equipment procurement specifications", "Gas and chemical delivery system controllers: on safety-critical process network; setpoint changes require supervisor approval; independent high/low alarms", "Metrology data integrity: measurement data used for statistical process control (SPC) must be protected against tampering; anomalous SPC data triggers investigation"] },
+      "governance": { "summary": "Semiconductor fab OT security integrated with equipment qualification and process control procedures.", "actions": ["Annual fab OT security assessment — cover all equipment network segments", "Equipment cybersecurity assessment at procurement — SEMI E187 compliance verification", "Process recipe access review quarterly — remove access for engineers who have changed roles"] },
+      "evidenceItems": ["Fab network architecture diagram by process area", "AMHS network separation evidence", "Process recipe management system access control and change log", "Equipment vendor remote access records", "SEMI E187 compliance assessment for new equipment", "SPC data integrity controls"],
+      "slMapping": { "sl2": "Equipment on dedicated VLANs by area; AMHS separated; recipe version control; vendor access via IDMZ", "sl3": "SEMI E187 compliance; recipe access restricted and logged; gas/chemical system independent alarms; SPC data integrity protection", "sl4": "Cryptographic integrity of process recipes; real-time anomaly detection on equipment parameters; automated recipe integrity verification before lot processing" },
+      "mitreAttackIcs": ["T0855", "T0836", "T0882"]
+    },
+    {
+      "id": "MF-R7",
+      "name": "Automated Guided Vehicle (AGV) and Autonomous Mobile Robot (AMR) security",
+      "description": "AGVs and AMRs are used extensively in semiconductor fabs (AMHS), automotive plants, and warehouses. These autonomous vehicles navigate shared spaces with human workers, creating safety implications if compromised. Fleet management systems control routing, traffic management, and charging. Compromise could cause collisions, production disruption, or be used as a network pivot point.",
+      "applicableZones": ["Production line control"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-2.1", "ISO 3691-4 (driverless industrial trucks — safety)", "NACSA Act 854 s18", "OSHA 1994 (Act 514)"], "summary": "AGVs/AMRs are safety-relevant OT systems operating in shared human-machine spaces. ISO 3691-4 defines safety requirements for driverless industrial trucks. Cybersecurity compromise of AGV/AMR systems has worker safety implications under OSHA Act 514.", "owner": "Automation Engineer / OT Security / Safety Manager" },
+      "technical": { "summary": "AGV/AMR fleet management system on dedicated network segment. Safety systems (obstacle detection, emergency stop) operate independently of fleet management network. Vehicle-to-infrastructure communication secured.", "actions": ["AGV/AMR fleet management system on dedicated VLAN — isolated from production OT and enterprise IT", "Safety systems (LiDAR obstacle detection, emergency stop, safety bumpers) must operate independently of fleet management network — hardware safety circuits", "Vehicle-to-infrastructure (V2I) wireless communication: dedicated SSID with WPA3 Enterprise; no shared wireless with other systems", "AGV/AMR firmware updates: vendor-approved updates only; tested in controlled environment before fleet deployment; staged rollout", "Fleet management server: access controlled; route and map changes logged; no unauthorised route modifications", "Charging station controllers: on same dedicated VLAN as fleet management; access controlled"] },
+      "governance": { "summary": "AGV/AMR security integrated with safety management system. Fleet management access reviewed quarterly.", "actions": ["Annual AGV/AMR safety and cybersecurity assessment — verify safety system independence from network", "Fleet management access review quarterly", "AGV/AMR incident investigation: any unexpected vehicle behaviour investigated for both safety and cybersecurity causes"] },
+      "evidenceItems": ["AGV/AMR network architecture diagram", "Safety system independence evidence", "Wireless security configuration", "Fleet management access control and change log", "AGV/AMR firmware update records"],
+      "slMapping": { "sl2": "Fleet management on dedicated VLAN; dedicated wireless SSID; safety systems independent; firmware update process", "sl3": "WPA3 Enterprise for V2I; fleet route change management; annual safety-cybersecurity assessment; staged firmware rollout", "sl4": "Encrypted V2I communication; real-time anomaly detection on vehicle behaviour; cryptographic firmware integrity verification" },
+      "mitreAttackIcs": ["T0855", "T0836", "T0821"]
+    },
+    {
+      "id": "MF-R8",
+      "name": "Paint shop and environmental control system security",
+      "description": "Automotive and manufacturing paint shops have stringent environmental control requirements (temperature, humidity, air flow, solvent concentration). Paint shop OT systems control HVAC, solvent recovery, electrostatic spray equipment, and oven/curing systems. Solvent vapour concentration monitoring is safety-critical — explosive atmosphere risk (ATEX). Environmental compliance (VOC emissions) depends on OT system integrity.",
+      "applicableZones": ["Production line control", "Process control (safety-critical chemical manufacturing)"],
+      "legal": { "basis": ["IEC 62443-3-3 SR-5.1", "IEC 62443-3-3 SR-2.1", "IEC 60079 (explosive atmospheres — ATEX)", "Environmental Quality Act 1974 (Act 127)", "OSHA 1994 (Act 514)"], "summary": "Paint shop OT controls safety-critical environmental parameters. Solvent concentration monitoring prevents explosive atmospheres. VOC emission monitoring ensures Environmental Quality Act compliance. ATEX compliance depends on OT system integrity.", "owner": "Paint Shop Manager / OT Security / Safety Manager / Environmental Compliance" },
+      "technical": { "summary": "Paint shop environmental control on dedicated OT network. Solvent concentration monitoring with independent safety interlocks. VOC emission monitoring data integrity protected for regulatory compliance.", "actions": ["Paint shop environmental control (HVAC, solvent recovery, booth ventilation) on dedicated OT network segment", "Solvent vapour concentration monitoring: independent safety interlocks (hardware-based LEL monitoring) that operate independently of BMS/SCADA", "Electrostatic spray equipment grounding and safety interlocks: not network-controllable — hardware safety circuits only", "Oven/curing zone temperature control: independent over-temperature alarms with automatic shutdown", "VOC emission monitoring: Continuous Emission Monitoring System (CEMS) data integrity protected; tamper-evident audit trail for regulatory reporting", "Paint recipe management: colour formula and spray parameter recipes version-controlled; access restricted to paint process engineers"] },
+      "governance": { "summary": "Paint shop OT security integrated with ATEX compliance and environmental management system.", "actions": ["Annual paint shop OT security and safety review — verify independence of safety interlocks", "Environmental monitoring data integrity audit — verify CEMS data accuracy and tamper protection", "Paint recipe access review — quarterly"] },
+      "evidenceItems": ["Paint shop OT network architecture", "LEL monitoring independence evidence", "CEMS data integrity audit trail", "Paint recipe version control and access log", "ATEX compliance documentation for network-connected equipment"],
+      "slMapping": { "sl2": "Dedicated paint shop OT network; independent LEL monitoring; CEMS data protected; recipe version control", "sl3": "Hardware safety interlocks independent of network; CEMS tamper-evident audit trail; annual OT security-safety review", "sl4": "Real-time anomaly detection on environmental parameters; cryptographic integrity of emission records; automated cross-verification of safety system status" },
+      "mitreAttackIcs": ["T0855", "T0836", "T0880"]
+    }
+  ],
+  "subsectors": [
+    {
+      "id": "semiconductor-fab",
+      "name": "Semiconductor Fabrication",
+      "description": "Semiconductor fabrication (wafer fab) environments use highly specialised OT systems for CVD, etch, lithography, CMP, ion implantation, and metrology. Process recipes are extremely valuable intellectual property. Contamination or parameter deviation at any process step can destroy entire wafer lots worth millions of ringgit. Malaysia's Penang and Kulim Hi-Tech Park are major global semiconductor manufacturing hubs.",
+      "otSystems": ["CVD (Chemical Vapour Deposition) controllers", "Etch tool controllers", "Lithography stepper/scanner controllers", "CMP (Chemical Mechanical Planarisation) controllers", "Ion implantation systems", "Metrology and inspection systems", "Gas and chemical delivery systems", "Cleanroom environmental monitoring", "AMHS (Automated Material Handling Systems)"],
+      "iec62443Zones": {
+        "Process equipment controllers": "SL 3",
+        "AMHS automation network": "SL 2",
+        "Metrology and inspection": "SL 2",
+        "Gas and chemical delivery": "SL 3",
+        "Cleanroom environmental monitoring": "SL 2",
+        "Fab-wide MES (recipe management)": "SL 2-3"
+      },
+      "nacsaRequirements": ["Process recipe classification as confidential IP — access restricted to authorised process engineers", "Equipment vendor remote access via IDMZ jump server only — all sessions recorded", "SEMI E187 (semiconductor manufacturing equipment cybersecurity) compliance for new equipment procurement", "Cleanroom environmental data integrity — contamination events require accurate historical data for root cause analysis"]
+    },
+    {
+      "id": "food-pharma",
+      "name": "Food and Pharmaceutical Manufacturing",
+      "description": "Food and pharmaceutical manufacturing have unique regulatory requirements for data integrity (FDA 21 CFR Part 11, GAMP 5, HACCP, GMP). Batch manufacturing control systems must maintain complete audit trails. Product quality sabotage through parameter manipulation could cause public health harm. Cold chain monitoring integrity is critical for biologics and temperature-sensitive products.",
+      "otSystems": ["Batch control systems", "Pasteurisation/sterilisation controllers", "Filling and packaging line PLCs", "Clean-in-place (CIP) automation", "Cold chain monitoring systems", "Environmental monitoring (cleanroom particulate, temperature, humidity)", "Weighing and dispensing systems", "Water purification (WFI, PW) control systems"],
+      "iec62443Zones": {
+        "Batch manufacturing control": "SL 2-3",
+        "Pasteurisation/sterilisation control": "SL 3",
+        "Packaging line control": "SL 2",
+        "CIP automation": "SL 2",
+        "Environmental monitoring": "SL 2",
+        "Water purification control": "SL 2-3"
+      },
+      "nacsaRequirements": ["Electronic batch record integrity — ALCOA+ principles (Attributable, Legible, Contemporaneous, Original, Accurate)", "21 CFR Part 11 compliant electronic signatures where pharmaceutical export to US market", "HACCP critical control point monitoring — OT integrity of CCP sensors and alarms", "Traceability system integrity — lot tracking for recall capability", "GMP deviation management — any OT security incident that may affect product quality triggers deviation investigation"]
+    },
+    {
+      "id": "automotive-discrete",
+      "name": "Automotive and Discrete Manufacturing",
+      "description": "Automotive and discrete manufacturing relies heavily on industrial robots, CNC machines, conveyor systems, and automated guided vehicles (AGVs). Production line stoppages have massive financial impact (automotive OEMs can lose >RM1 million per hour of unplanned downtime). Paint shop environmental control, welding robot coordination, and body-in-white dimensional accuracy are safety and quality critical.",
+      "otSystems": ["Welding robot controllers (ABB, FANUC, KUKA)", "Paint shop environmental and robot controllers", "CNC machining centres", "Automated Guided Vehicles (AGVs/AMRs)", "Conveyor and material handling PLCs", "Vision inspection systems", "Torque tool controllers", "Press line controllers", "Body-in-white measurement systems"],
+      "iec62443Zones": {
+        "Welding robot control network": "SL 2-3",
+        "Paint shop control": "SL 2",
+        "CNC machine network": "SL 2",
+        "AGV/AMR fleet management": "SL 2",
+        "Conveyor and material handling": "SL 2",
+        "Vision inspection": "SL 2",
+        "Press line control": "SL 2-3"
+      },
+      "nacsaRequirements": ["Robot safety controller independence from standard network — ISO 10218 compliance", "AGV/AMR fleet management system network isolation — autonomous vehicle safety", "Vision inspection system integrity — quality-critical measurement data", "Production line OT network resilience — no single point of failure for line-stop conditions", "Vendor remote access for robot programming — controlled via jump server with MFA and change management"]
     }
   ],
   "sectorSpecificThreats": [
