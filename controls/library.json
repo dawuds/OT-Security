@@ -443,7 +443,6 @@
       "IAM-R2"
     ],
     "iec62443SRs": [
-      "SR-2.1",
       "SR-2.1"
     ],
     "keyActivities": [
@@ -727,8 +726,7 @@
       "PR.AA-05"
     ],
     "mitreAttackIcs": [
-      "T0859",
-      "T0078"
+      "T0859"
     ]
   },
   {
