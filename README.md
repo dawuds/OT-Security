@@ -21,7 +21,7 @@ A structured, open-access knowledge base for Operational Technology (OT) cyberse
 | **Standards** | IEC 62443 series overview, all 51 SRs with SL 1-4 descriptions, NIST SP 800-82, MITRE ATT&CK for ICS (66 techniques) |
 | **Architecture** | Purdue model, zones and conduits, IDMZ pattern, asset types |
 | **Requirements** | 13 security domains with detailed requirements, SL mapping, NACSA obligations |
-| **Controls** | 17 controls with maturity levels and NACSA/NIST CSF mappings |
+| **Controls** | 25 controls with maturity levels and NACSA/NIST CSF mappings |
 | **Evidence** | 36 audit evidence items across 13 domains — what auditors look for, common gaps, how to verify |
 | **Threats** | 7 threat actor profiles, 5 known incidents (Stuxnet, TRITON, Ukraine, Colonial Pipeline, Oldsmar) mapped to preventive controls |
 | **Risk Management** | OT/ICS risk methodology, 5x5 safety-weighted matrix, 20-risk register, 18-item assessment checklist, treatment options |
@@ -39,7 +39,7 @@ Data is structured to maintain a strict bidirectional mapping:
 `IEC 62443 Requirement (SR)` $\leftrightarrow$ `OT Security Control` $\leftrightarrow$ `Audit Evidence` $\leftrightarrow$ `Artifact Template`
 
 ### Data Layers
-- **Controls (`/controls/library.json`):** 49 OT-specific controls mapped to the Purdue Model using the unified schema.
+- **Controls (`/controls/library.json`):** 25 OT-specific controls mapped to the Purdue Model using the unified schema.
 - **Evidence (`/evidence/index.json`):** Mapped to 51 System Requirements (SRs) and 7 Foundational Requirements (FRs).
 - **Standards:** Comprehensive data for IEC 62443-3-3, NIST 800-82, and NACSA Section 26.
 
@@ -64,7 +64,7 @@ OT-Security/
 │   └── inventory.json                  # 31 audit artifacts with controlSlugs
 ├── controls/
 │   ├── domains.json                    # 13 security domains
-│   └── library.json                    # 17 controls with maturity levels
+│   └── library.json                    # 25 controls with maturity levels
 ├── cross-references/
 │   ├── iec62443-to-nacsa.json          # IEC 62443 ↔ NACSA Act 854
 │   ├── iec62443-to-nist80082.json      # IEC 62443 ↔ NIST SP 800-82
@@ -125,7 +125,7 @@ OT-Security/
 ## Features
 
 - IEC 62443 full SR coverage (51 SRs across 7 FRs with SL 1-4 descriptions)
-- 17 controls across 13 security domains with maturity levels
+- 25 controls across 13 security domains with maturity levels
 - 36 evidence items across all 13 domains with audit guidance (whatGoodLooksLike, commonGaps)
 - 31 audit artifacts with control-slug mapping
 - 20 OT/ICS risks across 7 categories with 5x5 safety-weighted risk matrix
