@@ -3,6 +3,8 @@
   "title": "OT Sector to NACSA Code of Practice Cross-Reference",
   "description": "Maps OT sectors to relevant NACSA Act 854 codes of practice (indicative instruments). For each sector, identifies the OT-specific requirements that the code of practice adds on top of base Act 854 obligations and IEC 62443 baseline.",
   "sourceType": "constructed-indicative",
+  "_mappingType": "sector-level",
+  "_mappingNote": "Maps OT sectors to NACSA codes of practice documents, not to individual control slugs. References are to sector-specific code of practice files, not nacsa controls/library.json entries.",
   "verificationNote": "NACSA codes of practice under Act 854 were not gazetted as of 2026-03. Mappings reference indicative codes from the nacsa repo (github.com/dawuds/nacsa). Verify against gazetted instruments when published.",
   "nacsaRepoReference": "github.com/dawuds/nacsa — supplements/codes-of-practice/",
   "sectorMappings": [

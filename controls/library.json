@@ -3,7 +3,8 @@
     "sourceDocument": "IEC 62443 Series",
     "sourceVersion": "IEC 62443 (2024 editions)",
     "sourceDate": "2024-01-01",
-    "sourceURL": "https://www.iec.ch"
+    "sourceURL": "https://www.iec.ch",
+    "sourceType": "constructed-indicative"
   },
   "controls": [
     {

@@ -5,6 +5,8 @@
   "sourceType": "constructed-indicative",
   "verificationNote": "This mapping is a reasoned interpretation of how IEC 62443 SRs align with NACSA Act 854 obligations. It has not been validated by NACSA or endorsed as the official compliance pathway. Consult qualified legal and OT security advisors for compliance decisions.",
   "nacsaActReference": "Cyber Security Act 2024 (Act 854), Federal Gazette P.U.(B) 283/2024",
+  "_mappingType": "clause-level",
+  "_mappingNote": "References use Act 854 section numbers (e.g. s17, s18, s21-s26) which map to statutory provisions, not to individual control slugs in the nacsa controls/library.json. Closest slug-level equivalents: s17 -> ncii-entity-registration, ncii-governance-structure; s18 -> ncii-compliance-programme, ncii-policy-framework; s20 -> ncii-compliance-monitoring; s21 -> ncii-risk-assessment-programme; s22 -> ncii-compliance-programme; s23 -> ncii-external-audit; s24 -> ncii-security-awareness; s25 -> ncii-continuity-plan; s26 -> ncii-incident-notification.",
   "nacsaRepoReference": "See github.com/dawuds/nacsa for full Act 854 provisions, requirements, evidence items, and sector-specific obligations.",
   "mappings": [
     {

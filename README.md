@@ -1,5 +1,7 @@
 # OT Security Framework
 
+> **Disclaimer:** This repository is an educational and indicative resource. It does not constitute legal, regulatory, or technical advice. Content marked `sourceType: "constructed-indicative"` has not been verified against official sources. Always refer to authoritative standards bodies and seek professional counsel for compliance decisions.
+
 A structured, open-access knowledge base for Operational Technology (OT) cybersecurity — covering international standards, compliance requirements, frameworks, audit evidence, and recommendations.
 
 **Primary Standard:** IEC 62443 (paraphrased)

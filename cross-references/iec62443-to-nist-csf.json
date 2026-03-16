@@ -182,7 +182,7 @@
       "srName": "Auditable events",
       "nistCsfSubcategories": [
         "DE.AE-02",
-        "PR.PT-01"
+        "DE.AE-03"
       ],
       "similarity": "High"
     },
@@ -190,7 +190,7 @@
       "iec62443SR": "SR-2.9",
       "srName": "Audit storage capacity",
       "nistCsfSubcategories": [
-        "PR.PT-01"
+        "DE.AE-03"
       ],
       "similarity": "High"
     },
@@ -206,7 +206,7 @@
       "iec62443SR": "SR-2.11",
       "srName": "Timestamps",
       "nistCsfSubcategories": [
-        "PR.PT-01"
+        "DE.AE-03"
       ],
       "similarity": "Medium"
     },
@@ -214,7 +214,7 @@
       "iec62443SR": "SR-2.12",
       "srName": "Non-repudiation",
       "nistCsfSubcategories": [
-        "PR.PT-01",
+        "DE.AE-03",
         "DE.AE-02"
       ],
       "similarity": "High"
@@ -293,7 +293,7 @@
       "srName": "Protection of audit information",
       "nistCsfSubcategories": [
         "PR.DS-01",
-        "PR.PT-01"
+        "DE.AE-03"
       ],
       "similarity": "High"
     },
