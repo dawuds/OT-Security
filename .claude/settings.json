@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node validate.js)",
+      "Bash(node *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Read(*)",
+      "Edit(controls/**)",
+      "Edit(data/**)",
+      "Edit(*.json)",
+      "Edit(*.js)",
+      "Edit(*.css)",
+      "Edit(*.html)",
+      "Write(controls/**)",
+      "Write(data/**)"
+    ],
+    "deny": []
+  },
+  "env": {}
+}
