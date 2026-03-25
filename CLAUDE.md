@@ -1,5 +1,7 @@
 # OT-Security — IEC 62443 + NACSA OT Security
 
+**Last updated:** 2026-03-25
+
 ## What This Is
 Structured knowledge base for OT/ICS/SCADA security based on IEC 62443 and NACSA sector requirements. SPA explorer with JSON data layers.
 
@@ -36,6 +38,7 @@ Open `index.html` in a browser. Run `node validate.js` to check data integrity.
 - MITRE ATT&CK for ICS tactics are OT-specific, not enterprise ATT&CK
 
 ## Related Repos
-- `nacsa/` — NACSA Act 854 (OT sectors: Energy, Transport, Water are NCII sectors)
-- `Tech-Audit/NACSA/Sector-Guides/` — OT sector audit guides
-- `nist/` — NIST CSF 2.0 baseline
+
+- [nacsa](https://github.com/dawuds/nacsa) — NACSA Act 854 (OT sectors: Energy, Transport, Water are NCII sectors)
+- [Tech-Audit](https://github.com/dawuds/Tech-Audit) — OT sector audit guides
+- [nist](https://github.com/dawuds/nist) — NIST CSF 2.0 baseline
