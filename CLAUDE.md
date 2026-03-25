@@ -3,6 +3,9 @@
 ## What This Is
 Structured knowledge base for OT/ICS/SCADA security based on IEC 62443 and NACSA sector requirements. SPA explorer with JSON data layers.
 
+## Quick Start
+Open `index.html` in a browser. Run `node validate.js` to check data integrity.
+
 ## Architecture
 - **SPA**: `index.html` + `app.js` + `style.css` (vanilla JS, no build step)
 - **Data**: JSON files across controls, cross-references, sectors, standards, risk-management, evidence, requirements
