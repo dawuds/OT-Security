@@ -25,3 +25,5 @@ credentials*
 # Build
 dist/
 .cache/
+# Claude Code local settings (personal, not shared)
+.claude/settings.local.json
