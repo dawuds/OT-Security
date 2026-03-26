@@ -1,0 +1,405 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-26",
+    "source": "IEC 62443-3-3 + NACSA Act 854 s26",
+    "techAuditDomain": "OT-Security",
+    "techAuditPath": "Tech-Audit/OT-Security/",
+    "description": "Maps 25 OT-Security controls to Tech-Audit/OT-Security audit procedures"
+  },
+  "domainMappings": [
+    {
+      "domainSlug": "network-segmentation",
+      "domainName": "Network Segmentation and Zone Architecture",
+      "frMapping": "FR5",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "idmz-implementation",
+          "controlName": "Industrial DMZ Implementation",
+          "procedureRefs": ["OT-NS-01", "OT-NS-02"],
+          "iec62443SRs": ["SR-5.1", "SR-5.2"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.IR-01", "PR.IR-02"],
+          "mitreAttackIcs": ["T0817", "T0820"],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "remote-access",
+      "domainName": "Remote Access Management",
+      "frMapping": "FR1,FR2",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-remote-access-gateway",
+          "controlName": "OT Remote Access Gateway",
+          "procedureRefs": ["OT-RA-01", "OT-RA-02"],
+          "iec62443SRs": ["SR-1.13", "SR-2.6"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-01", "PR.AA-05"],
+          "mitreAttackIcs": ["T0822", "T0859"],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "identity-access-management",
+      "domainName": "Identity and Access Management",
+      "frMapping": "FR1,FR2",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "default-credential-elimination",
+          "controlName": "Default Credential Elimination",
+          "procedureRefs": ["OT-IAM-01"],
+          "iec62443SRs": ["SR-1.5"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-02"],
+          "mitreAttackIcs": ["T0812"],
+          "securityLevelMin": 1
+        },
+        {
+          "controlSlug": "ot-mfa-implementation",
+          "controlName": "Multi-Factor Authentication for OT",
+          "procedureRefs": ["OT-IAM-01"],
+          "iec62443SRs": ["SR-1.1", "SR-1.13"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-01", "PR.AA-03"],
+          "mitreAttackIcs": ["T0859", "T0822"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-rbac-implementation",
+          "controlName": "Role-Based Access Control for OT",
+          "procedureRefs": ["OT-IAM-02"],
+          "iec62443SRs": ["SR-2.1"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-05", "PR.AA-06"],
+          "mitreAttackIcs": ["T0859"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-password-policy",
+          "controlName": "OT Password-Based Authentication Policy",
+          "procedureRefs": ["OT-IAM-02"],
+          "iec62443SRs": ["SR-1.7"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-01", "PR.AA-02"],
+          "mitreAttackIcs": ["T0859", "T0812"],
+          "securityLevelMin": 1
+        },
+        {
+          "controlSlug": "ot-device-authentication",
+          "controlName": "OT Device-to-Device Authentication",
+          "procedureRefs": ["OT-IAM-03"],
+          "iec62443SRs": ["SR-1.2"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-01", "PR.AA-03"],
+          "mitreAttackIcs": ["T0830", "T0848"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-account-lifecycle",
+          "controlName": "OT Account Lifecycle Management",
+          "procedureRefs": ["OT-IAM-03"],
+          "iec62443SRs": ["SR-1.3", "SR-1.4"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-01", "PR.AA-05"],
+          "mitreAttackIcs": ["T0859"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-access-control-enforcement",
+          "controlName": "OT Access Control Enforcement and Non-Repudiation",
+          "procedureRefs": ["OT-IAM-04"],
+          "iec62443SRs": ["SR-2.12"],
+          "nacsaSections": ["s18", "s26"],
+          "nistCsfRefs": ["PR.AA-06", "DE.AE-03"],
+          "mitreAttackIcs": ["T0859"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-session-management",
+          "controlName": "OT Session Management",
+          "procedureRefs": ["OT-IAM-04"],
+          "iec62443SRs": ["SR-2.5", "SR-2.7"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-05", "PR.AA-06"],
+          "mitreAttackIcs": ["T0859", "T0822"],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "safety-system-security",
+      "domainName": "Safety System Security",
+      "frMapping": "FR3,FR5,FR6",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "sis-network-isolation",
+          "controlName": "SIS Physical Network Isolation",
+          "procedureRefs": ["OT-SIS-01", "OT-SIS-02"],
+          "iec62443SRs": ["SR-5.1"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.IR-01"],
+          "mitreAttackIcs": ["T0838", "T0829"],
+          "securityLevelMin": 4
+        }
+      ]
+    },
+    {
+      "domainSlug": "patch-vulnerability-management",
+      "domainName": "Patch and Vulnerability Management",
+      "frMapping": "FR3,FR7",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-patch-management",
+          "controlName": "OT Patch Management Programme",
+          "procedureRefs": ["OT-PVM-01", "OT-PVM-02"],
+          "iec62443SRs": ["SR-3.2", "SR-3.4"],
+          "nacsaSections": ["s18", "s21"],
+          "nistCsfRefs": ["PR.PS-02"],
+          "mitreAttackIcs": [],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "monitoring-logging",
+      "domainName": "Monitoring and Logging",
+      "frMapping": "FR2,FR6",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-passive-monitoring",
+          "controlName": "Passive OT Network Monitoring",
+          "procedureRefs": ["OT-ML-01", "OT-ML-02"],
+          "iec62443SRs": ["SR-6.2", "SR-2.8"],
+          "nacsaSections": ["s18", "s26"],
+          "nistCsfRefs": ["DE.AE-02", "DE.CM-01"],
+          "mitreAttackIcs": [],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "incident-detection-response",
+      "domainName": "Incident Detection and Response",
+      "frMapping": "FR6",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "nacsa-incident-notification",
+          "controlName": "NACSA Incident Notification Procedure",
+          "procedureRefs": ["OT-IDR-01", "OT-IDR-02"],
+          "iec62443SRs": ["SR-6.1", "SR-6.2"],
+          "nacsaSections": ["s26"],
+          "nistCsfRefs": ["RS.CO-02", "RS.CO-03"],
+          "mitreAttackIcs": [],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "asset-inventory",
+      "domainName": "Asset Inventory and Management",
+      "frMapping": "FR7",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-asset-inventory",
+          "controlName": "OT Asset Inventory",
+          "procedureRefs": ["OT-AI-01", "OT-AI-02"],
+          "iec62443SRs": ["SR-7.8"],
+          "nacsaSections": ["s18", "s21"],
+          "nistCsfRefs": ["ID.AM-01", "ID.AM-02"],
+          "mitreAttackIcs": [],
+          "securityLevelMin": 1
+        }
+      ]
+    },
+    {
+      "domainSlug": "configuration-management",
+      "domainName": "Configuration Management",
+      "frMapping": "FR7",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-change-management",
+          "controlName": "OT Change Management",
+          "procedureRefs": ["OT-CM-01"],
+          "iec62443SRs": ["SR-7.6"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.PS-01"],
+          "mitreAttackIcs": ["T0895"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-disabled-services",
+          "controlName": "OT Unnecessary Service and Port Elimination",
+          "procedureRefs": ["OT-CM-02"],
+          "iec62443SRs": ["SR-7.7"],
+          "nacsaSections": ["s18", "s21"],
+          "nistCsfRefs": ["PR.PS-01", "PR.PS-02"],
+          "mitreAttackIcs": ["T0866", "T0883"],
+          "securityLevelMin": 1
+        }
+      ]
+    },
+    {
+      "domainSlug": "backup-recovery",
+      "domainName": "Backup and Recovery",
+      "frMapping": "FR7",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-backup-recovery",
+          "controlName": "OT Configuration Backup and Recovery",
+          "procedureRefs": ["OT-BR-01"],
+          "iec62443SRs": ["SR-7.3", "SR-7.4"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.DS-11", "RC.RP-04"],
+          "mitreAttackIcs": ["T0809"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-emergency-power",
+          "controlName": "Emergency Power for Critical OT Systems",
+          "procedureRefs": ["OT-BR-02"],
+          "iec62443SRs": ["SR-7.5"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.IR-01", "PR.IR-02"],
+          "mitreAttackIcs": ["T0816"],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "supply-chain",
+      "domainName": "Supply Chain Security",
+      "frMapping": "FR3",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-vendor-security-assessment",
+          "controlName": "OT Vendor Security Assessment",
+          "procedureRefs": ["OT-SC-01", "OT-SC-02"],
+          "iec62443SRs": ["SR-3.4", "SR-2.3"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["GV.SC-06", "GV.SC-09"],
+          "mitreAttackIcs": ["T0862"],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "physical-security",
+      "domainName": "Physical Security",
+      "frMapping": "FR1",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-physical-access-control",
+          "controlName": "OT Zone Physical Access Control",
+          "procedureRefs": ["OT-PS-01"],
+          "iec62443SRs": ["SR-2.3"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.AA-01", "PR.IR-01"],
+          "mitreAttackIcs": [],
+          "securityLevelMin": 1
+        },
+        {
+          "controlSlug": "ot-tamper-detection",
+          "controlName": "OT Equipment Tamper Detection",
+          "procedureRefs": ["OT-PS-02"],
+          "iec62443SRs": ["SR-3.4"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["DE.CM-01", "PR.IR-01"],
+          "mitreAttackIcs": ["T0800", "T0856"],
+          "securityLevelMin": 2
+        }
+      ]
+    },
+    {
+      "domainSlug": "data-protection",
+      "domainName": "Data Confidentiality and Integrity",
+      "frMapping": "FR3,FR4",
+      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "controlMappings": [
+        {
+          "controlSlug": "ot-data-encryption",
+          "controlName": "OT Data Encryption (Transit and Rest)",
+          "procedureRefs": ["OT-DCI-01"],
+          "iec62443SRs": ["SR-4.1", "SR-4.3"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.DS-01", "PR.DS-02"],
+          "mitreAttackIcs": ["T0830"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-historian-integrity",
+          "controlName": "Historian and Process Data Integrity",
+          "procedureRefs": ["OT-DCI-01"],
+          "iec62443SRs": ["SR-3.4", "SR-3.9"],
+          "nacsaSections": ["s18", "s26"],
+          "nistCsfRefs": ["PR.DS-06", "PR.PS-04"],
+          "mitreAttackIcs": ["T0882"],
+          "securityLevelMin": 2
+        },
+        {
+          "controlSlug": "ot-input-validation",
+          "controlName": "OT Input Validation and Command Integrity",
+          "procedureRefs": ["OT-DCI-02"],
+          "iec62443SRs": ["SR-3.5"],
+          "nacsaSections": ["s18"],
+          "nistCsfRefs": ["PR.DS-06", "PR.DS-01"],
+          "mitreAttackIcs": ["T0836", "T0855"],
+          "securityLevelMin": 2
+        }
+      ]
+    }
+  ]
+}
