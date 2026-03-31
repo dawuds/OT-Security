@@ -1,6 +1,6 @@
 # OT-Security — IEC 62443 + NACSA OT Security
 
-**Last updated:** 2026-03-26
+**Last updated:** 2026-03-31
 
 ## What This Is
 
@@ -33,6 +33,7 @@ Open `index.html` in a browser. Run `node validate.js` to check data integrity.
 - `cross-references/iec62443-to-nist80082.json` — IEC 62443 to NIST 800-82
 - `cross-references/mitre-to-controls.json` — MITRE ATT&CK for ICS mapping
 - `cross-references/sector-to-nacsa-cop.json` — Sector to NACSA CoP alignment
+- `audit-integration.json` — Maps 25 controls to Tech-Audit/OT-Security audit procedures
 
 ## Conventions
 - Kebab-case slugs for all IDs
