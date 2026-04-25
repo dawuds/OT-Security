@@ -1,0 +1,725 @@
+{
+  "meta": {
+    "title": "B.A.S.I.C. S.T.A.R.T. Framework",
+    "source": "GenAI Prompts to Help You Build OT/ICS Cybersecurity",
+    "author": "Mike Holcomb / UtilSec, LLC",
+    "sourceType": "structured-from-published-source",
+    "verificationNote": "Framework pillar names, structure, and prompt architecture reproduced from published material by Mike Holcomb (UtilSec, LLC). Plan section content and KPI examples are derived from the source document. All outputs must be validated by certified OT professionals against current standards before operational use.",
+    "lastReviewed": "2026-04"
+  },
+  "framework": {
+    "acronym": "B.A.S.I.C. S.T.A.R.T.",
+    "fullExpansion": "Backup & Recovery, Asset Inventory, Secure Network Architecture, Incident Response Planning, Continuous Vulnerability Management — Secure Remote Access, Training & Awareness, Risk Assessments, Real-Time Network Monitoring, Teamwork (IT/OT Partnership)",
+    "description": "A practitioner-focused 10-pillar framework for OT/ICS Cybersecurity Managers to build or improve a foundational cybersecurity program. Each pillar delivers a structured AI prompt that drives the generation of customised, sector-specific plans complete with measurable KPI frameworks.",
+    "promptArchitecture": {
+      "phase1": "Discovery & Context Gathering — AI asks environment-specific questions and waits for answers before generating any plan. Typically 4–6 questions covering sector type, current maturity, constraints, and reporting audience.",
+      "phase2": "Strategy Generation — Comprehensive plan tailored to Phase 1 responses. Structured into plan sections with sub-topics addressing IT/OT delineation, system-specific playbooks, metrics, and automation.",
+      "phase3": "Next Steps — 1–2 targeted follow-up questions to refine the theoretical architecture into an actionable project roadmap."
+    },
+    "pillars": [
+      {
+        "id": 1,
+        "letter": "B",
+        "phase": "BASIC",
+        "slug": "backup-recovery",
+        "name": "Backup & Recovery",
+        "description": "Design a resilient OT Backup and Recovery program structured around the 3-2-1-1-0 framework adapted for industrial environments. Addresses PLC logic, HMI configurations, SCADA servers, and historian data with recovery sequencing that preserves process safety.",
+        "keyPrinciple": "Recovery order must follow the Purdue Model: network infrastructure first, then SCADA/DCS, then PLCs/RTUs. A PLC restored to the wrong state into a running process is more dangerous than the original attack.",
+        "iec62443Ref": ["SR-7.3", "SR-7.6", "SR-7.7"],
+        "nacsaRef": ["s21", "s22"],
+        "nistCsfRef": ["RC.RP-01", "RC.RP-02", "PR.DS-10", "PR.DS-11"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Manufacturing, Power Generation, Water/Wastewater, Oil & Gas" },
+          { "id": "Q2", "topic": "Key System Types", "example": "SCADA, DCS, PLCs, RTUs, HMIs, Engineering Workstations" },
+          { "id": "Q3", "topic": "Tolerance for Downtime", "example": "Minutes, hours, or days" },
+          { "id": "Q4", "topic": "Current IT Integration", "example": "Fully isolated, converged IT/OT networks, shared Active Directory" },
+          { "id": "Q5", "topic": "Primary Threats of Concern", "example": "Ransomware, insider threat, hardware failure" },
+          { "id": "Q6", "topic": "Reporting Audience", "example": "Plant Managers, Board of Directors, NACSA Auditors" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "The OT/ICS 3-2-1-1-0 Architecture",
+            "keyTopics": [
+              "3 copies of data: primary on HMI/EWS, backup on IDMZ server, archive on offline media",
+              "2 different media types: OT-rated NAS for operational backup, encrypted USB/tape for cold archive",
+              "1 off-site copy: secure transfer out of plant via data diode or IDMZ-hosted SFTP, respecting Purdue Model",
+              "1 immutable / offline copy: air-gapped or write-once media that ransomware cannot reach across the network",
+              "0 errors (verification): automated hash verification + scheduled restoration testing in isolated testbed — never in production"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "IT vs. OT Tie-ins & Delineation",
+            "keyTopics": [
+              "Where shared IT infrastructure (backup servers, tape libraries) can be leveraged vs. where OT must remain isolated",
+              "Network pathways through DMZ or unidirectional gateways for backup data traversal",
+              "IAM controls to prevent compromised IT credentials from deleting or encrypting OT backup copies"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "System-Specific Backup Playbooks",
+            "keyTopics": [
+              "Level 0/1 — PLCs/RTUs: logic programs, setpoints, firmware images, parameter files",
+              "Level 2/3 — HMIs, SCADA servers, Engineering Workstations: full OS + application backup",
+              "Level 3 — Data Historians: database snapshots, tag configuration, trend archives"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Incident Response & Restoration Workflow",
+            "keyTopics": [
+              "Recovery sequencing: network gear → SCADA/DCS servers → PLCs/RTUs → historian",
+              "Decision tree: when to restore vs. rebuild from known-good media",
+              "Manual operation procedures to maintain process safety during OT outage"
+            ]
+          },
+          {
+            "section": 5,
+            "title": "Effective Metrics & KPIs",
+            "keyTopics": [
+              "Leading: % of Level 1 PLCs with verified logic backups in last 30 days",
+              "Leading: % of backups with successful automated hash verification this month",
+              "Lagging: Mean Time to Recover (MTTR) for critical HMIs during testbed simulations",
+              "Lagging: Number of failed restoration tests requiring plan update",
+              "Audience alignment: Uptime Readiness for Plant Managers vs. Ransomware Resilience for the Board"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of Level 1 PLCs with verified logic backups in the last 30 days",
+            "% of SCADA server backups with successful automated hash verification",
+            "Frequency of successful immutable vault write-test verifications"
+          ],
+          "lagging": [
+            "Mean Time to Recover (MTTR) for critical HMIs during testbed simulations",
+            "Number of backup failures discovered during quarterly restoration drills",
+            "Time elapsed since last successful full-environment restoration test"
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "letter": "A",
+        "phase": "BASIC",
+        "slug": "asset-management",
+        "name": "Asset Management",
+        "description": "Design a Metrics and KPI tracking program to measure the health and maturity of OT asset inventory. Produces audience-specific dashboards for Board, Plant Management, and OT SecOps, focused on Purdue Level 1–3 assets with compensating controls rather than IT-centric patch counts.",
+        "keyPrinciple": "You cannot protect what you cannot see. Asset inventory in OT must be passive — active scanning can crash fragile PLCs. Discovery must precede every other security initiative.",
+        "iec62443Ref": ["SR-7.8", "SR-2.2"],
+        "nacsaRef": ["s18", "s19"],
+        "nistCsfRef": ["ID.AM-01", "ID.AM-02", "ID.AM-03"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Primary Audiences", "example": "Board of Directors, Plant/Site Managers, OT Security Operations team, Compliance Auditors" },
+          { "id": "Q2", "topic": "Current Metric Maturity", "example": "No metrics, highly manual spreadsheet tracking, or automated dashboards via SIEM/OT monitoring tools" },
+          { "id": "Q3", "topic": "Regulatory / Compliance Drivers", "example": "IEC 62443, NERC CIP, NACSA Act 854" },
+          { "id": "Q4", "topic": "Integration with Existing Pillars", "example": "Emphasis on Backup & Recovery and Secure Network Architecture programs already in place" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "Audience-Specific Dashboards",
+            "keyTopics": [
+              "Executive/Board: risk burn-down rate, compliance posture, financial exposure from unmanaged devices",
+              "Plant/Site Manager: days since last passive scan update, percentage of unmanaged devices per site, backup coverage per asset",
+              "Tactical/SecOps: anomalous OT protocol traffic per asset, firewall rule violations per zone, Mean Time to Detect/Respond in OT"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "Leading vs. Lagging OT Indicators",
+            "keyTopics": [
+              "Asset Management: % of Purdue Level 1–3 assets actively monitored vs. estimated total",
+              "Backup & Recovery: % of Crown Jewel PLCs/DCS with verified, immutable backups in last 30 days",
+              "Vulnerability Management: % of critical vulnerabilities mitigated by network segmentation or compensating controls (not direct patching)",
+              "Identity: % of OT remote access sessions utilising MFA and jump servers"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "Data Collection & Automation Strategy",
+            "keyTopics": [
+              "Passive monitoring tools (Dragos, Claroty, Nozomi) as the primary discovery source — no active scanning",
+              "Ingestion of OT-specific firewall logs and IDMZ traffic to a central reporting tool",
+              "Baseline establishment for month-over-month trend reporting"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "The 'So What?' Factor — Driving Action",
+            "keyTopics": [
+              "Linking red metrics directly to budget requests and remediation projects",
+              "Pre-defined playbooks for when a metric turns red (e.g., unmanaged device detected → quarantine VLAN + investigation ticket)"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of Purdue Level 1–3 assets in the active passive-monitoring inventory vs. estimated total",
+            "% of new OT assets appearing in network traffic that are in the authorised device register"
+          ],
+          "lagging": [
+            "Number of unmanaged/unknown devices discovered on OT network this month",
+            "Age of oldest unreviewed asset entry in the inventory register"
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "letter": "S",
+        "phase": "BASIC",
+        "slug": "secure-network-architecture",
+        "name": "Secure Network Architecture",
+        "description": "Design a defensible Secure OT Network Architecture implementing the IT/OT Industrial DMZ (IDMZ), IEC 62443 Zones and Conduits methodology for internal segmentation, and a managed ACL lifecycle — with metrics to prove its efficacy.",
+        "keyPrinciple": "The Industrial DMZ is not optional — it is the single most impactful architectural control for OT. No traffic should route directly between the enterprise (Levels 4/5) and the industrial network (Levels 0–3) without transiting through IDMZ-hosted services.",
+        "iec62443Ref": ["SR-5.1", "SR-5.2", "SR-5.3", "SR-5.4"],
+        "nacsaRef": ["s18", "s20"],
+        "nistCsfRef": ["PR.IR-01", "PR.IR-02", "PR.IR-04"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Manufacturing, Power Generation, Water/Wastewater, Oil & Gas" },
+          { "id": "Q2", "topic": "Current Network State", "example": "Completely flat, basic IT/OT VLAN separation, or fully deployed Purdue Model with IDMZ" },
+          { "id": "Q3", "topic": "Primary Firewall / Network Vendors", "example": "Cisco, Palo Alto, Fortinet, Check Point, Nozomi, Claroty" },
+          { "id": "Q4", "topic": "Remote Access Requirements", "example": "Do vendors or engineers require remote access to the plant floor? How is it handled today?" },
+          { "id": "Q5", "topic": "Tolerance for Latency/Disruption", "example": "Critical safety systems or time-sensitive protocols like GOOSE or PROFINET" },
+          { "id": "Q6", "topic": "Reporting Audience", "example": "Plant Managers, Board, or NACSA Auditors" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "The IT/OT Boundary & Industrial DMZ (IDMZ)",
+            "keyTopics": [
+              "Two-firewall IDMZ architecture: OT-side NGFW + IT-side NGFW with IDMZ hosted services between them",
+              "No direct routing: all IT-OT data exchange flows through IDMZ proxy/relay services",
+              "Data diodes vs. NGFWs: unidirectional gateways for historian replication; NGFW for control-plane traffic",
+              "Secure remote access termination in IDMZ — user laptops never touch Level 0–3 directly"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "Internal Segmentation — Zones and Conduits (IEC 62443-3-2)",
+            "keyTopics": [
+              "Micro-segmentation: separate operational processes into distinct zones (e.g., packaging zone isolated from mixing zone)",
+              "Safety system isolation: SIS physically and logically separated from Basic Process Control System (BPCS)",
+              "Wireless & IIoT: 5G, Wi-Fi, and IIoT sensors on isolated wireless DMZ that does not bridge segmented zones"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "ACL Management & Firewall Rule Lifecycle",
+            "keyTopics": [
+              "Default deny posture in legacy environments that rely on broadcast traffic",
+              "90–180 day rule review cadence with documented business justification for every permit rule",
+              "Expiration dates on temporary rules; automatic escalation for rules not reviewed on schedule"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Additional Architectural Resiliency",
+            "keyTopics": [
+              "Out-of-Band (OOB) management network for switches and firewalls — usable during an active cyber event",
+              "High Availability (HA) firewall pairs: failure must not result in loss of view or loss of control for plant operators"
+            ]
+          },
+          {
+            "section": 5,
+            "title": "Effective Metrics & KPIs",
+            "keyTopics": [
+              "% of firewall rules with 'Any/Any' configurations — target: 0%",
+              "Number of unauthorised cross-zone traffic attempts blocked per week",
+              "% of remote access sessions transiting through IDMZ jump host vs. direct VPNs"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of firewall rules with open Any/Any source or destination — target: 0%",
+            "% of remote access sessions transiting IDMZ jump host vs. direct plant VPN"
+          ],
+          "lagging": [
+            "Number of unauthorised cross-zone traffic attempts blocked per week",
+            "Number of firewall rules past their scheduled review date"
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "letter": "I",
+        "phase": "BASIC",
+        "slug": "incident-response-planning",
+        "name": "Incident Response Planning",
+        "description": "Build a proactive, highly operationalised OT Incident Response program grounded in the SANS Top 5 Critical Controls for ICS. Includes sector-specific historical threat intelligence, IT/OT severance protocols, cyber-physical Tabletop Exercises (TTX), and measurable IR KPIs.",
+        "keyPrinciple": "In OT, physical safety and process availability outrank data confidentiality. The triage question is not 'what data was stolen?' but 'is the process still safe?' — IR plans that do not account for this will fail at the worst possible moment.",
+        "iec62443Ref": ["SR-6.1", "SR-6.2", "SR-3.1"],
+        "nacsaRef": ["s26", "s22"],
+        "nistCsfRef": ["RS.MA-01", "RS.MA-02", "RS.AN-06", "RC.CO-04"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Critical for the historical threat intelligence phase" },
+          { "id": "Q2", "topic": "Current IR Maturity", "example": "No formal plan, an IT plan being reused for OT, or a dedicated but untested OT IR plan" },
+          { "id": "Q3", "topic": "Stakeholder Engagement", "example": "Do plant managers and safety engineers participate in cyber planning, or is it IT-driven?" },
+          { "id": "Q4", "topic": "Containment Capabilities", "example": "Can you physically or logically sever the IT/OT connection without halting production?" },
+          { "id": "Q5", "topic": "Reporting Audience", "example": "Plant Managers, Board, or Regulators (e.g., NACSA s26 notification)" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "Sector-Specific Threat Intelligence — Historical Analysis",
+            "keyTopics": [
+              "Top 3–4 historical OT incidents targeting your sector with kill chain analysis",
+              "For each incident: the attack vector, how SANS Top 5 controls would have broken the kill chain",
+              "Adversary TTPs mapped to MITRE ATT&CK for ICS techniques"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "The OT IR Plan — SANS Top 5 Integration",
+            "keyTopics": [
+              "ICS-specific triage: physical safety first, process availability second, data confidentiality third",
+              "IT/OT Severance protocol: when and how to physically disconnect IT and OT networks, and who has authority",
+              "ICS network visibility: passive PCAP/OT SIEM investigation procedures without active scanning of PLCs",
+              "Secure remote access lockdown playbook: terminate all vendor VPNs and jump sessions the moment an anomaly is detected",
+              "Post-incident root-cause analysis driving compensating controls and vulnerability remediation"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "Cyber-Physical Tabletop Exercise (TTX) Programme",
+            "keyTopics": [
+              "Scenario design based on historical incidents from Section 1 (sector-specific realism)",
+              "Engineering inject: introduce physical plant injects mid-exercise to force IT/OT collaboration (e.g., 'The HMI says valve is closed, but pressure gauge shows it is building — who do you trust?')",
+              "Quarterly mini-tabletops; annual full-scale exercise with Action After Review (AAR)"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Effective Metrics & KPIs",
+            "keyTopics": [
+              "Mean Time to Detect (MTTD) in the OT environment",
+              "IT/OT Severance execution time during drills (target: < 15 minutes)",
+              "% of plant operators participating in annual TTX",
+              "NACSA s26 notification readiness: time from detection to regulatory notification during drill"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of plant operators and shift supervisors who have participated in an OT-specific IR TTX in the last 12 months",
+            "IT/OT severance execution time measured during quarterly drill (minutes)"
+          ],
+          "lagging": [
+            "Mean Time to Detect (MTTD) an anomaly in the OT environment",
+            "Time from initial detection to NACSA s26 regulatory notification (target: < 6 hours)",
+            "Number of TTX Action Items closed within 90 days of exercise"
+          ]
+        }
+      },
+      {
+        "id": 5,
+        "letter": "C",
+        "phase": "BASIC",
+        "slug": "continuous-vulnerability-management",
+        "name": "Continuous Vulnerability Management",
+        "description": "Design a foundational, safety-first Vulnerability Management program for OT. Addresses the core challenge that 'patch everything' is not an option — prioritising compensating controls, logical isolation, and risk-based scoring over CVSS-driven IT patching cycles.",
+        "keyPrinciple": "CVSS scores fail in OT because they do not account for process criticality (a CVSS-5.0 vulnerability on the chlorination dosing PLC is more dangerous than a CVSS-9.8 on an offline engineering workstation). Scoring must include Process Criticality, Connectivity, and Exploitability in OT context.",
+        "iec62443Ref": ["SR-7.8", "SR-2.2", "SR-3.2"],
+        "nacsaRef": ["s19", "s20"],
+        "nistCsfRef": ["ID.RA-01", "ID.RA-02", "ID.RA-03", "PR.IR-04"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Manufacturing, Power Generation, Water/Wastewater, Oil & Gas" },
+          { "id": "Q2", "topic": "Current Asset Inventory Maturity", "example": "Detailed automated list with firmware versions, or starting from scratch" },
+          { "id": "Q3", "topic": "Patching Constraints", "example": "Annual shutdowns only, or frozen legacy systems that can never be updated" },
+          { "id": "Q4", "topic": "Current Discovery Tools", "example": "Dragos, Claroty, Nozomi (passive), or manual vendor disclosures only" },
+          { "id": "Q5", "topic": "Reporting Audience", "example": "Engineering Operations, Board, Compliance Auditors" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "OT Vulnerability Discovery Workflow",
+            "keyTopics": [
+              "Passive observation: traffic analysis + firmware version matching against ICS-CERT / CISA advisories — never active Nessus-style scans",
+              "Vendor-driven intelligence: Rockwell, Siemens, Schneider Electric security portals for product-specific advisories",
+              "'Insecure by Design' identification: assets with clear-text protocols (Modbus, DNP3 without authentication) or default credentials"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "Risk-Based Prioritisation — Moving Beyond CVSS",
+            "keyTopics": [
+              "OT Risk Score = (Process Criticality × 3) + (Connectivity Score × 2) + (OT Exploitability × 1)",
+              "Process Criticality: does this asset directly control safety, production, or environmental outcomes?",
+              "Connectivity: is it air-gapped, behind an IDMZ, or exposed to the IT network with dual NICs?",
+              "OT Exploitability: is the vulnerability exploitable via Modbus, DNP3, or other protocols in use on the plant?"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "Mitigation Hierarchy & Compensating Controls",
+            "keyTopics": [
+              "Virtual patching: IPS/IDS signatures at network boundary to block exploit attempts without touching the device",
+              "Logical isolation: move vulnerable assets into restricted micro-segmented VLANs",
+              "Configuration hardening: disable unnecessary services, close unused ports, enforce strict ACLs",
+              "Manual patching: firmware updates during planned maintenance windows with full backup and rollback tested first"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Management of Change (MOC) & Vulnerability Ledger",
+            "keyTopics": [
+              "Vulnerability Ledger: formally document every known-unpatched vulnerability with business justification and compensating controls",
+              "MOC integration: any change to an OT asset must trigger a vulnerability re-assessment of the impacted zone",
+              "Testing protocol: validate patches in isolated testbed environment before deploying to production — always"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of critical vulnerabilities with documented, active compensating controls in the Vulnerability Ledger",
+            "% of ICS-CERT advisories reviewed and triaged within 5 business days of publication"
+          ],
+          "lagging": [
+            "Average age of high-risk vulnerabilities on unsegmented OT assets (target: reduce month over month)",
+            "Mean Time to Mitigate (via compensating control) vs. Mean Time to Patch (for patchable assets)"
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "letter": "S",
+        "phase": "START",
+        "slug": "secure-remote-access",
+        "name": "Secure Remote Access",
+        "description": "Design a highly secure, zero-trust-aligned OT Remote Access programme that enforces the 'Protocol Break' — ensuring no remote user's laptop ever directly touches a plant-floor device. Addresses JIT access, MFA under plant-floor constraints, operator sovereignty, and session recording.",
+        "keyPrinciple": "The Protocol Break is non-negotiable. A remote session must terminate in the IDMZ jump server, and a new independent session is opened from that jump server down to the OT asset. The user's laptop never has a routable path to Level 0–3.",
+        "iec62443Ref": ["SR-1.13", "SR-2.6", "SR-1.1", "SR-1.2"],
+        "nacsaRef": ["s20", "s22"],
+        "nistCsfRef": ["PR.AA-02", "PR.AA-05", "PR.AC-06"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Manufacturing, Power Generation, Water/Wastewater, Oil & Gas" },
+          { "id": "Q2", "topic": "Current Remote Access Posture", "example": "Direct VPNs into plant floor, shared TeamViewer accounts, or dedicated jump servers" },
+          { "id": "Q3", "topic": "Primary Remote Users", "example": "Internal IT/OT engineers, or external third-party OEMs and vendors" },
+          { "id": "Q4", "topic": "Physical Plant Constraints", "example": "Mobile phones banned on plant floor; 24/7 manned control room" },
+          { "id": "Q5", "topic": "Reporting Audience", "example": "Plant Managers, Board, Auditors (NACSA s20)" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "The Protocol Break Architecture",
+            "keyTopics": [
+              "IDMZ jump server: remote session terminates in IDMZ (VDI, Citrix, or secure reverse proxy) before a new session opens to the OT asset",
+              "Blocking direct internet dial-out: OT assets cannot initiate outbound sessions (eliminates rogue AnyDesk/TeamViewer)",
+              "Vendor-specific segmentation: Vendor A can only reach their specific PLC/HMI, not the broader OT network"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "Identity, MFA, and Privileged Access Management (PAM)",
+            "keyTopics": [
+              "Hardware tokens (YubiKeys) where mobile phones are banned on the plant floor",
+              "Just-In-Time (JIT) access: access granted for a specific time window (e.g., 4-hour vendor maintenance session) and automatically revoked",
+              "Standing privileges eliminated: no permanent always-on vendor VPNs"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "Plant Floor Sovereignty — The Operator Override",
+            "keyTopics": [
+              "Physical permissive: remote session cannot initiate unless a local operator approves via HMI workflow or physical key-switch",
+              "Session termination: operators can instantly kill any remote session if they observe unsafe physical behaviour in the process",
+              "Over-the-shoulder monitoring: local operators can see what the remote vendor is doing on their screen in real time"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Session Monitoring & Auditing",
+            "keyTopics": [
+              "Video-based session recording for all vendor sessions — stored in IDMZ, reviewed on-demand",
+              "Session metadata logging: who connected, from where, to which asset, for how long, what commands were executed",
+              "Anomaly alerting: sessions outside approved maintenance windows trigger immediate SOC alert"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of third-party remote sessions using JIT access vs. standing always-on privileges (target: 100% JIT)",
+            "% of remote access sessions with session recording enabled"
+          ],
+          "lagging": [
+            "Number of rogue remote control tools (AnyDesk, TeamViewer outside approved gateway) detected and blocked",
+            "Average duration of vendor remote sessions vs. approved maintenance window duration",
+            "Number of sessions initiated without operator approval workflow"
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "letter": "T",
+        "phase": "START",
+        "slug": "training-awareness",
+        "name": "Training & Awareness",
+        "description": "Design an impactful, role-based OT Training and Awareness programme that moves beyond generic IT phishing videos. Addresses cyber-physical anomaly recognition for operators, USB hygiene for maintenance technicians, and IT/OT severance authority for plant managers — delivered through plant-floor-appropriate mechanisms.",
+        "keyPrinciple": "The most effective OT security awareness programme maps cyber threats to physical safety processes that operators already respect — not IT concepts. An operator who understands LOTO (Lock Out, Tag Out) already understands the concept of access control.",
+        "iec62443Ref": ["SR-2.1", "SR-2.4"],
+        "nacsaRef": ["s19", "s22"],
+        "nistCsfRef": ["PR.AT-01", "PR.AT-02"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Manufacturing, Power Generation, Water/Wastewater, Oil & Gas" },
+          { "id": "Q2", "topic": "Current Training Posture", "example": "Generic IT phishing videos only, or OT-specific training already in place" },
+          { "id": "Q3", "topic": "Audience Demographics", "example": "Plant managers, control room operators, maintenance engineers, third-party vendors" },
+          { "id": "Q4", "topic": "Operational Constraints", "example": "12-hour shifts where 2-hour classroom training is impossible" },
+          { "id": "Q5", "topic": "Reporting Audience for Metrics", "example": "HR, Plant Managers, NACSA Auditors" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "Role-Based Curriculum Design",
+            "keyTopics": [
+              "Control Room Operators: recognising cyber-physical anomalies (HMI readings vs. physical gauge discrepancies), incident reporting procedures, dangers of bypassing safety interlocks",
+              "Maintenance / Instrument Techs: strict USB/removable media hygiene, secure handling of transient cyber assets (laptops, calibrators), Management of Change (MOC) awareness",
+              "Plant Managers / Leadership: cyber risk as operational downtime and physical safety risk, authority and procedure for authorising IT/OT network severance during an incident"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "Plant-Floor Delivery Mechanisms",
+            "keyTopics": [
+              "Shift handover / toolbox talks: 3-minute micro-learning integrated into existing daily safety briefings",
+              "Visual campaigns: physical signage near high-risk areas ('STOP: Has this USB been scanned?' at engineering workstations)",
+              "IT/OT culture bridge: IT analysts shadow plant operations; automation engineers attend SOC sessions — mutual empathy building"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "OT Equivalents of the Phishing Test",
+            "keyTopics": [
+              "Physical penetration / tailgating tests: do employees challenge unbadged personnel attempting to enter the control room?",
+              "USB drop exercises: benign USB drives left in plant breakroom — do they get plugged into production HMIs?",
+              "Vendor access checks: do operators verify a contractor's work order before unlocking a panel or enabling remote access?"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Third-Party & Vendor Onboarding",
+            "keyTopics": [
+              "Mandatory cyber site-briefing before any contractor is granted physical plant access",
+              "Prohibited equipment list: no personal devices, only approved transient assets",
+              "Acknowledgement sign-off capturing that the vendor understands OT cyber policies before access is granted"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of contractors and vendors who completed the mandatory cyber site-briefing before plant access",
+            "% of shift handovers that included a security micro-briefing this month"
+          ],
+          "lagging": [
+            "Number of USB drop exercise drives that were plugged into production assets (target: 0)",
+            "Number of physical tailgating/social engineering attempts successfully challenged by operators",
+            "% of employees who can correctly identify the IT/OT severance trigger and escalation path"
+          ]
+        }
+      },
+      {
+        "id": 8,
+        "letter": "A",
+        "phase": "START",
+        "slug": "risk-assessments",
+        "name": "Risk Assessments",
+        "description": "Design a foundational cyber-physical Risk Assessment programme using Consequence-Driven methodologies (IEC 62443-3-2, INL CCE). Starts with the physical consequence ('the Boom') rather than the IT vulnerability, and integrates with existing engineering safety processes like HAZOP and PHA.",
+        "keyPrinciple": "Start with consequence, work backwards to cause. Identifying that a hacked chlorination dosing PLC could cause a public health emergency is more motivating — and more accurate — than citing a CVSS-9.8 score on an asset no one has heard of.",
+        "iec62443Ref": ["SR-3.2", "SR-7.1"],
+        "nacsaRef": ["s17", "s19"],
+        "nistCsfRef": ["ID.RA-01", "ID.RA-02", "GV.RM-06", "GV.RM-07"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Determines which consequence scenarios are most likely" },
+          { "id": "Q2", "topic": "Current Risk Frameworks", "example": "NIST 800-30 for IT, HAZOP or PHA for engineering safety" },
+          { "id": "Q3", "topic": "Asset Criticality Understanding", "example": "Do you know which PLCs will cause total plant shutdown if compromised?" },
+          { "id": "Q4", "topic": "Threat Landscape", "example": "Untargeted ransomware, insider threats, or advanced state-sponsored activity" },
+          { "id": "Q5", "topic": "Reporting Audience", "example": "Board of Directors, Plant Engineering Leads, Insurers, NACSA" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "Consequence-Driven Identification — 'The Boom First'",
+            "keyTopics": [
+              "Crown Jewel Analysis: work with plant engineers to identify worst-case physical outcomes (over-pressurisation, toxic release, loss of cooling, public water contamination)",
+              "Trace each consequence back to the specific digital assets controlling the relevant physical process",
+              "Engineering integration: map cyber risks directly into existing HAZOP or PHA documents"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "OT-Specific Threat Modelling & Likelihood",
+            "keyTopics": [
+              "Threat profiling for converged actors: hacktivist speed/disruption tactics combined with state-sponsored OT capabilities",
+              "Reachability assessment: likelihood based on network segmentation — is the vulnerable PLC behind an IDMZ, or connected to an engineering workstation with dual NICs?",
+              "Sector-specific threat intelligence: known campaigns targeting your sector (e.g., water sector targeting by VOLTZITE)"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "Risk Treatment & Cyber-Informed Engineering (CIE)",
+            "keyTopics": [
+              "Engineering out the risk: physical controls that cyber attacks cannot override (e.g., mechanical pressure relief valve so a hacked PLC physically cannot over-pressurise a tank)",
+              "Compensating controls with formal documentation and review triggers",
+              "Risk ownership: plant managers (business owners) must sign off on residual physical risk — not IT security"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Dynamic Risk Register",
+            "keyTopics": [
+              "Living register updated on MOC events — not a static annual spreadsheet",
+              "Risk ownership assigned to plant managers, not IT",
+              "Formal residual risk acceptance process with Board-level sign-off for Critical-band risks"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of critical physical processes with a completed cyber-HAZOP assessment",
+            "% of risks in the register with an assigned plant-level owner (not IT owner)"
+          ],
+          "lagging": [
+            "Ratio of cyber risks mitigated via physical engineering controls vs. software patches",
+            "Number of high-risk findings in the register that lack an assigned owner or treatment plan"
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "letter": "R",
+        "phase": "START",
+        "slug": "real-time-network-monitoring",
+        "name": "Real-Time Network Monitoring",
+        "description": "Design a safety-first Network Security Monitoring (NSM) programme for OT. Passive-only data acquisition, industrial protocol deep packet inspection, OT-specific baselining, alert tuning, and a translation layer that bridges IT SOC analysts and plant-floor supervisors.",
+        "keyPrinciple": "OT networks are deterministic — the same devices communicate with the same peers on the same ports at the same frequency. Anything outside the known-good baseline is immediately suspicious. This determinism makes OT the ideal environment for passive anomaly detection, but the fragility of legacy devices makes passive monitoring non-negotiable.",
+        "iec62443Ref": ["SR-6.1", "SR-6.2", "SR-3.1"],
+        "nacsaRef": ["s22", "s26"],
+        "nistCsfRef": ["DE.CM-01", "DE.CM-06", "DE.CM-09", "RS.AN-06"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Manufacturing, Power Generation, Water/Wastewater, Oil & Gas" },
+          { "id": "Q2", "topic": "Current Visibility", "example": "Completely blind at Purdue Levels 0–3, basic firewall logs, or full DPI via SPAN/TAPs" },
+          { "id": "Q3", "topic": "SOC Operating Model", "example": "Internal IT SOC monitoring OT, outsourced MSSP, or dedicated OT SOC" },
+          { "id": "Q4", "topic": "Tooling Constraints", "example": "Dragos/Claroty/Nozomi, or open-source Zeek/Suricata/Wireshark for PCAP analysis" },
+          { "id": "Q5", "topic": "Reporting Audience", "example": "CISO, Plant Managers, external NACSA regulators" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "Safety-First Passive Architecture",
+            "keyTopics": [
+              "TAPs vs. SPANs: physical Network TAPs at IT/OT boundary and IDMZ; SPAN/mirror ports at core OT switches",
+              "Deep Packet Inspection for industrial protocols: Modbus TCP, DNP3, ENIP/CIP, S7Comm, BACnet — detect malicious setpoint changes or unauthorised PLC logic downloads",
+              "100% passive, listen-only posture — sensors must never inject traffic that could crash fragile legacy PLCs"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "Baselining & Threat Modelling — IT/OT Convergence",
+            "keyTopics": [
+              "Asset communication baseline: matrix of who talks to whom, on what port, at what frequency — deviations are immediate anomalies",
+              "Hunting the converged actor: detection hypotheses for state-sponsored TTPs using hacktivist-speed disruption tools",
+              "Historian polling baselines: filter expected OSIsoft PI polling traffic so it does not generate false positives"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "Alert Tuning & the IT-to-Plant Escalation Workflow",
+            "keyTopics": [
+              "Tuning false positives: filter known-good traffic patterns (scheduled backups, historian polling, PLC health checks)",
+              "Translation layer: playbook mapping SOC alert types to plain-English questions for plant supervisors (e.g., 'Modbus FC16 Write detected on Reactor PLC at 02:14 — was maintenance scheduled?')",
+              "Escalation path: Level 1 SOC → OT Security Engineer → Plant Shift Supervisor → Plant Manager"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Incident Data Retention",
+            "keyTopics": [
+              "Full PCAP storage strategy vs. NetFlow for cost-managed long-term retention",
+              "Retention periods: 90 days full PCAP at network choke points; 12 months NetFlow for trend analysis",
+              "Forensic preservation: when to freeze a PCAP archive on suspected incident detection"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of Purdue Level 2/3 network choke points with passive monitoring sensor coverage",
+            "% of known OT communication baselines formally documented"
+          ],
+          "lagging": [
+            "False Positive to True Positive alert ratio (target: below 5:1 after tuning period)",
+            "Time-to-Acknowledge by plant-floor personnel for critical OT alerts (target: < 30 minutes during business hours)"
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "letter": "T",
+        "phase": "START",
+        "slug": "teamwork-it-ot-partnership",
+        "name": "Teamwork — IT/OT Partnership",
+        "description": "Design a strategic blueprint for building a high-performing, cross-functional IT/OT Cybersecurity Team. Addresses governance structure, cross-pollination programmes, hybrid role definitions, RACI matrices, and fostering a no-blame incident culture that bridges the IT/OT cultural divide.",
+        "keyPrinciple": "You cannot secure what you do not understand. An IT analyst who has never walked a plant floor will make architectural decisions that are technically correct but operationally catastrophic. Mandatory cross-training is not a soft HR initiative — it is a security control.",
+        "iec62443Ref": ["SR-2.1", "SR-2.4"],
+        "nacsaRef": ["s17", "s19"],
+        "nistCsfRef": ["GV.OC-01", "GV.OC-02", "GV.RR-01", "GV.RR-02"],
+        "discoveryQuestions": [
+          { "id": "Q1", "topic": "Sector / Environment Type", "example": "Manufacturing, Power Generation, Water/Wastewater, Oil & Gas" },
+          { "id": "Q2", "topic": "Current IT/OT Relationship", "example": "Highly siloed and combative, passively cooperative, or moving toward unified model" },
+          { "id": "Q3", "topic": "Governance & Risk Ownership", "example": "Does the enterprise CISO own OT cyber risk, or does the Plant/Site Manager?" },
+          { "id": "Q4", "topic": "Resource Allocation", "example": "Dedicated OT security engineers, or IT network + automation engineers doubling up" },
+          { "id": "Q5", "topic": "Reporting Audience", "example": "CISO, VP of Operations, HR" }
+        ],
+        "planSections": [
+          {
+            "section": 1,
+            "title": "The IT/OT Centre of Excellence (Steering Committee)",
+            "keyTopics": [
+              "Joint charter: mission statement explicitly balancing IT security mandates with OT safety and reliability mandates",
+              "Governance structure: CISO + Plant Director + Engineering Lead + OT Security Architect as voting members",
+              "Tie-breaker workflow: when IT demands a patch and OT refuses due to production schedule — who holds the veto, and how is residual risk formally accepted?"
+            ]
+          },
+          {
+            "section": 2,
+            "title": "Cross-Pollination and Empathy Building",
+            "keyTopics": [
+              "IT in the Plant: IT security analysts walk the plant floor, shadow shift supervisors, witness physical processes and LOTO procedures",
+              "OT in the SOC: control engineers sit in the IT Security Operations Centre to understand network telemetry and threat intelligence",
+              "Mandatory annual cross-training hours for both disciplines"
+            ]
+          },
+          {
+            "section": 3,
+            "title": "Defining Hybrid Roles & Responsibilities",
+            "keyTopics": [
+              "The OT Security Architect: translates enterprise security policy into Purdue-compliant architectures; must understand both firewall rules and ladder logic",
+              "The Automation/Process Security Analyst: plant-side engineer who acts as the primary liaison during incidents — holds the 'physical wrench' while IT holds the 'keyboard'",
+              "RACI matrix for key activities: firewall rule changes, vulnerability scanning, incident containment, MOC approvals"
+            ]
+          },
+          {
+            "section": 4,
+            "title": "Fostering a No-Blame Incident Culture",
+            "keyTopics": [
+              "Joint post-incident and post-TTX debriefs structured to prevent IT/OT finger-pointing",
+              "Psychological safety: plant operators must feel comfortable reporting suspected anomalies (unusual HMI mouse movements, unexpected valve activations) without fear of reprimand from IT",
+              "Near-miss reporting system adapted from existing plant safety culture"
+            ]
+          }
+        ],
+        "kpis": {
+          "leading": [
+            "% of IT security staff with completed plant floor safety/HAZOP familiarisation hours",
+            "Number of jointly authored MOC tickets (signed off by both IT Security and Plant Engineering)"
+          ],
+          "lagging": [
+            "Reduction in escalations to the Steering Committee for IT/OT dispute resolution (indicates improved working relationship)",
+            "% of post-incident Action Items that have joint IT and OT ownership"
+          ]
+        }
+      }
+    ]
+  }
+}

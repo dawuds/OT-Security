@@ -90,6 +90,7 @@ async function render(view, sub) {
     case 'architecture': return sub ? renderArchitecture(sub) : renderReference('_architecture');
     case 'reference':    return renderReference(sub);
     case 'search':       return renderSearch(sub);
+    case 'basic-start':  return renderBasicStart(sub);
     default:             return renderOverview();
   }
 }
@@ -1871,6 +1872,330 @@ function exportToCSV() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+// --- B.A.S.I.C. S.T.A.R.T. ---
+async function renderBasicStart(sub) {
+  var data = await load('basic-start/framework.json');
+  if (!data) return;
+  var pillars = data.framework.pillars || [];
+
+  var tabs = [
+    { id: 'overview',       label: 'Framework Overview' },
+    { id: 'pillars',        label: 'All 10 Pillars' },
+    { id: 'worked-example', label: 'Worked Example' },
+    { id: 'tools',          label: 'Python Tools' },
+  ];
+  var active = sub || 'overview';
+
+  var tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
+    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'basic-start/' + t.id + '\')">' + t.label + '</button>';
+  }).join('') + '</div>';
+
+  var content = '';
+  if (active === 'overview')            content = await renderBSOverview(data, pillars);
+  else if (active === 'pillars')        content = renderBSPillars(pillars);
+  else if (active === 'worked-example') content = await renderBSWorkedExample(pillars);
+  else if (active === 'tools')          content = renderBSTools();
+  else if (active.indexOf('pillar-') === 0) {
+    var slug = active.replace('pillar-', '');
+    var pillar = pillars.find(function(p) { return p.slug === slug; });
+    content = pillar ? renderBSPillarDetail(pillar) : '<div class="error-state"><h2>Pillar not found</h2></div>';
+  } else {
+    content = await renderBSOverview(data, pillars);
+  }
+
+  setHTML(
+    '<div class="page-header">' +
+      '<h1 class="page-title">B.A.S.I.C. S.T.A.R.T.</h1>' +
+      '<p class="page-subtitle">10-Pillar OT/ICS Cybersecurity Programme Framework &middot; Mike Holcomb / UtilSec, LLC</p>' +
+    '</div>' +
+    '<div class="disclaimer"><strong>Source:</strong> Framework structure and pillar names are from <em>GenAI Prompts to Help You Build OT/ICS Cybersecurity</em> by Mike Holcomb (UtilSec, LLC). ' +
+    'The worked example uses a <strong>fictional company (SABESB)</strong> for illustration only. All plans must be validated by certified OT professionals before operational use.</div>' +
+    tabsHtml + content
+  );
+}
+
+async function renderBSOverview(data, pillars) {
+  var fw = data.framework;
+  var basicPillars = pillars.filter(function(p) { return p.phase === 'BASIC'; });
+  var startPillars = pillars.filter(function(p) { return p.phase === 'START'; });
+
+  function phaseBlock(label, items, colour) {
+    return '<div class="card" style="border-left:4px solid ' + colour + ';margin-bottom:0.75rem">' +
+      '<div class="card-title" style="letter-spacing:0.05em">' + escHtml(label) + '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem">' +
+      items.map(function(p) {
+        return '<div onclick="navigate(\'basic-start/pillar-' + p.slug + '\')" style="cursor:pointer;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.75rem;display:flex;align-items:center;gap:0.5rem">' +
+          '<span style="font-size:1.1rem;font-weight:800;color:' + colour + '">' + escHtml(p.letter) + '</span>' +
+          '<span style="font-size:0.8rem;font-weight:600">' + p.id + '. ' + escHtml(p.name) + '</span>' +
+          '</div>';
+      }).join('') + '</div></div>';
+  }
+
+  var pa = fw.promptArchitecture || {};
+  var stepsHtml = [
+    { n: 1, t: 'Discovery & Context Gathering', d: pa.phase1 || '' },
+    { n: 2, t: 'Strategy Generation', d: pa.phase2 || '' },
+    { n: 3, t: 'Next Steps', d: pa.phase3 || '' },
+  ].map(function(s) {
+    return '<div class="attack-step"><strong>Phase ' + s.n + ': ' + escHtml(s.t) + '</strong>' +
+      '<div style="font-size:0.8rem;margin-top:0.25rem">' + escHtml(s.d) + '</div></div>';
+  }).join('');
+
+  var pillarCardsHtml = pillars.map(function(p) {
+    var colour = p.phase === 'BASIC' ? '#3B82F6' : '#8B5CF6';
+    var badges = (p.iec62443Ref||[]).map(function(r) { return '<span class="badge badge-sl2" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('') +
+      (p.nacsaRef||[]).map(function(r) { return '<span class="badge badge-malaysia" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('');
+    return '<div class="card card-link" onclick="navigate(\'basic-start/pillar-' + p.slug + '\')">' +
+      '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">' +
+        '<span style="font-size:1.6rem;font-weight:900;color:' + colour + ';min-width:2rem">' + escHtml(p.letter) + '</span>' +
+        '<div><div class="card-title" style="margin:0">' + p.id + '. ' + escHtml(p.name) + '</div>' +
+        '<div style="font-size:0.65rem;color:' + colour + '">' + escHtml(p.phase) + '</div></div>' +
+      '</div>' +
+      '<div class="card-desc">' + escHtml(p.description.substring(0,140)) + '&hellip;</div>' +
+      '<div style="margin-top:0.5rem;display:flex;gap:0.3rem;flex-wrap:wrap">' + badges + '</div>' +
+      '</div>';
+  }).join('');
+
+  return '<div class="card" style="border-left:3px solid var(--accent);margin-bottom:1.5rem">' +
+    '<div class="card-title">' + escHtml(fw.acronym||'B.A.S.I.C. S.T.A.R.T.') + '</div>' +
+    '<div class="card-desc">' + escHtml(fw.description||'') + '</div></div>' +
+    '<div class="two-col" style="margin-bottom:1.5rem">' +
+      phaseBlock('B.A.S.I.C. &mdash; Foundation', basicPillars, '#3B82F6') +
+      phaseBlock('S.T.A.R.T. &mdash; Programme Maturity', startPillars, '#8B5CF6') +
+    '</div>' +
+    '<h2>Prompt Architecture &mdash; 3-Phase Design</h2>' +
+    '<div class="attack-chain">' + stepsHtml + '</div>' +
+    '<h2>All 10 Pillars</h2>' +
+    '<div class="two-col">' + pillarCardsHtml + '</div>';
+}
+
+function renderBSPillars(pillars) {
+  return '<div class="two-col">' + pillars.map(function(p) {
+    var colour = p.phase === 'BASIC' ? '#3B82F6' : '#8B5CF6';
+    var badges = (p.iec62443Ref||[]).map(function(r) { return '<span class="badge badge-sl2" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('') +
+      (p.nacsaRef||[]).map(function(r) { return '<span class="badge badge-malaysia" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('') +
+      (p.nistCsfRef||[]).slice(0,2).map(function(r) { return '<span class="badge" style="font-size:0.6rem;background:var(--bg-card);border:1px solid var(--border)">' + escHtml(r) + '</span>'; }).join('');
+    return '<div class="card card-link" onclick="navigate(\'basic-start/pillar-' + p.slug + '\')">' +
+      '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">' +
+        '<span style="font-size:2rem;font-weight:900;color:' + colour + ';min-width:2.5rem">' + escHtml(p.letter) + '</span>' +
+        '<div><div class="card-title" style="margin:0">' + p.id + '. ' + escHtml(p.name) + '</div>' +
+        '<span style="font-size:0.65rem;background:' + colour + '20;color:' + colour + ';padding:0.15rem 0.4rem;border-radius:3px;font-weight:600">' + escHtml(p.phase) + '</span></div>' +
+      '</div>' +
+      '<div class="card-desc">' + escHtml(p.description.substring(0,160)) + '&hellip;</div>' +
+      '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border)">' +
+        '<div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:0.25rem"><strong>Key Principle:</strong> ' + escHtml((p.keyPrinciple||'').substring(0,120)) + '&hellip;</div>' +
+        '<div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-top:0.25rem">' + badges + '</div>' +
+      '</div></div>';
+  }).join('') + '</div>';
+}
+
+function renderBSPillarDetail(p) {
+  var colour = p.phase === 'BASIC' ? '#3B82F6' : '#8B5CF6';
+
+  var questionsHtml = (p.discoveryQuestions||[]).map(function(q, i) {
+    return '<div class="attack-step"><strong>Q' + (i+1) + ': ' + escHtml(q.topic) + '</strong>' +
+      '<div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.15rem">e.g., ' + escHtml(q.example) + '</div></div>';
+  }).join('');
+
+  var sectionsHtml = (p.planSections||[]).map(function(s) {
+    return '<div class="card" style="margin-bottom:0.75rem">' +
+      '<div class="card-title">Section ' + s.section + ': ' + escHtml(s.title) + '</div>' +
+      '<ul style="font-size:0.8rem;padding-left:1.25rem;margin:0">' +
+      (s.keyTopics||[]).map(function(t) { return '<li style="margin-bottom:0.35rem">' + escHtml(t) + '</li>'; }).join('') +
+      '</ul></div>';
+  }).join('');
+
+  var kpis = p.kpis || {};
+  var leadHtml = (kpis.leading||[]).map(function(k) { return '<li style="margin-bottom:0.35rem">' + escHtml(k) + '</li>'; }).join('');
+  var lagHtml  = (kpis.lagging||[]).map(function(k) { return '<li style="margin-bottom:0.35rem">' + escHtml(k) + '</li>'; }).join('');
+  var iecBadges   = (p.iec62443Ref||[]).map(function(r) { return '<span class="badge badge-sl2" style="margin:2px">' + escHtml(r) + '</span>'; }).join('');
+  var nacsaBadges = (p.nacsaRef||[]).map(function(r) { return '<span class="badge badge-malaysia" style="margin:2px">' + escHtml(r) + '</span>'; }).join('');
+  var nistBadges  = (p.nistCsfRef||[]).map(function(r) { return '<span class="badge" style="margin:2px;background:var(--bg-card);border:1px solid var(--border);font-size:0.65rem">' + escHtml(r) + '</span>'; }).join('');
+
+  return '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">' +
+    '<span style="font-size:3rem;font-weight:900;color:' + colour + ';line-height:1">' + escHtml(p.letter) + '</span>' +
+    '<div><h2 style="margin:0">' + p.id + '. ' + escHtml(p.name) + '</h2>' +
+    '<span style="font-size:0.75rem;background:' + colour + '20;color:' + colour + ';padding:0.2rem 0.5rem;border-radius:4px;font-weight:600">' + escHtml(p.phase) + ' Pillar</span></div></div>' +
+
+    '<div class="card" style="border-left:3px solid ' + colour + ';margin-bottom:1rem"><div class="card-desc">' + escHtml(p.description) + '</div></div>' +
+    '<div class="card" style="border-left:3px solid var(--danger);margin-bottom:1.5rem"><div class="card-title">Key Principle</div><div class="card-desc">' + escHtml(p.keyPrinciple||'') + '</div></div>' +
+
+    '<div class="two-col" style="margin-bottom:1.5rem">' +
+      '<div><h3>Framework Mappings</h3>' +
+        '<div style="margin-bottom:0.5rem"><strong style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em">IEC 62443</strong><br>' + iecBadges + '</div>' +
+        '<div style="margin-bottom:0.5rem"><strong style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em">NACSA Act 854</strong><br>' + nacsaBadges + '</div>' +
+        '<div><strong style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em">NIST CSF 2.0</strong><br>' + nistBadges + '</div></div>' +
+      '<div><h3>Phase 1: Discovery Questions</h3><div class="attack-chain">' + questionsHtml + '</div></div>' +
+    '</div>' +
+
+    '<h2>Plan Sections (Phase 2 Output)</h2>' + sectionsHtml +
+
+    '<h2>KPI Framework</h2>' +
+    '<div class="two-col">' +
+      '<div class="card"><div class="card-title">Leading Indicators</div>' +
+        '<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem">Predictive &mdash; measure programme health before failure occurs</div>' +
+        '<ul style="font-size:0.8rem;padding-left:1.25rem;margin:0">' + leadHtml + '</ul></div>' +
+      '<div class="card"><div class="card-title">Lagging Indicators</div>' +
+        '<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem">Reactive &mdash; measure outcomes after the fact</div>' +
+        '<ul style="font-size:0.8rem;padding-left:1.25rem;margin:0">' + lagHtml + '</ul></div>' +
+    '</div>' +
+
+    '<div style="margin-top:1.5rem;display:flex;gap:0.5rem">' +
+      '<button class="btn-secondary" onclick="navigate(\'basic-start/pillars\')">&#8592; All Pillars</button>' +
+      '<button class="btn-secondary" onclick="navigate(\'basic-start/worked-example\')">Worked Example &#8594;</button>' +
+    '</div>';
+}
+
+async function renderBSWorkedExample(pillars) {
+  var ex = await load('basic-start/worked-example.json');
+  if (!ex) return '<div class="error-state"><h2>Could not load worked example</h2></div>';
+  var scenario = ex.scenario || {};
+  var outputs  = ex.outputs  || [];
+
+  var systemsHtml = Object.entries(scenario.systems||{}).map(function(entry) {
+    return '<tr><td style="font-weight:600;font-size:0.8rem;white-space:nowrap">' + escHtml(entry[0]) + '</td>' +
+      '<td style="font-size:0.8rem">' + escHtml(entry[1]) + '</td></tr>';
+  }).join('');
+
+  var gapHtml = Object.entries(scenario.currentMaturity||{}).filter(function(e) { return typeof e[1]==='string'; }).map(function(e) {
+    return '<li style="margin-bottom:0.25rem;font-size:0.8rem"><strong>' + escHtml(e[0]) + ':</strong> ' + escHtml(e[1]) + '</li>';
+  }).join('');
+
+  var threatTags = (scenario.threats&&scenario.threats.primary||[]).map(function(t) {
+    return '<span class="badge">' + escHtml(t) + '</span>';
+  }).join(' ');
+
+  var outputsHtml = outputs.map(function(o) {
+    var pillar  = pillars.find(function(p) { return p.slug === o.slug; }) || {};
+    var colour  = pillar.phase === 'BASIC' ? '#3B82F6' : '#8B5CF6';
+    var kpis    = o.kpis || {};
+    var leadHtml = (kpis.leading||[]).map(function(k) { return '<li style="font-size:0.75rem;margin-bottom:0.25rem">' + escHtml(k) + '</li>'; }).join('');
+    var lagHtml  = (kpis.lagging||[]).map(function(k) { return '<li style="font-size:0.75rem;margin-bottom:0.25rem">' + escHtml(k) + '</li>'; }).join('');
+
+    var findingsHtml = Object.entries(o)
+      .filter(function(e) { return !['pillarId','slug','title','contextSummary','kpis'].includes(e[0]); })
+      .slice(0, 3)
+      .map(function(entry) {
+        var key = entry[0]; var val = entry[1];
+        var label = key.replace(/([A-Z])/g,' $1').replace(/^./,function(s){return s.toUpperCase();});
+        var preview = '';
+        if (typeof val === 'string') {
+          preview = escHtml(val.substring(0, 220)) + (val.length > 220 ? '&hellip;' : '');
+        } else if (Array.isArray(val) && val.length) {
+          var items = val.slice(0, 2).map(function(item) {
+            if (typeof item === 'string') return escHtml(item.substring(0, 130));
+            var text = item.step || item.name || item.asset || item.programme || item.test || item.incident || '';
+            var detail = item.description || item.procedure || item.backupMethod || item.vector || '';
+            return escHtml(text) + (detail ? ': ' + escHtml(String(detail).substring(0, 80)) : '');
+          }).join('<br>');
+          if (val.length > 2) items += '<br><em style="color:var(--text-muted)">+' + (val.length-2) + ' more&hellip;</em>';
+          preview = items;
+        } else if (val && typeof val === 'object') {
+          var subVals = Object.values(val).filter(function(v){return typeof v==='string';}).slice(0,2);
+          preview = subVals.map(function(v){return escHtml(v.substring(0,130));}).join('<br>');
+        }
+        return preview ? '<div style="margin-bottom:0.75rem">' +
+          '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.2rem">' + escHtml(label) + '</div>' +
+          '<div style="font-size:0.8rem">' + preview + '</div></div>' : '';
+      }).filter(Boolean).join('');
+
+    return '<div class="card" style="margin-bottom:1rem;border-left:4px solid ' + colour + '">' +
+      '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">' +
+        '<span style="font-size:1.8rem;font-weight:900;color:' + colour + ';line-height:1">' + escHtml(pillar.letter||'') + '</span>' +
+        '<div><div class="card-title" style="margin:0">' + o.pillarId + '. ' + escHtml(o.title) + '</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.1rem">' + escHtml(o.contextSummary||'') + '</div></div>' +
+      '</div>' +
+      findingsHtml +
+      ((kpis.leading||kpis.lagging) ? '<div class="two-col" style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border)">' +
+        (kpis.leading&&kpis.leading.length ? '<div><strong style="font-size:0.7rem;text-transform:uppercase">Leading KPIs</strong><ul style="padding-left:1.25rem;margin:0.25rem 0 0">' + leadHtml + '</ul></div>' : '') +
+        (kpis.lagging&&kpis.lagging.length ? '<div><strong style="font-size:0.7rem;text-transform:uppercase">Lagging KPIs</strong><ul style="padding-left:1.25rem;margin:0.25rem 0 0">' + lagHtml + '</ul></div>' : '') +
+      '</div>' : '') +
+      '<div style="margin-top:0.5rem"><span onclick="navigate(\'basic-start/pillar-' + o.slug + '\')" style="font-size:0.75rem;color:var(--accent);cursor:pointer">View pillar framework &#8594;</span></div>' +
+      '</div>';
+  }).join('');
+
+  return '<h2>Scenario: ' + escHtml(scenario.company) + ' (' + escHtml(scenario.abbreviation) + ')</h2>' +
+    '<div class="card" style="border-left:3px solid var(--accent);margin-bottom:1.5rem">' +
+      '<div class="card-desc">' + escHtml(scenario.description||'') + '</div>' +
+      '<div style="margin-top:0.5rem;display:flex;gap:0.5rem;flex-wrap:wrap">' +
+        (scenario.nciiDesignated ? '<span class="badge badge-malaysia">NCII Designated</span>' : '') +
+        '<span class="badge badge-sl2">SL 1 &rarr; SL 2 Target</span>' +
+        '<span class="badge">' + escHtml(scenario.sector||'') + '</span>' +
+        '<span class="badge">' + escHtml(scenario.location||'') + '</span>' +
+      '</div></div>' +
+    '<div class="two-col" style="margin-bottom:1.5rem">' +
+      '<div><h3>OT System Landscape</h3>' +
+        '<div class="table-wrap"><table><thead><tr><th>System</th><th>Details</th></tr></thead>' +
+        '<tbody>' + systemsHtml + '</tbody></table></div></div>' +
+      '<div><h3>Current Gaps</h3>' +
+        '<div class="card" style="border-left:3px solid var(--danger)"><ul style="padding-left:1.25rem;margin:0">' + gapHtml + '</ul></div>' +
+        '<div style="margin-top:0.75rem"><div style="font-size:0.75rem;font-weight:600;margin-bottom:0.4rem">Primary Threats</div>' + threatTags + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<h2>B.A.S.I.C. S.T.A.R.T. Plan Outputs &mdash; All 10 Pillars</h2>' +
+    '<div class="disclaimer"><strong>Note:</strong> SABESB is entirely fictional. These outputs show what the framework produces when run with real sector, technology, and constraint context.</div>' +
+    outputsHtml;
+}
+
+function renderBSTools() {
+  function codeBlock(code) {
+    return '<pre style="background:var(--bg-card);padding:0.5rem 0.75rem;border-radius:4px;font-size:0.75rem;overflow-x:auto;margin:0.25rem 0">' + escHtml(code) + '</pre>';
+  }
+
+  var honeypot = '<div class="card" style="margin-bottom:1.5rem">' +
+    '<div class="card-title" style="font-size:1.05rem">Industrial Modbus TCP Honeypot</div>' +
+    '<div style="display:flex;gap:0.5rem;margin:0.5rem 0">' +
+      '<span class="badge">Python 3</span><span class="badge badge-sl2">tools/modbus-honeypot.py</span>' +
+    '</div>' +
+    '<div class="card-desc">Simulates a Water Treatment Plant PLC responding to Modbus TCP on port 502. Detects pings, TCP SYN scans, and all Modbus function codes. Red alerts on writes to Crown Jewel registers (chlorination setpoint, treatment stage, maintenance mode). Logs structured JSON to rotating file; forwards to remote syslog.</div>' +
+    '<div class="two-col" style="margin-top:1rem">' +
+      '<div>' +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Install</div>' +
+        codeBlock('pip install pymodbus scapy') +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.25rem">Usage</div>' +
+        codeBlock('sudo python3 modbus-honeypot.py\\\n  --host 0.0.0.0 --port 502\\\n  --syslog-host 10.0.0.50') +
+        '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.4rem"><strong>Run as:</strong> root/sudo (raw socket + port 502)</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Alert Colours</div>' +
+        '<div style="display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.4rem"><span style="background:#EF4444;color:white;padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:700;white-space:nowrap">RED</span><span style="font-size:0.8rem">Write to any register or coil (attacker modifying PLC state)</span></div>' +
+        '<div style="display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.4rem"><span style="background:#F59E0B;color:white;padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:700;white-space:nowrap">YELLOW</span><span style="font-size:0.8rem">TCP SYN scan on OT ports (Nmap reconnaissance)</span></div>' +
+        '<div style="display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.75rem"><span style="background:#06B6D4;color:white;padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:700;white-space:nowrap">CYAN</span><span style="font-size:0.8rem">New TCP connection or ICMP ping</span></div>' +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Crown Jewel Registers</div>' +
+        '<div style="font-size:0.8rem">HR0: Chlorine Dosing Setpoint &bull; HR6: Treatment Stage &bull; HR7: Maintenance Mode Flag</div>' +
+      '</div>' +
+    '</div></div>';
+
+  var pcap = '<div class="card" style="margin-bottom:1.5rem">' +
+    '<div class="card-title" style="font-size:1.05rem">Passive OT PCAP Analyzer</div>' +
+    '<div style="display:flex;gap:0.5rem;margin:0.5rem 0">' +
+      '<span class="badge">Python 3</span><span class="badge badge-sl2">tools/pcap-analyzer.py</span>' +
+    '</div>' +
+    '<div class="card-desc">Reads an offline .pcap/.pcapng file via GUI file selector (no live sniffing). Extracts asset inventory with OUI vendor resolution, detects industrial protocols, maps communication flows, and alerts on public IP interactions. Exports two structured CSV files.</div>' +
+    '<div class="two-col" style="margin-top:1rem">' +
+      '<div>' +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Install</div>' +
+        codeBlock('pip install pyshark\n# Also: sudo apt install tshark') +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.25rem">Usage</div>' +
+        codeBlock('python3 pcap-analyzer.py\n# GUI file selector opens automatically') +
+        '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.4rem"><strong>Run as:</strong> any user (no root needed &mdash; offline only)</div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Output Files</div>' +
+        '<div style="margin-bottom:0.5rem"><span class="badge badge-sl2" style="font-size:0.65rem">ot_asset_inventory.csv</span><div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem">MAC, IP, OUI Vendor, Protocols Observed</div></div>' +
+        '<div style="margin-bottom:0.75rem"><span class="badge badge-sl2" style="font-size:0.65rem">ot_communication_map.csv</span><div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem">Src/Dst IP+MAC, Protocol, Port, Packet Count, Public_Internet_Routing</div></div>' +
+        '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Protocols Detected</div>' +
+        '<div style="font-size:0.8rem">Modbus/502 &bull; DNP3/20000 &bull; ENIP-CIP/44818 &bull; S7Comm/102 &bull; OPC-UA/4840 &bull; BACnet/47808 &bull; PROFINET</div>' +
+      '</div>' +
+    '</div></div>';
+
+  return '<div class="card" style="border-left:3px solid var(--accent);margin-bottom:1.5rem">' +
+    '<div class="card-title">OT Security Python Tools</div>' +
+    '<div class="card-desc">Practical tools for OT environments. Source in <code>tools/</code> directory.</div></div>' +
+    '<div class="disclaimer"><strong>Lab/testbed only.</strong> Never deploy the Modbus honeypot on a production OT network. The PCAP analyzer is offline-only and safe for sensitive environments.</div>' +
+    honeypot + pcap;
 }
 
 // --- INIT ---

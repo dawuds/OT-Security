@@ -1,0 +1,595 @@
+{
+  "meta": {
+    "title": "B.A.S.I.C. S.T.A.R.T. — Worked Example",
+    "description": "A fully worked example demonstrating the B.A.S.I.C. S.T.A.R.T. framework applied to a fictional NCII-designated Malaysian water utility. Demonstrates the kind of tailored output produced when each pillar prompt is run with specific organisational context.",
+    "sourceType": "constructed-indicative",
+    "verificationNote": "This worked example is entirely fictional. SABESB does not exist. All technical plans, asset configurations, and recommendations are indicative examples for educational purposes. Real implementations must be tailored by certified OT professionals and validated against current IEC 62443, NACSA Act 854, and sector-specific requirements.",
+    "lastReviewed": "2026-04"
+  },
+  "scenario": {
+    "company": "Syarikat Air Bestari Sdn. Bhd.",
+    "abbreviation": "SABESB",
+    "sector": "Water & Wastewater",
+    "location": "Selangor, Malaysia",
+    "nciiDesignated": true,
+    "nacsaObligations": ["s17", "s18", "s19", "s20", "s21", "s22", "s23", "s24", "s25", "s26"],
+    "description": "Fictional NCII-designated water treatment operator serving approximately 1.2 million residents in the Klang Valley. Operates 3 Water Treatment Plants (WTPs) and 12 remote Pump Stations (PSs).",
+    "systems": {
+      "scada": "Wonderware System Platform on Windows Server 2019 (primary at WTP-1, replicated to WTP-2/3)",
+      "plcs": "Allen-Bradley ControlLogix L7x at all three WTPs (32 units total)",
+      "rtus": "Schneider Electric Modicon M340 at 12 remote Pump Stations (communicating via DNP3 over 4G LTE)",
+      "hmis": "Wonderware InTouch on Windows 10 workstations (3 per WTP, 1 per PS)",
+      "historian": "OSIsoft PI Server 2019 at WTP-1 IDMZ (partially deployed)",
+      "engineeringWorkstations": "Windows 11 Pro (6 units, shared across WTP sites)"
+    },
+    "itOtState": {
+      "networkSeparation": "Basic VLAN separation (OT VLAN 100 at each WTP, IT VLAN 10), single Fortinet FortiGate at each site — no formal IDMZ",
+      "activeDirectory": "Shared Active Directory (IT and OT engineering workstations on same domain)",
+      "remoteAccess": "TeamViewer corporate account with shared credentials — used by internal engineers and 3 OEM vendors (Rockwell, Schneider, Wonderware). No MFA. Critical gap.",
+      "internetConnectivity": "RTUs at remote pump stations communicate via 4G LTE to central SCADA — no dedicated OT WAN"
+    },
+    "currentMaturity": {
+      "iecSLCurrent": "SL 1",
+      "iecSLTarget": "SL 2",
+      "assetInventory": "Manual Excel spreadsheet, last updated 8 months ago, no firmware versions tracked",
+      "backupPractice": "SCADA server OS backup only (Windows Server Backup, weekly, stored on same network). No PLC logic backups. No historian backup.",
+      "irPlan": "IT-only plan based on NIST SP 800-61. No OT-specific procedures. No plant staff involvement.",
+      "vulnerabilityManagement": "None. Relies on vendor notifications. Annual patching during Hari Raya shutdown only.",
+      "networkMonitoring": "IT firewall logs only. No visibility into OT VLAN traffic."
+    },
+    "constraints": {
+      "downtime": "Maximum 30 minutes acceptable before regulators and public health authority must be notified",
+      "patching": "Annual 5-day maintenance shutdown (Hari Raya holidays). Some legacy Schneider RTUs cannot be updated — vendor support ended 2019.",
+      "staffing": "2 IT security staff (network-focused). 15 OT/automation engineers. No dedicated OT cybersecurity role.",
+      "plantFloor": "No mobile phones allowed inside WTP control rooms (safety rule). 24/7 manned control rooms at WTP-1 only; WTP-2 and WTP-3 are day-shift only."
+    },
+    "threats": {
+      "primary": ["Ransomware propagation from IT to OT via shared AD", "Insider threat (contractor with standing TeamViewer access)", "Opportunistic scanning of public 4G-connected RTUs"],
+      "secondary": ["Nation-state targeting of NCII water infrastructure", "Supply chain compromise via Wonderware/Rockwell update servers"],
+      "historicalRelevant": ["Oldsmar Water Treatment Plant (2021) — attacker raised sodium hydroxide concentration via TeamViewer", "IPEX waterworks ransomware (2021) — production halted for days", "MXD water system breach (2021) — weak remote access exploited"]
+    }
+  },
+  "outputs": [
+    {
+      "pillarId": 1,
+      "slug": "backup-recovery",
+      "title": "SABESB Backup & Recovery Plan",
+      "contextSummary": "Water/Wastewater | Allen-Bradley ControlLogix PLCs + Schneider Modicon RTUs + Wonderware SCADA + OSIsoft PI | Downtime tolerance: 30 minutes | Shared AD, no IDMZ | Primary threats: Ransomware + hardware failure | Audience: Plant Manager + NACSA auditors",
+      "architecture3211": {
+        "copy1_primary": "Live PLC logic on Allen-Bradley ControlLogix cards + live Wonderware application server on WTP-1 (Windows Server 2019)",
+        "copy2_operational": "Weekly automated backup to dedicated OT Backup Server in planned IDMZ at WTP-1. Wonderware full application export + RSLogix 5000 project files via scheduled script. Encrypted at rest (AES-256).",
+        "copy3_offsite": "Monthly encrypted transfer via unidirectional data diode to NAS in IT DMZ. NACSA-required data sovereignty: stored on Malaysian-hosted infrastructure only.",
+        "copy4_immutable": "Quarterly cold backup to encrypted USB drives stored in fireproof safe at WTP-2 (physically separate site). Drives are write-once and removed from network after write. Ransomware cannot reach these.",
+        "verification_zero_errors": "Automated SHA-256 hash verification after every backup job. Quarterly test restoration to isolated testbed VM — never to production. Results logged and reported to Plant Manager monthly."
+      },
+      "systemPlaybooks": [
+        {
+          "level": "Level 0/1 — PLCs (Allen-Bradley ControlLogix L7x)",
+          "backupMethod": "RSLogix 5000 / Studio 5000 project file export via Engineering Workstation (EWS-01 dedicated to backup role). Export triggered monthly via scheduled task. Includes: ladder logic, setpoints, tag database, force lists.",
+          "storage": "Primary: OT Backup Server in IDMZ. Immutable copy: encrypted USB in WTP-2 safe.",
+          "verificationTest": "Restore to spare ControlLogix in offline testbed rack — verify setpoints and I/O map match production. Annual test during Hari Raya maintenance window.",
+          "criticalAssets": ["WTP-1 Chlorination Dosing PLC (ControlLogix-CHL-01) — Safety Critical", "WTP-1 Main Pump Control PLC (ControlLogix-PMP-01)", "WTP-2/3 equivalent units (6 critical PLCs)"]
+        },
+        {
+          "level": "Level 0/1 — RTUs (Schneider Modicon M340 at Pump Stations)",
+          "backupMethod": "Unity Pro project file export via EWS. Monthly. Communications configuration (DNP3 mapping) included separately.",
+          "storage": "OT Backup Server + encrypted USB. Note: Modicon M340 firmware cannot be updated — document vendor-confirmed EOL status in Vulnerability Ledger.",
+          "verificationTest": "Annual configuration comparison between live RTU and backup file using vendor comparison tool."
+        },
+        {
+          "level": "Level 2/3 — SCADA Servers (Wonderware System Platform on WS2019)",
+          "backupMethod": "Full Wonderware application backup (ArchestrA IDE export) + Windows Server Backup of OS/D:. Daily incremental, weekly full. Backup to OT Backup Server in IDMZ.",
+          "storage": "IDMZ OT Backup Server (14-day retention) + quarterly cold USB",
+          "verificationTest": "Semi-annual test: restore Wonderware to staging VM, verify InTouch connection to simulated PLCs. Validate all tag values and alarm limits."
+        },
+        {
+          "level": "Level 2/3 — HMIs (Wonderware InTouch on Windows 10)",
+          "backupMethod": "InTouch application export + standard Windows backup. Weekly. 6 HMIs across WTP-1/2/3.",
+          "storage": "OT Backup Server. Cold USB for WTP-1 HMIs (safety-critical control room)"
+        },
+        {
+          "level": "Level 3 — OSIsoft PI Historian",
+          "backupMethod": "PI Server backup via PI ICU tool: PI Archive files, PI AF database, tag configuration. Daily to IDMZ NAS. Monthly to IT DMZ NAS for offsite copy.",
+          "storage": "14-day on IDMZ NAS. 90-day on IT DMZ NAS.",
+          "verificationTest": "Monthly: restore PI archive to test PI server, verify 30-day tag trend matches production archive."
+        }
+      ],
+      "recoverySequence": [
+        "Step 1: Network infrastructure — restore Fortinet FortiGate configurations from backup (30 min). Verify OT VLAN isolation before proceeding.",
+        "Step 2: SCADA servers (WTP-1 primary) — restore Wonderware from IDMZ backup to production server (45 min). Verify tag connectivity.",
+        "Step 3: PLCs at WTP-1 — restore RSLogix 5000 project to each ControlLogix unit in sequence (CHL-01 chlorination first — public health priority). Engineer present at physical panel for each restore.",
+        "Step 4: HMIs — restore InTouch applications. Operator verifies all displays match physical panel readings before accepting control.",
+        "Step 5: Remote RTUs at pump stations — restore Modicon configurations via EWS over 4G. Verify each PS individually before returning to automatic control.",
+        "Step 6: PI Historian — restore from IDMZ backup. Historical data continuity not required for immediate operations."
+      ],
+      "nacsa": "NACSA s21 requires NCII operators to maintain business continuity plans. This backup architecture directly supports s21 obligations. NACSA s26 6-hour notification trigger: if ransomware is confirmed on OT systems, the s26 clock starts — recovery timeline must account for 6-hour notification deadline.",
+      "kpis": {
+        "reportingAudience": {
+          "plantManager": "Framed as 'Uptime Readiness' — % of critical PLCs with current verified backups; days since last successful restoration test",
+          "board": "Framed as 'Ransomware Resilience' — estimated Recovery Time Objective (RTO) if ransomware hit today; immutable backup currency",
+          "nacsa": "Backup compliance against s21 BCP obligations; audit evidence: backup logs, hash verification reports, restoration test records"
+        },
+        "leading": [
+          "% of 6 critical Safety-Tier PLCs with verified logic backups in last 30 days (target: 100%)",
+          "% of all backup jobs with passing automated SHA-256 hash verification this month (target: 100%)"
+        ],
+        "lagging": [
+          "MTTR for critical WTP-1 SCADA server during testbed simulation (baseline: measure in first drill)",
+          "Number of backup failures discovered during quarterly restoration test (target: 0)"
+        ]
+      }
+    },
+    {
+      "pillarId": 2,
+      "slug": "asset-management",
+      "title": "SABESB Asset Inventory & Metrics Programme",
+      "contextSummary": "Audiences: Board (NACSA posture), Plant Managers (site hygiene), OT SecOps team | Current maturity: manual Excel spreadsheet, 8 months stale | Regulatory: IEC 62443 + NACSA Act 854 | Integration: builds on Backup & Recovery programme",
+      "currentState": "Manual Excel inventory with 47 entries, last updated 8 months ago. No firmware versions. No Purdue level classification. No passive monitoring. Engineering staff estimate 30–40% of OT assets may not be in the register.",
+      "targetState": "Passive monitoring tool (Claroty Community Edition or Nozomi Guardian Free Tier as first step) producing auto-discovered asset list. Monthly reconciliation with manual register. Firmware versions tracked for all Level 1–3 assets.",
+      "dashboards": [
+        {
+          "audience": "Board of Directors / NACSA Audit",
+          "metrics": [
+            "OT Asset Inventory Completeness Score: % of estimated Purdue L1–3 assets in active register (current baseline: ~65%)",
+            "NCII Compliance Posture: % of NACSA s18–s22 obligations with documented evidence",
+            "Crown Jewel Coverage: % of 8 safety-critical assets with current backup AND active monitoring"
+          ],
+          "framing": "Business risk and NCII compliance readiness"
+        },
+        {
+          "audience": "Plant / Site Managers (WTP-1, WTP-2, WTP-3)",
+          "metrics": [
+            "Unmanaged devices detected on OT VLAN this month: count and location",
+            "Days since asset register last updated for this site",
+            "% of site PLCs with current backup (linked to Pillar 1 KPI)"
+          ],
+          "framing": "Operational hygiene — like a daily safety walk but for cyber"
+        },
+        {
+          "audience": "OT SecOps / IT Security Team",
+          "metrics": [
+            "New MAC addresses observed on OT VLAN vs. authorised device list",
+            "Assets with firmware versions matching ICS-CERT advisories issued this quarter",
+            "Engineering Workstations with dual-NIC configurations bridging OT and IT VLANs (target: 0)"
+          ],
+          "framing": "Granular telemetry for detection and response"
+        }
+      ],
+      "otSpecificMetrics": [
+        "% of Purdue L1–3 assets actively passively-monitored vs. estimated total (do NOT count assets only in Excel)",
+        "% of Allen-Bradley ControlLogix firmware versions checked against Rockwell Security Advisory portal in last 90 days",
+        "% of Schneider Modicon EOL assets with formal risk acceptance and compensating controls documented"
+      ],
+      "dataCollection": "Phase 1 (Month 1–3): Deploy Nozomi Guardian Lite or Claroty Edge on SPAN port of OT core switch at WTP-1. Auto-discover and compare against Excel register. Phase 2 (Month 4–6): Extend to WTP-2 and WTP-3. Phase 3 (Month 7–12): Integrate into central dashboard (PowerBI on IT side, read-only data feed via IDMZ).",
+      "kpis": {
+        "leading": [
+          "% of Purdue L1–3 assets in active passive monitoring vs. estimated total (baseline Q1 2026: ~65%; target Q4 2026: 95%)",
+          "% of new OT network devices appearing in traffic that have a corresponding authorised entry in register within 48 hours"
+        ],
+        "lagging": [
+          "Number of unmanaged/unknown devices discovered on OT network this month",
+          "Number of Schneider Modicon EOL units without formal risk acceptance"
+        ]
+      }
+    },
+    {
+      "pillarId": 3,
+      "slug": "secure-network-architecture",
+      "title": "SABESB Secure Network Architecture Plan",
+      "contextSummary": "Water/Wastewater | Basic VLAN separation, no IDMZ, shared AD | Fortinet FortiGate (IT boundary) + Cisco switches with ACLs (OT) | TeamViewer remote access (critical gap) | SCADA polling latency-sensitive | Audience: NACSA auditors + Plant Management",
+      "currentGaps": [
+        "No Industrial DMZ — IT and OT connected via single firewall with over-permissive ACLs",
+        "Shared Active Directory extends IT credential compromise risk to OT engineering workstations",
+        "TeamViewer shared accounts with direct OT VLAN access — no IDMZ break",
+        "No Safety Instrumented System (SIS) isolation — chlorination dosing PLCs on same segment as general process PLCs",
+        "Remote Pump Station RTUs connected via 4G directly to SCADA — no authentication"
+      ],
+      "targetArchitecture": {
+        "layer45": "IT Enterprise network (shared AD, corporate systems). Fortinet FortiGate FW-IT (deny all inbound from IDMZ except historian pull).",
+        "idmz": "Industrial DMZ between FW-IT and new FW-OT (second Fortinet FortiGate). Services hosted: OT Remote Access Jump Server (Secomea GateManager), OSIsoft PI Mirror (read-only historian replica for IT), OT Backup Server, SCADA patch staging server.",
+        "layer3": "SCADA/EWS VLAN (L3). Wonderware servers, Engineering Workstations. FW-OT: permit SCADA→PI Mirror (IDMZ), permit EWS→Jump Server (IDMZ) for outbound maintenance. Deny all from IT.",
+        "layer2": "HMI VLAN (L2). Wonderware InTouch workstations. Micro-segmented from SCADA VLAN.",
+        "layer1_safety": "Safety Zone (isolated VLAN + physical separation): Chlorination Dosing PLCs (CHL-01, CHL-02, CHL-03). Permit only: CHL PLCs → SCADA (read-only setpoint confirmation). No direct access from EWS without SCADA proxy.",
+        "layer1_process": "Process Control Zone: remaining Allen-Bradley ControlLogix PLCs (pump control, filtration). SCADA→PLCs via OPC-UA, PLCs→SCADA telemetry.",
+        "remotePS": "Remote Pump Station Zone: Schneider Modicon RTUs via 4G VPN tunnel (IPsec PSK) terminating at new VPN concentrator in IDMZ. RTUs cannot initiate connections — inbound only from SCADA."
+      },
+      "phases": [
+        { "phase": 1, "name": "IDMZ Foundation", "timeline": "Months 1–3", "actions": ["Procure second Fortinet FortiGate for OT-side IDMZ firewall", "Migrate OSIsoft PI Server to IDMZ (physical relocation)", "Establish IDMZ as first hop for all IT-OT data exchange", "Block direct IT-to-OT routing at FW-IT"] },
+        { "phase": 2, "name": "Safety Zone Isolation", "timeline": "Months 4–6", "actions": ["Physically segment chlorination dosing PLCs onto dedicated safety VLAN", "Install 1G fibre patch panel for safety zone separation", "Update Wonderware tag server to use read-only proxy for CHL PLC setpoints"] },
+        { "phase": 3, "name": "Remote Access Replacement", "timeline": "Months 4–8", "actions": ["Deploy Secomea GateManager in IDMZ as remote access jump server", "Retire TeamViewer — hard block at FW-IT and FW-OT", "Issue YubiKey tokens to all internal engineers and 3 OEM vendors"] },
+        { "phase": 4, "name": "RTU VPN Hardening", "timeline": "Months 7–12", "actions": ["Replace 4G PSK IPsec with certificate-based VPN for all 12 RTU connections", "Configure RTU VPN to terminate in IDMZ (not directly to SCADA VLAN)", "Implement connection rate limiting to detect RTU impersonation attempts"] }
+      ],
+      "aclLifecycle": {
+        "reviewCadence": "90 days for OT-facing rules; 180 days for IT-side rules",
+        "businessJustification": "Every permit rule must have: owner name, business purpose, approved date, review date. Orphaned rules with no owner are blocked after 14-day notice.",
+        "defaultDeny": "FW-OT base policy: deny all. Permit rules added only for documented data flows. Broadcast traffic handled within VLAN — does not traverse firewall."
+      },
+      "nacsa": "Architecture directly addresses NACSA s18 (network protection) and s20 (access control). Two-firewall IDMZ is the practical implementation of s18's requirement to protect the boundary between NCII systems and other networks.",
+      "kpis": {
+        "leading": [
+          "% of FW-OT rules with Any/Any source or destination (target: 0%)",
+          "% of remote access sessions transiting IDMZ jump server vs. direct to OT VLAN (target: 100% via IDMZ)"
+        ],
+        "lagging": [
+          "Number of unauthorised cross-zone traffic attempts blocked per week at FW-OT",
+          "Number of FW rules past their 90-day review date"
+        ]
+      }
+    },
+    {
+      "pillarId": 4,
+      "slug": "incident-response-planning",
+      "title": "SABESB OT Incident Response Plan",
+      "contextSummary": "Water/Wastewater (NCII-designated) | IT-only IRP today, no OT IRP | IT-driven, plant staff not involved | Can physically isolate WTP but requires manual operation switch | Audience: NACSA regulators (s26 6-hour notification)",
+      "historicalAnalysis": [
+        {
+          "incident": "Oldsmar Water Treatment Plant, Florida, USA (February 2021)",
+          "vector": "TeamViewer remote access session (shared credentials, no MFA). Attacker increased sodium hydroxide (lye) setpoint from 111 ppm to 11,100 ppm — 100x public health safe limit.",
+          "killChainBreakers": [
+            "Secure Remote Access (Pillar 6): IDMZ jump server + JIT access would have required operator approval for each session",
+            "Real-Time Network Monitoring (Pillar 9): Modbus FC16 write to setpoint register at 08:00 Saturday would have triggered immediate alert",
+            "Training (Pillar 7): Operator who noticed the mouse moving did the right thing — this awareness is what SABESB must build"
+          ],
+          "relevanceToSABESB": "SABESB uses TeamViewer with shared credentials for identical remote access. Chlorination dosing PLCs (CHL-01 through CHL-03) are the direct analogue to Oldsmar's sodium hydroxide control. This incident is the primary justification for the Safety Zone isolation in Pillar 3."
+        },
+        {
+          "incident": "IPEX Waterworks, Oldsmar (overlapping sector) / Multiple US water utilities ransomware (2021–2023)",
+          "vector": "Ransomware propagation from IT network into OT via shared network connections and remote access tools. Production halted; manual operation for days.",
+          "killChainBreakers": [
+            "Backup & Recovery (Pillar 1): Immutable backups would reduce recovery time from days to hours",
+            "Secure Network Architecture (Pillar 3): IDMZ prevents ransomware spread from IT to OT VLAN",
+            "Incident Response (Pillar 4): IT/OT Severance protocol enables immediate isolation without halting water supply"
+          ],
+          "relevanceToSABESB": "SABESB's shared Active Directory creates the exact vector used in these incidents. Shared domain means ransomware with AD credentials can reach OT engineering workstations."
+        },
+        {
+          "incident": "Ukraine Power Grid (2015 / 2016 — Industroyer/Crashoverride)",
+          "vector": "Spear-phishing → IT compromise → lateral movement to OT SCADA → destructive ICS-specific malware targeting protection relays. 225,000 customers without power.",
+          "killChainBreakers": [
+            "Continuous Vulnerability Management (Pillar 5): Network segmentation as compensating control",
+            "Real-Time Network Monitoring (Pillar 9): Anomalous Modbus/DNP3 commands from unexpected sources"
+          ],
+          "relevanceToSABESB": "As an NCII-designated operator, SABESB is a potential target for state-sponsored actors. The IT→OT lateral movement path used in Ukraine is present in SABESB's current architecture."
+        }
+      ],
+      "irPlan": {
+        "triggerCriteria": [
+          "IT SOC alert: anomalous authentication to Engineering Workstations outside business hours",
+          "Operator report: unexpected HMI behaviour, setpoint changes not authorised by shift supervisor",
+          "Passive NSM alert: Modbus FC16 Write to CHL-01 during non-maintenance period",
+          "Ransomware encryption detected anywhere on shared AD domain"
+        ],
+        "triage": "Physical safety FIRST. Is the water treatment process still in a safe state? If uncertain — switch to manual operation at the affected WTP immediately. Do NOT attempt to use OT network to verify — check physical gauges.",
+        "itOtSeverance": {
+          "trigger": "Confirmed or suspected ransomware on shared AD, or any lateral movement from IT to OT VLAN detected",
+          "authority": "Plant Manager (WTP-1) has sole authority to authorise severance. Deputy: Senior OT Engineer. CISO cannot override Plant Manager on this decision.",
+          "procedure": [
+            "Plant Manager calls 'Cyber Isolation' — shift supervisors notified at all 3 WTPs",
+            "OT Engineer disables trunk port connecting OT VLAN to core switch (FortiGate IT-side disconnection)",
+            "All 12 RTU 4G VPN tunnels terminated at VPN concentrator (single command via out-of-band management laptop)",
+            "Operators switch to manual control panels at each WTP — written manual operation procedures laminated at each panel",
+            "IT SOC continues investigation on isolated IT network",
+            "Target severance execution time: < 15 minutes from trigger to full OT isolation"
+          ],
+          "nacsaS26": "NACSA s26 6-hour notification clock starts at confirmed incident time. Draft notification template pre-approved by Plant Manager and Legal. Notification recipient: NACSA Cyber999 hotline."
+        },
+        "investigationProcedure": "PASSIVE ONLY on OT network. No Nessus scans, no pings to PLCs. Use existing SPAN port PCAP capture (initiated immediately on isolation). Interview shift supervisors. Review OT firewall logs. Preserve evidence before any recovery action.",
+        "recoveryApproval": "No OT system may be reconnected to the IT network until: (1) forensic investigation complete, (2) root cause identified, (3) compensating control implemented, (4) Plant Manager and CISO jointly sign recovery authorisation."
+      },
+      "ttxProgramme": {
+        "scenario1_quarterly": {
+          "name": "Ransomware at WTP-1: The Friday Night Surprise",
+          "injectSummary": "Ransomware encrypts WTP-1 Engineering Workstations at 19:30 Friday. Shared AD credentials used to attempt lateral movement to SCADA server. Operators observe SCADA HMI screens flickering. Chlorination system continues to run on last known setpoints.",
+          "engineeringInject": "At T+20 minutes: 'The WTP-1 chlorination HMI shows normal operation, but the laboratory technician calls to say the free chlorine residual at the distribution entry point is dropping. The HMI and the lab test disagree. Who do you trust and what do you do?'",
+          "learningObjectives": ["IT/OT severance execution under time pressure", "Manual operation switch by plant operators", "NACSA s26 notification decision-making", "Preserving forensic evidence while restoring service"]
+        },
+        "scenario2_annual": {
+          "name": "Targeted Attack: The Slow Boil",
+          "injectSummary": "Nation-state actor has maintained persistent access in IT network for 6 weeks. Slow, covert lateral movement to SCADA historian in partial IDMZ. Attacker begins modifying PI Server tag limits so Wonderware SCADA displays 'normal' while chemical dosing is gradually manipulated over 3 days.",
+          "engineeringInject": "Day 2: 'A consumer complaint is received: water tastes slightly different in Subang Jaya area. SCADA shows all parameters in normal range. The NSM analyst flags unusual historian writes from an unknown internal IP at 03:00 this morning.' — Multiple simultaneous injects across IT and OT tracks.",
+          "learningObjectives": ["Detection of slow-and-low attacks that evade threshold-based alerting", "IT/OT joint investigation", "Public communications under NACSA obligation", "The limitation of trusting SCADA readings during active manipulation"]
+        }
+      },
+      "kpis": {
+        "leading": [
+          "% of WTP shift supervisors who have participated in an OT-specific TTX in last 12 months (target: 100%)",
+          "IT/OT severance execution time during quarterly drill (target: < 15 minutes)"
+        ],
+        "lagging": [
+          "MTTD for anomalous OT network events (baseline to be established post-NSM deployment)",
+          "Time from confirmed incident to NACSA s26 notification draft submission (target: < 2 hours to allow 4-hour legal review before 6-hour deadline)"
+        ]
+      }
+    },
+    {
+      "pillarId": 5,
+      "slug": "continuous-vulnerability-management",
+      "title": "SABESB Vulnerability Management Programme",
+      "contextSummary": "Water/Wastewater | Manual Excel inventory, no firmware versions | Annual Hari Raya shutdown patches only; Modicon M340 EOL (no patches available) | No discovery tools | Audience: Engineering Operations + NACSA",
+      "discoveryWorkflow": {
+        "passiveObservation": "Deploy Nozomi Guardian (or Claroty Edge) on SPAN port at WTP-1 core OT switch. Passively fingerprint all Level 1–3 assets and extract firmware version strings from OT protocol handshakes (ENIP/CIP for Allen-Bradley, Modbus TCP for Schneider). Compare extracted firmware versions against Rockwell Security Advisories and Schneider ICS Security portal daily.",
+        "vendorIntel": "Subscribe to: Rockwell Automation Security Advisories (ra.rockwell.com/security), Schneider Electric Cybersecurity (se.com/en/cybersecurity), Wonderware Aveva Security Bulletins, CISA ICS-CERT (cisa.gov/ics-advisories). Triage all advisories within 5 business days.",
+        "insecureByDesign": {
+          "clearTextProtocols": "Modbus TCP (all 12 Schneider RTUs) — no authentication, no encryption. Documented as architectural risk. Mitigated by: RTU VLAN isolation + VPN at IDMZ boundary.",
+          "defaultCredentials": "Audit all HMI workstations for default Wonderware InTouch credentials. All Engineering Workstations to be assessed for vendor default accounts.",
+          "eolAssets": "12 Schneider Modicon M340 RTUs — vendor support ended 2019. Documented in Vulnerability Ledger. Compensating controls: RTU VLAN isolation, DNP3 traffic anomaly monitoring, no direct internet access. Risk formally accepted by Plant Manager."
+        }
+      },
+      "otRiskScoring": {
+        "formula": "OT Risk Score = (Process Criticality × 3) + (Connectivity Score × 2) + (OT Exploitability × 1). Maximum score: 18. Critical: 15–18, High: 11–14, Medium: 7–10, Low: 0–6.",
+        "processCriticality": { "5": "Direct control of safety-critical process (CHL dosing PLCs — incorrect dosing = public health emergency)", "4": "Loss causes >30 min service disruption (main pump control PLCs)", "3": "Loss degrades service quality (filtration PLCs)", "2": "Operational inefficiency only", "1": "Engineering/monitoring systems" },
+        "connectivityScore": { "5": "Directly internet-accessible", "4": "Connected to IT network with shared credentials/AD", "3": "Behind single firewall with IT access", "2": "Behind IDMZ (post-Phase 1 architecture)", "1": "Air-gapped" },
+        "topRiskedAssets": [
+          { "asset": "CHL-01 Chlorination Dosing PLC (ControlLogix)", "score": 15, "band": "Critical", "processC": 5, "connectivityC": 3, "exploitC": 1, "mitigation": "Phase 3: Safety Zone physical isolation. Until then: strict Wonderware proxy for setpoint access only." },
+          { "asset": "Schneider Modicon M340 RTUs (x12) — EOL + Modbus clear-text", "score": 12, "band": "High", "processC": 4, "connectivityC": 2, "exploitC": 2, "mitigation": "Existing: 4G VPN tunnel (PSK). Phase 4: Certificate-based VPN. Virtual patch: DNP3 anomaly detection at IDMZ." },
+          { "asset": "WTP-1 SCADA Server (Wonderware on WS2019)", "score": 11, "band": "High", "processC": 4, "connectivityC": 3, "exploitC": 1, "mitigation": "Phase 1: Migrate to IDMZ. Annual OS patching during Hari Raya shutdown." }
+        ]
+      },
+      "vulnerabilityLedger": "Maintained in SharePoint (IT side, read-only to OT team). Fields: Asset ID, Vulnerability CVE/Advisory ID, CVSS Base, OT Risk Score, Discovery Date, Compensating Control, Control Review Date, Business Justification for non-patching, Sign-off (Plant Manager), Next Review Date. 90-day mandatory review cycle. MOC event triggers immediate re-assessment of affected assets.",
+      "patchCycle": "Annual patching window: 5 days during Hari Raya Aidilfitri shutdown. Sequence: (1) Test patch on identical asset in offline testbed lab at WTP-1, (2) Verify functionality (3 days minimum post-patch in testbed), (3) Plant Manager + OT Engineer sign MOC, (4) Apply to production with rollback media in hand. No patches during active production without exceptional authorisation.",
+      "kpis": {
+        "leading": [
+          "% of critical OT vulnerabilities (OT Risk Score ≥ 15) with active, documented compensating controls in Vulnerability Ledger (target: 100%)",
+          "% of ICS-CERT/Rockwell/Schneider advisories triaged within 5 business days of publication"
+        ],
+        "lagging": [
+          "Average age of High-band vulnerabilities (OT Risk Score 11–14) on unsegmented assets (target: reduce 20% quarter over quarter)",
+          "Number of Schneider M340 EOL risks with expired compensating control review dates (target: 0)"
+        ]
+      }
+    },
+    {
+      "pillarId": 6,
+      "slug": "secure-remote-access",
+      "title": "SABESB Secure Remote Access Programme",
+      "contextSummary": "Water/Wastewater | TeamViewer shared accounts today (critical gap) | Internal engineers + 3 OEM vendors: Rockwell, Schneider, Aveva/Wonderware | No phones on plant floor; 24/7 control room at WTP-1 only | Audience: NACSA auditors",
+      "currentRisk": "TeamViewer with shared corporate credentials provides 3 OEM vendors with persistent, always-on, direct access to OT VLAN at all 3 WTPs. No MFA. No session recording. No operator awareness when vendor is connected. This is the exact attack vector used in Oldsmar (2021).",
+      "targetArchitecture": {
+        "gateway": "Secomea GateManager deployed in IDMZ at WTP-1. All remote access — internal and vendor — must traverse this gateway. Single pane of glass for all OT remote sessions.",
+        "protocolBreak": "Secomea SiteManager at each WTP/PS. Remote user connects to GateManager in IDMZ and opens a proxied session (RDP/VNC) to target asset. User's device has no direct IP route to OT VLAN — ever.",
+        "vendorSegmentation": "Vendor A (Rockwell) → permitted to reach ControlLogix PLCs only (by IP whitelist). Vendor B (Schneider) → Modicon RTUs only. Vendor C (Aveva/Wonderware) → SCADA servers only. Cross-vendor lateral movement: impossible by architecture."
+      },
+      "jitAccess": {
+        "procedure": [
+          "Vendor submits maintenance request (email + Secomea portal ticket) 24 hours in advance",
+          "OT Security Engineer approves in Secomea console — creates time-limited access token (max 4 hours per session)",
+          "Token delivered to vendor's registered email (MFA-protected)",
+          "WTP Control Room Operator receives automated SMS/call: 'Rockwell vendor session scheduled 10:00–12:00, target: ControlLogix PLC-01. Reply 1 to permit.'",
+          "Session initiated — Secomea records full session video + command log",
+          "Session auto-terminates at approved end time. Extension requires new operator approval."
+        ],
+        "emergencyAccess": "For unplanned emergency access: SABESB OT Engineer must be co-present in session (over-the-shoulder) and Plant Manager must verbally authorise. Secomea emergency token valid for 60 minutes only."
+      },
+      "mfaConstraints": "Mobile phones banned in WTP control rooms. Solution: YubiKey 5 NFC hardware tokens issued to all 15 OT/automation engineers and 3 OEM vendor engineers. YubiKeys authenticate to Secomea GateManager. Backup: TOTP via dedicated OTP card (no smartphone required).",
+      "operatorSovereignty": "Control room operators at WTP-1 have a physical emergency stop for all remote sessions (network switch port disable, hardwired to control room desk). Operators can kill any active session in < 5 seconds. Operators trained to use this immediately if they observe unexpected process changes during a remote session.",
+      "retiredSystems": "TeamViewer corporate account to be fully retired by end of Phase 3 (Month 8). FW-OT rule added to block TeamViewer relay servers by IP/domain. FW-IT rule blocks TeamViewer downloads to OT engineering workstations.",
+      "kpis": {
+        "leading": [
+          "% of OEM vendor remote sessions using Secomea JIT access vs. standing TeamViewer access (target: 100% Secomea by Month 8)",
+          "% of remote sessions with operator approval workflow completed before session start"
+        ],
+        "lagging": [
+          "Number of rogue remote tools (AnyDesk, personal TeamViewer) detected on OT VLAN by NSM (target: 0)",
+          "Average duration of vendor sessions vs. approved maintenance window (sessions overrunning approval = process failure indicator)"
+        ]
+      }
+    },
+    {
+      "pillarId": 7,
+      "slug": "training-awareness",
+      "title": "SABESB OT Training & Awareness Programme",
+      "contextSummary": "Water/Wastewater | Generic IT phishing videos only today | Control room operators, maintenance techs, plant managers, 3 OEM vendors | 12-hour shifts, cannot pull from floor | Audience: HR + NACSA auditors",
+      "roleCurricula": [
+        {
+          "role": "Control Room Operators (24 operators across WTP-1/2/3)",
+          "deliveryConstraint": "12-hour rotating shifts. Maximum 5 minutes continuous training.",
+          "coreTopics": [
+            "Cyber-Physical Anomaly Recognition: 'When to trust the HMI vs. the physical gauge' — using the Oldsmar incident as a case study (without naming SABESB's own vulnerabilities)",
+            "Incident Reporting Procedure: How to call a Cyber Isolation ('I see something wrong on HMI' escalation card, laminated at every operator station)",
+            "The Manual Operation Switch: Where it is, when to use it, and the authority to use it WITHOUT waiting for IT"
+          ],
+          "deliveryMethods": ["Shift handover 3-minute toolbox talk (monthly, rotating topics)", "Laminated 'Cyber Anomaly Recognition' quick card at each operator station", "Annual 30-minute practical drill (included in existing emergency response drill schedule)"]
+        },
+        {
+          "role": "Maintenance / Instrument Technicians (8 staff)",
+          "coreTopics": [
+            "USB & Removable Media Hygiene: Every USB drive must pass through the USB scanning kiosk (to be installed at WTP-1 workshop entrance) before connection to any OT asset",
+            "Transient Cyber Asset Handling: Vendor laptops connecting to PLCs must be isolated (no corporate WiFi bridging). Vendor laptop on dedicated isolated maintenance laptop with pre-approved software only.",
+            "MOC Awareness: Any change to a PLC/RTU configuration triggers a MOC ticket that includes OT Security sign-off"
+          ],
+          "deliveryMethods": ["USB scanning kiosk with enforced workflow (no kiosk scan, no physical plant access for the device)", "Monthly 5-minute toolbox talk at maintenance team briefing", "Posted procedures above each engineering workstation"]
+        },
+        {
+          "role": "Plant Managers (3 managers — WTP-1/2/3)",
+          "coreTopics": [
+            "Cyber Risk as Operational and Safety Risk: Quantified downtime scenarios — 'A ransomware attack today: 5 days to restore SCADA from current backup, MYR 2.5M estimated operational cost, potential NACSA s26 regulatory action'",
+            "IT/OT Severance Authority: Plant Manager is the sole authorised decision-maker. This is framed as identical to ordering plant evacuation — the safety authority stays with operations, not IT.",
+            "NACSA s26 Obligation Awareness: The 6-hour notification clock, personal accountability under Act 854"
+          ],
+          "deliveryMethods": ["Quarterly 45-minute executive briefing (board-appropriate framing)", "Annual full-day TTX participation (mandatory)", "Personal notification card with NACSA s26 procedure and CISO/Legal contact numbers"]
+        },
+        {
+          "role": "OEM Vendors (Rockwell, Schneider, Aveva) — 3 companies, ~8 individual engineers",
+          "coreTopics": [
+            "SABESB OT Cyber Site Briefing: Mandatory before any site access, physical or remote. Signed acknowledgement required.",
+            "Prohibited Equipment: No personal devices, no personal USB drives, no personal remote access tools. Use only SABESB-provided maintenance laptop or SABESB-approved Secomea portal.",
+            "Reporting obligation: If vendor engineer suspects a security incident during their maintenance session — immediate notification to Plant Manager, no exception."
+          ],
+          "deliveryMethods": ["Online SABESB Vendor Cyber Briefing (15-minute video + quiz, hosted on SharePoint)", "Signed Vendor Access Agreement before first access", "Refreshed annually or when SABESB OT cyber policy changes"]
+        }
+      ],
+      "otPhishingEquivalents": [
+        { "test": "USB Drop Exercise", "procedure": "Bi-annual: 5 benign USB drives (labelled 'SABESB Salary Data Q3' or similar) placed in WTP-1 breakroom, WTP-1 car park, and engineering workshop. Drives contain only a harmless .txt file that phones home to a SABESB-controlled server. If plugged into any production system: immediate security awareness remediation for the individual.", "target": "0 drives plugged into OT assets" },
+        { "test": "Vendor Access Verification Check", "procedure": "Quarterly: IT Security posing as a new Rockwell vendor engineer calls WTP control room and requests operator to enable remote access for 'emergency maintenance'. Correct response: operator checks vendor against approved access schedule, requests authorisation number, declines if not on schedule.", "target": "100% of operators correctly challenge unscheduled vendor requests" },
+        { "test": "Tailgating Test", "procedure": "Security consultant attempts to tailgate a legitimate employee into the WTP-1 control room without a visible access badge. Measures whether operators challenge the entry.", "target": "100% of entries challenged within 30 seconds" }
+      ],
+      "visualCampaigns": [
+        "STOP: Has this USB been scanned? — at every engineering workstation and maintenance workshop entry",
+        "Did you check the physical gauge? — at each HMI operator station, with stylised HMI-vs-gauge comparison graphic",
+        "Is a vendor session in progress? — traffic-light display at WTP-1 control room desk showing active/inactive remote sessions (fed from Secomea API)"
+      ],
+      "kpis": {
+        "leading": [
+          "% of OEM vendor engineers with current SABESB Vendor Cyber Briefing completion + signed access agreement (target: 100% before any access)",
+          "% of shift handovers that included a cyber security micro-briefing (target: 80%+ per month)"
+        ],
+        "lagging": [
+          "USB drop exercise: drives plugged into production OT assets (target: 0)",
+          "% of vendor access verification checks passed by control room operators (target: 100%)",
+          "Number of tailgating test entries not challenged (target: 0)"
+        ]
+      }
+    },
+    {
+      "pillarId": 8,
+      "slug": "risk-assessments",
+      "title": "SABESB Cyber-Physical Risk Assessment Programme",
+      "contextSummary": "Water/Wastewater | HAZOP in place for engineering; no cyber-HAZOP | Crown Jewel assets unknown | Primary threats: ransomware + opportunistic; NCII designation means nation-state consideration | Audience: Board + NACSA + Insurance underwriter",
+      "crownJewelAnalysis": {
+        "method": "3-day Crown Jewel Analysis workshop facilitated by SABESB OT Security Architect with Plant Engineers, Process Safety team, and IT Security.",
+        "topCrownJewels": [
+          {
+            "asset": "Chlorination Dosing PLCs — CHL-01, CHL-02, CHL-03 (ControlLogix at WTP-1/2/3)",
+            "worstCaseConsequence": "Attacker sets sodium hypochlorite dosing to 50x safe limit. 1.2 million consumers receive chemically dangerous water. Mass public health emergency, fatalities possible.",
+            "cyberHazopEntry": "HAZOP Node: Chlorine Dosing Loop. Deviation: Setpoint HIGH. Cause: Unauthorised setpoint write via compromised EWS or OEM vendor session. Consequence: Over-chlorination → THM formation at high dose → Acute health effects for vulnerable populations. Safeguards: Mechanical pressure relief NOT applicable to chemical dosing. Engineered control: Install second independent offline chlorine residual analyser with hardware interlock to dump/halt dosing if residual exceeds 5 ppm. Cyber control: Safety Zone isolation + operator approval for all setpoint writes.",
+            "engineeredMitigation": "CRITICAL ACTION: Install offline chlorine residual analyser with hardware interlock (not connected to SCADA) — mechanical backstop that a hacked PLC cannot override."
+          },
+          {
+            "asset": "WTP-1 SCADA Server (Wonderware System Platform)",
+            "worstCaseConsequence": "SCADA loss → operators are blind across all 3 WTPs. Manual operation possible at each site but requires 3–5 operators per site minimum (SABESB has 2 per shift at WTP-2/3). Risk of accidental process upset during extended manual operation.",
+            "residualRiskTreatment": "IDMZ migration (Pillar 3) + backup SCADA on standby VM + manual operation procedures laminated at every control panel"
+          },
+          {
+            "asset": "DNP3 / 4G RTU Channel to Remote Pump Stations",
+            "worstCaseConsequence": "Attacker spoofs pump station telemetry, forcing SCADA to believe PSs are operating normally while pumps fail. Water pressure loss in distribution network. Hospitals and emergency services lose supply.",
+            "residualRiskTreatment": "Certificate-based VPN (Phase 4 of architecture plan) + DNP3 message authentication (DNP3 SAv6) as firmware allows"
+          }
+        ]
+      },
+      "otThreatModel": {
+        "ransomwareScenario": { "likelihood": "HIGH — water sector actively targeted 2021–2024. Shared AD + TeamViewer = two common entry points.", "reachabilityPath": "Phishing email to IT staff → credential harvest → AD lateral movement → OT Engineering Workstation (shared AD) → SCADA server → encrypt PI Historian + SCADA application", "mitigations": "Shared AD separation (Pillar 3), IDMZ (Pillar 3), SCADA backup (Pillar 1), Severance protocol (Pillar 4)" },
+        "insiderThreatScenario": { "likelihood": "MEDIUM — vendor engineers with standing TeamViewer access and no monitoring.", "reachabilityPath": "Disgruntled or coerced OEM vendor engineer uses shared TeamViewer to access CHL PLC setpoints outside approved maintenance window.", "mitigations": "JIT access + session recording + operator approval (Pillar 6), Passive NSM detection of off-hours Modbus writes (Pillar 9)" },
+        "nationStateScenario": { "likelihood": "LOW-MEDIUM — NCII designation elevates risk profile. Recent VOLTZITE / VOLT TYPHOON campaigns targeted water and energy sectors.", "reachabilityPath": "Supply chain via Rockwell/Wonderware update mechanism → long dwell time in SCADA historian → slow manipulation of process parameters", "mitigations": "NSM baselining (Pillar 9), SCADA integrity checking, Crown Jewel isolation (this pillar), software supply chain hardening" }
+      },
+      "dynamicRiskRegister": {
+        "mocTriggers": "Any change to a Crown Jewel asset triggers immediate risk register update and re-review of associated compensating controls.",
+        "ownership": "All 3 Crown Jewel assets: owned by respective WTP Plant Manager (not IT). Residual risk acceptance form signed by Plant Manager with CISO countersignature. Board informed of any Critical-band residual risks quarterly.",
+        "insuranceAlignment": "SABESB's cyber insurance underwriter (AIA/Allianz Malaysia) requires: asset register, backup proof, and incident response plan as policy conditions. This risk register serves as primary evidence."
+      },
+      "kpis": {
+        "leading": [
+          "% of 3 Crown Jewel asset clusters with completed cyber-HAZOP worksheet (target: 100% by end of Year 1)",
+          "% of risk register entries with an assigned plant-level owner (not IT owner)"
+        ],
+        "lagging": [
+          "Number of high-risk findings in register lacking an active treatment plan (target: 0)",
+          "Ratio of risks mitigated via physical engineering controls vs. software patches (track over time)"
+        ]
+      }
+    },
+    {
+      "pillarId": 9,
+      "slug": "real-time-network-monitoring",
+      "title": "SABESB Network Security Monitoring Programme",
+      "contextSummary": "Water/Wastewater | Completely blind at Purdue L0–3 today; only IT firewall logs | IT SOC of 2 staff (no OT expertise) trying to monitor OT | Considering Nozomi/Claroty | Audience: CISO + NACSA",
+      "sensorArchitecture": [
+        { "location": "WTP-1 OT Core Switch", "method": "SPAN port mirror to Nozomi Guardian sensor (dedicated OT analysis appliance). Captures all OT VLAN traffic.", "protocols": ["Modbus TCP (Allen-Bradley PLCs)", "ENIP/CIP (ControlLogix EtherNet/IP)", "OPC-UA (SCADA to PLC)"] },
+        { "location": "IDMZ Switch (IT/OT boundary)", "method": "Physical Network TAP (passive, fail-safe) on trunk between FW-OT and IDMZ. Captures all cross-IDMZ traffic including PI Historian replication, remote access sessions.", "protocols": ["All inter-VLAN traffic", "Secomea GateManager sessions"] },
+        { "location": "WTP-2 / WTP-3 OT Core Switches", "method": "Phase 2: SPAN mirror to Nozomi sensor (shared licence, separate segment profile). WTP-2 and WTP-3 sensors phone home to centralised Nozomi Management Console at WTP-1 IDMZ.", "protocols": ["Modbus TCP", "ENIP/CIP"] },
+        { "location": "RTU 4G Uplink (VPN concentrator in IDMZ)", "method": "SPAN on VPN concentrator — captures decrypted DNP3 traffic from all 12 Pump Station RTUs after VPN termination.", "protocols": ["DNP3 over TCP (all 12 RTUs)"] }
+      ],
+      "baselineDefinition": {
+        "normalModbus": "FC3 (Read Holding Registers) from SCADA to CHL PLCs: every 5 seconds (Wonderware polling interval). FC3 from EWS: only during documented maintenance windows. FC16 (Write Multiple Registers) to CHL PLCs: only from EWS-01 IP during approved maintenance window.",
+        "alertTriggers": [
+          { "alert": "Modbus FC16 Write to CHL-01/02/03 from ANY source other than EWS-01 during non-maintenance hours", "severity": "CRITICAL", "action": "Immediate: notify Plant Manager + OT Security Engineer + halt via operator. NACSA s26 clock consideration." },
+          { "alert": "New MAC address observed on OT VLAN not in authorised device register", "severity": "HIGH", "action": "Isolate to quarantine VLAN. OT Security Engineer investigation within 30 minutes." },
+          { "alert": "DNP3 message from RTU containing Application Layer Confirmation Request at unusual frequency (potential RTU firmware manipulation)", "severity": "HIGH", "action": "Verify with physical site inspection of affected Pump Station." },
+          { "alert": "Engineering Workstation communicating with public IP address on any port", "severity": "HIGH", "action": "Block outbound session, investigate EWS for compromise." },
+          { "alert": "ENIP/CIP Explicit Messaging to ControlLogix outside of scheduled Wonderware polling pattern", "severity": "MEDIUM", "action": "OT Security Engineer investigates within 2 hours. Interview any maintenance staff scheduled at that time." }
+        ]
+      },
+      "translationLayer": {
+        "description": "IT SOC analysts at SABESB have no OT expertise. Every OT alert must be translated into a plain-English question for the plant supervisor.",
+        "examples": [
+          { "socAlert": "Modbus FC16 Write anomaly — Source: 10.100.50.23 — Target: 10.100.0.5:502 — 02:14 Saturday", "plantSupervisorQuery": "The system detected an attempt to change settings on the WTP-1 Chlorination PLC at 2:14am Saturday morning. Was any maintenance work scheduled on the chlorination system at that time? Who was in the plant?" },
+          { "socAlert": "New device MAC AA:BB:CC:DD:EE:FF on OT VLAN, no register match", "plantSupervisorQuery": "An unrecognised device just appeared on the WTP-1 plant network. Can you check if any engineer or vendor connected a laptop or device to the network in the last 30 minutes?" }
+        ],
+        "escalationPath": "Level 1 SOC alert → OT Security Engineer (primary translator) → Plant Shift Supervisor (plant-side confirmation) → Plant Manager (authorise response) → CISO (IR declaration if needed)"
+      },
+      "incidentDataRetention": {
+        "fullPCAP": "90 days at IDMZ TAP location (highest value for forensics). Nozomi Guardian stores 30 days of OT session data. Storage estimated: ~2 TB per year for SABESB traffic volume.",
+        "netFlow": "12 months NetFlow from Fortinet FW-OT and FW-IT. Stored in FortiAnalyzer. Used for trend analysis and historical investigation.",
+        "freezeProtocol": "On suspected incident: OT Security Engineer snapshots current Nozomi PCAP archive to write-protected storage immediately. Do not let circular buffer overwrite potential evidence."
+      },
+      "kpis": {
+        "leading": [
+          "% of Purdue L2/3 network choke points with passive sensor coverage (target: 100% by end of Phase 2)",
+          "% of OT communication baselines formally documented in Nozomi (target: all known PLCs and RTUs baselined within 90 days of sensor deployment)"
+        ],
+        "lagging": [
+          "False Positive to True Positive alert ratio (baseline in Month 1; target < 3:1 by Month 6 after tuning)",
+          "Time-to-Acknowledge for Critical alerts by Plant Shift Supervisor (target: < 15 minutes 24/7)"
+        ]
+      }
+    },
+    {
+      "pillarId": 10,
+      "slug": "teamwork-it-ot-partnership",
+      "title": "SABESB IT/OT Partnership Blueprint",
+      "contextSummary": "Water/Wastewater | Highly siloed today — IT drives all cyber decisions, OT automation engineers resistant | CISO owns cyber risk but Plant Managers run operations | No dedicated OT security staff; IT + automation engineers doubling up | Audience: CISO + VP Operations",
+      "currentCulture": "IT Security team views OT engineers as 'refusing to patch' and 'creating risk'. OT automation engineers view IT Security as 'people who don't understand that you can't reboot a water plant.' Both are partially correct. Neither is solving the problem.",
+      "steeringCommittee": {
+        "name": "SABESB OT Cybersecurity Centre of Excellence (OT-CoE)",
+        "members": ["CISO (Chair)", "WTP-1 Plant Manager", "Senior OT Automation Engineer", "IT Network Engineering Lead"],
+        "charter": "The SABESB OT-CoE mission is to maintain reliable, safe water supply to 1.2 million Klang Valley residents by managing OT cybersecurity as a safety and operational risk — not as an IT compliance exercise. Safety and process availability take precedence over data confidentiality. Security controls must never compromise process reliability without formal risk acceptance by the Plant Manager.",
+        "meetingCadence": "Monthly (1 hour) + ad-hoc on TTX results or significant incidents",
+        "tieBreakerWorkflow": "IT Security requests a patch/change → OT Engineering assesses production impact → If refusal: OT Engineer formally documents residual risk + compensating controls in Vulnerability Ledger, signed by Plant Manager → Risk registered with target review date. IT Security cannot override Plant Manager on operational safety decisions. Plant Manager cannot override CISO on classification of incident severity."
+      },
+      "crossTraining": [
+        {
+          "programme": "IT in the Plant",
+          "participants": "Both IT Security staff (2 people), 2 days annually",
+          "activities": ["Walk WTP-1 plant floor with Senior Automation Engineer", "Observe and understand HAZOP and Permit to Work procedures", "Shadow a control room operator shift (4 hours)", "Understand why 'just reboot the PLC' is not viable in a running water treatment process"],
+          "outcome": "IT Security staff develop HAZOP awareness certificate (internal); become empathetic to OT constraints when proposing security controls"
+        },
+        {
+          "programme": "OT in the SOC",
+          "participants": "Senior OT Automation Engineer + 2 OT engineers on rotation, 1 day per quarter",
+          "activities": ["Sit with IT SOC during daily triage", "Understand what the NSM alerts look like from IT's perspective", "Collaborate on tuning Nozomi alert baselines", "Joint review of any OT-related security incidents"],
+          "outcome": "OT engineers understand that passive monitoring is not intrusive; become advocates for NSM to their peers"
+        }
+      ],
+      "hybridRoles": [
+        {
+          "title": "OT Security Architect (New Position)",
+          "description": "Translates SABESB enterprise security policy into Purdue-compliant architectures. Must hold both IT security certifications (CISSP or equivalent) AND OT/ICS qualifications (GICSP or IEC 62443 certification). Responsible for firewall rule design, IDMZ architecture, and OT security roadmap.",
+          "existingPath": "Internal candidate: Senior OT Automation Engineer with IT Security secondment. External: advertise with Malaysian NACSA-certified OT security consultancies."
+        },
+        {
+          "title": "Automation/Process Security Analyst (Role Addition to Existing Automation Engineer Role)",
+          "description": "Plant-side engineer who acts as the primary liaison during cyber incidents. Holds the 'physical wrench' — knows what safe manual operation looks like — while IT holds the 'keyboard'. Cannot be replaced by a pure IT person during an OT incident.",
+          "raciForKeyActivities": {
+            "firewallRuleChange": { "R": "OT Security Architect", "A": "CISO", "C": "Plant Manager + OT Automation Engineer", "I": "IT Network Lead" },
+            "vulnerabilityScanning": { "R": "IT Security (passive tool)", "A": "OT Security Architect", "C": "OT Automation Engineer (confirms no production impact)", "I": "Plant Manager" },
+            "incidentContainment": { "R": "Plant Manager (OT), CISO (IT)", "A": "Plant Manager", "C": "IT SOC + Automation/Process Security Analyst", "I": "NACSA, Board" },
+            "mocApproval": { "R": "OT Automation Engineer", "A": "Plant Manager", "C": "OT Security Architect (cyber impact)", "I": "CISO" }
+          }
+        }
+      ],
+      "noBlameCulture": {
+        "postIncidentStructure": "Joint IT/OT debrief facilitated by neutral party (SABESB CEO's office, not CISO or Plant Manager). Structured using blameless post-mortem format. Focus: system failure, not human failure. Every operator who reports a suspected anomaly — even if it turns out to be a false alarm — is publicly thanked at the next team briefing.",
+        "psychologicalSafety": "Any WTP operator who observes an unexplained HMI anomaly or unexpected physical process change must be able to report it without fear of: (1) being accused of causing the problem, (2) IT Security dismissing their report as 'not a security issue'. A 'Cyber Near-Miss Report' form (same format as existing plant safety near-miss report) is introduced at all three WTPs."
+      },
+      "kpis": {
+        "leading": [
+          "% of IT Security staff with completed plant floor/HAZOP familiarisation hours this year (target: 100%)",
+          "Number of MOC tickets jointly authored by IT Security and OT Engineering (target: increase quarter over quarter)"
+        ],
+        "lagging": [
+          "Number of IT/OT disputes escalated to OT-CoE Steering Committee for resolution (target: decrease after charter is in place)",
+          "% of Cyber Near-Miss Reports that resulted in a process improvement (measures psychological safety effectiveness)"
+        ]
+      }
+    }
+  ]
+}

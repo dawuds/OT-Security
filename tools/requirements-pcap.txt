@@ -1,0 +1,5 @@
+pyshark>=0.6
+# Wireshark / tshark must be installed on the host OS.
+# Ubuntu/Debian: sudo apt install tshark
+# macOS: brew install wireshark
+# Windows: install from wireshark.org (ensure tshark is in PATH)

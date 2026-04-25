@@ -22,6 +22,12 @@ credentials*
 *.swp
 *.swo
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # Build
 dist/
 .cache/
