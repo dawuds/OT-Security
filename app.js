@@ -91,6 +91,8 @@ async function render(view, sub) {
     case 'reference':    return renderReference(sub);
     case 'search':       return renderSearch(sub);
     case 'basic-start':  return renderBasicStart(sub);
+    case 'templates':    return renderTemplatesView(sub);
+    case 'learn':        return renderLearnView(sub);
     default:             return renderOverview();
   }
 }
@@ -149,7 +151,8 @@ async function renderOverview() {
   const allSRs = srData.systemRequirements || srData.requirements || [];
   const srCount = allSRs.length;
   const domainCount = reqs.domains ? reqs.domains.length : 12;
-  const controlCount = Array.isArray(controls) ? controls.length : 0;
+  const controlList = Array.isArray(controls) ? controls : (controls && controls.controls) || [];
+  const controlCount = controlList.length;
   const incidentCount = incidents.incidents ? incidents.incidents.length : 0;
   const actorCount = actors.threatActors ? actors.threatActors.length : 0;
   const sectorCount = sectors.sectors ? sectors.sectors.length : 0;
@@ -236,12 +239,16 @@ async function renderFramework(sub) {
     { id: 'iec-sl',       label: 'Security Levels' },
     { id: 'iec-fr',       label: 'Foundational Requirements' },
     { id: 'iec-sr',       label: 'System Requirements (' + srTotal + ' SRs)' },
+    { id: 'domains',      label: 'Domain Requirements' },
     { id: 'purdue-interactive', label: 'Purdue Model' },
     { id: 'nist',         label: 'NIST SP 800-82' },
     { id: 'mitre',        label: 'MITRE ATT&CK for ICS' },
     { id: 'sectors',      label: 'Sectors' },
   ];
-  const active = showSectors ? 'sectors' : (sub || 'iec-overview');
+  // Allow domain detail via "domain:<id>" sub-route
+  var domainDetailId = null;
+  if (sub && sub.indexOf('domain:') === 0) { domainDetailId = sub.substring(7); }
+  const active = showSectors ? 'sectors' : (domainDetailId ? 'domains' : (sub || 'iec-overview'));
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
     return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'framework/' + t.id + '\')">' + t.label + '</button>';
@@ -252,6 +259,7 @@ async function renderFramework(sub) {
   else if (active === 'iec-sl')   content = await renderIecSL();
   else if (active === 'iec-fr')   content = await renderIecFR();
   else if (active === 'iec-sr')   content = await renderIecSR();
+  else if (active === 'domains')  content = domainDetailId ? await renderDomainDetail(domainDetailId) : await renderDomainsIndex();
   else if (active === 'purdue-interactive') content = await renderPurdueInteractive();
   else if (active === 'nist')     content = await renderNist();
   else if (active === 'mitre')    content = await renderMitre();
@@ -283,6 +291,77 @@ async function renderSectorsContent() {
   return '\
     <div class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</div>\
     <div class="control-grid">' + html + '</div>';
+}
+
+// --- DOMAIN REQUIREMENTS (per-domain detail) ---
+async function renderDomainsIndex() {
+  const idx = await load('requirements/index.json');
+  const domains = (idx && idx.domains) || [];
+  const cards = domains.map(function(d) {
+    var srs = (d.primarySRs || []).map(function(s){return '<span class="badge badge-sl2">'+escHtml(s)+'</span>';}).join(' ');
+    var frs = (d.primaryFR || []).map(function(f){return '<span class="tag">'+escHtml(f)+'</span>';}).join(' ');
+    return '<a class="control-card control-card-link" href="#framework/domain:'+escHtml(d.id)+'" style="text-decoration:none;color:inherit">' +
+      '<div class="control-card-title">'+escHtml(d.name)+'</div>' +
+      '<div class="control-card-desc">'+escHtml(d.description||'')+'</div>' +
+      '<div class="control-card-meta" style="margin-top:0.5rem">'+frs+' '+srs+'</div>' +
+    '</a>';
+  }).join('');
+  return '<div class="page-sub">13 security domains, each with detailed legal/technical/governance requirements, SL mapping, and MITRE ATT&CK ICS coverage.</div>' +
+    '<div class="control-grid">' + cards + '</div>';
+}
+
+async function renderDomainDetail(domainId) {
+  const [idx, domain] = await Promise.all([
+    load('requirements/index.json'),
+    load('requirements/by-domain/' + domainId + '.json').catch(function(){return null;})
+  ]);
+  if (!domain) return '<div class="error-state"><h2>Domain not found</h2><p class="error-message">'+escHtml(domainId)+'</p><button onclick="navigate(\'framework/domains\')">Back to domains</button></div>';
+
+  // Find sibling controls in this domain
+  var ctrlData = await load('controls/library.json');
+  var allControls = Array.isArray(ctrlData) ? ctrlData : (ctrlData && ctrlData.controls) || [];
+  var domainControls = allControls.filter(function(c){return c.domain === domainId;});
+  var controlChips = domainControls.map(function(c){
+    return '<a class="tag" href="#control/'+escHtml(c.slug)+'" style="text-decoration:none">'+escHtml(c.name)+'</a>';
+  }).join(' ');
+
+  var reqsHtml = (domain.requirements || []).map(function(r) {
+    var srBadges = (domain.primarySRs || []).map(function(s){return '<a href="#framework/iec-sr" class="badge badge-sl2" style="text-decoration:none">'+escHtml(s)+'</a>';}).join(' ');
+    var legalBasis = (r.legal && r.legal.basis) ? r.legal.basis.map(function(b){return '<li>'+escHtml(b)+'</li>';}).join('') : '';
+    var techActions = (r.technical && r.technical.actions) ? r.technical.actions.map(function(a){return '<li>'+escHtml(a)+'</li>';}).join('') : '';
+    var govActions = (r.governance && r.governance.actions) ? r.governance.actions.map(function(a){return '<li>'+escHtml(a)+'</li>';}).join('') : '';
+    var evidence = (r.evidenceItems || []).map(function(e){return '<li>'+escHtml(e)+'</li>';}).join('');
+    var slMapping = r.slMapping ? Object.entries(r.slMapping).map(function(e){
+      var lvl = e[0].replace('sl','SL ');
+      return '<tr><td>'+slBadge(parseInt(e[0].replace('sl',''),10))+'</td><td style="font-size:0.8rem">'+escHtml(e[1])+'</td></tr>';
+    }).join('') : '';
+    var mitre = (r.mitreAttackIcs || []).map(function(t){return '<a class="tag" href="#framework/mitre" style="text-decoration:none">'+escHtml(t)+'</a>';}).join(' ');
+
+    return '<article class="control-card" style="margin-bottom:1rem">' +
+      '<div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem">' +
+        '<span class="badge badge-sl3">'+escHtml(r.id)+'</span>' +
+        '<span class="control-card-title" style="margin:0">'+escHtml(r.name)+'</span>' +
+      '</div>' +
+      '<div class="control-card-desc" style="margin-bottom:0.75rem">'+escHtml(r.description||'')+'</div>' +
+      (r.legal ? '<details style="margin-bottom:0.5rem"><summary style="cursor:pointer;font-weight:600;font-size:0.85rem;color:var(--accent)">Legal basis</summary><div style="font-size:0.8rem;color:var(--text-secondary);padding:0.5rem 0">'+escHtml(r.legal.summary||'')+'<ul style="margin-top:0.5rem;padding-left:1.25rem">'+legalBasis+'</ul>'+(r.legal.owner?'<div style="margin-top:0.35rem"><strong>Owner:</strong> '+escHtml(r.legal.owner)+'</div>':'')+'</div></details>' : '') +
+      (r.technical ? '<details open style="margin-bottom:0.5rem"><summary style="cursor:pointer;font-weight:600;font-size:0.85rem;color:var(--accent)">Technical implementation</summary><div style="font-size:0.8rem;color:var(--text-secondary);padding:0.5rem 0">'+escHtml(r.technical.summary||'')+(techActions?'<ul style="margin-top:0.5rem;padding-left:1.25rem">'+techActions+'</ul>':'')+'</div></details>' : '') +
+      (r.governance ? '<details style="margin-bottom:0.5rem"><summary style="cursor:pointer;font-weight:600;font-size:0.85rem;color:var(--accent)">Governance</summary><div style="font-size:0.8rem;color:var(--text-secondary);padding:0.5rem 0">'+escHtml(r.governance.summary||'')+(govActions?'<ul style="margin-top:0.5rem;padding-left:1.25rem">'+govActions+'</ul>':'')+'</div></details>' : '') +
+      (evidence ? '<details style="margin-bottom:0.5rem"><summary style="cursor:pointer;font-weight:600;font-size:0.85rem;color:var(--accent)">Evidence items</summary><ul style="font-size:0.8rem;color:var(--text-secondary);padding:0.5rem 0 0.5rem 1.5rem;margin:0">'+evidence+'</ul></details>' : '') +
+      (slMapping ? '<details style="margin-bottom:0.5rem"><summary style="cursor:pointer;font-weight:600;font-size:0.85rem;color:var(--accent)">SL mapping (SL 1 → SL 4)</summary><div style="padding:0.5rem 0"><table style="width:100%;font-size:0.8rem"><tbody>'+slMapping+'</tbody></table></div></details>' : '') +
+      (mitre ? '<div style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-muted)"><strong>MITRE ATT&CK ICS:</strong> '+mitre+'</div>' : '') +
+    '</article>';
+  }).join('');
+
+  var primarySrLinks = (domain.primarySRs || []).map(function(s){return '<a class="badge badge-sl2" href="#framework/iec-sr" style="text-decoration:none">'+escHtml(s)+'</a>';}).join(' ');
+  var primaryFrLinks = (domain.iec62443FRs || []).map(function(f){return '<a class="tag" href="#framework/iec-fr" style="text-decoration:none">'+escHtml(f)+'</a>';}).join(' ');
+
+  return '<nav class="breadcrumbs"><a href="#framework/domains">Domains</a><span class="sep">/</span><span class="current">'+escHtml(domain.name||domainId)+'</span></nav>' +
+    '<header style="margin-bottom:1rem">' +
+      '<h2 style="margin-bottom:0.25rem">'+escHtml(domain.name||domainId)+'</h2>' +
+      '<div style="font-size:0.85rem;color:var(--text-secondary)">'+primaryFrLinks+' '+primarySrLinks+'</div>' +
+    '</header>' +
+    (controlChips ? '<div class="control-card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">Linked Controls</div>'+controlChips+'</div>' : '') +
+    reqsHtml;
 }
 
 async function renderIecOverview() {
@@ -524,7 +603,7 @@ async function renderControls(sub) {
     load('evidence/index.json').catch(function() { return {}; }),
   ]);
 
-  const allControls = Array.isArray(controls) ? controls : [];
+  const allControls = Array.isArray(controls) ? controls : (controls && controls.controls) || [];
 
   // domains.json is a FLAT ARRAY (not {domains:[...]})
   var domainMap = {};
@@ -575,21 +654,25 @@ async function renderControls(sub) {
 
 async function renderControlBySlug(slug) {
   if (!slug) return renderControls();
-  const [controls, artifactInventory, evidenceIndex] = await Promise.all([
+  const [controls, artifactInventory, evidenceIndex, auditIntegration, incidents, mitre, srs] = await Promise.all([
     load('controls/library.json'),
     load('artifacts/inventory.json').catch(function() { return []; }),
     load('evidence/index.json').catch(function() { return {}; }),
+    load('audit-integration.json').catch(function() { return null; }),
+    load('threats/known-incidents.json').catch(function() { return null; }),
+    load('cross-references/mitre-to-controls.json').catch(function() { return null; }),
+    load('standards/iec62443/system-requirements.json').catch(function() { return null; }),
   ]);
-  const allControls = Array.isArray(controls) ? controls : [];
+  const allControls = Array.isArray(controls) ? controls : (controls && controls.controls) || [];
   const ctrl = allControls.find(function(c) { return c.slug === slug; });
   if (!ctrl) {
     setHTML('<div class="error-state"><h2>Control not found</h2><p class="error-message">No control with slug: ' + escHtml(slug) + '</p><button onclick="navigate(\'controls\')">Back to Controls</button></div>');
     return;
   }
-  renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex);
+  renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex, auditIntegration, incidents, mitre, srs);
 }
 
-function renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex) {
+function renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex, auditIntegration, incidents, mitre, srs) {
   var controlSlug = ctrl.slug;
   var domain = ctrl.domain;
 
@@ -670,20 +753,81 @@ function renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex
     '<div class="accordion"><div class="accordion-item"><button class="accordion-trigger" aria-expanded="true"><span>Required Artifacts (' + linkedArtifacts.length + ')</span><span class="accordion-icon">&#9660;</span></button><div class="accordion-content" role="region">' + artifactCardsHtml + '</div></div></div>' +
   '</section>';
 
-  // Framework Mappings
-  var fwHtml = '<section class="detail-section"><h2 class="detail-section-title">Framework Mappings</h2><div class="fw-mappings">';
-  if (ctrl.iec62443SRs) fwHtml += '<div class="fw-mapping-row"><span class="fw-label">IEC 62443</span><span class="fw-codes">' + ctrl.iec62443SRs.join(', ') + '</span></div>';
-  if (ctrl.nistCsf) fwHtml += '<div class="fw-mapping-row"><span class="fw-label">NIST CSF 2.0</span><span class="fw-codes">' + ctrl.nistCsf.join(', ') + '</span></div>';
-  if (ctrl.nacsa) fwHtml += '<div class="fw-mapping-row"><span class="fw-label">NACSA Act 854</span><span class="fw-codes">' + ctrl.nacsa.join(', ') + '</span></div>';
-  if (ctrl.mitreAttackIcs) fwHtml += '<div class="fw-mapping-row"><span class="fw-label">MITRE ATT&CK ICS</span><span class="fw-codes">' + ctrl.mitreAttackIcs.join(', ') + '</span></div>';
-  fwHtml += '</div></section>';
+  // Framework Mappings — now with cross-links
+  function srLinks(arr) { return (arr || []).map(function(x){return '<a class="fw-chip" href="#framework/iec-sr">'+escHtml(x)+'</a>';}).join(' '); }
+  function csfLinks(arr) { return (arr || []).map(function(x){return '<a class="fw-chip" href="#reference/nist-csf">'+escHtml(x)+'</a>';}).join(' '); }
+  function nacsaLinks(arr) { return (arr || []).map(function(x){return '<a class="fw-chip" href="#reference/nacsa">'+escHtml(x)+'</a>';}).join(' '); }
+  function mitreLinks(arr) { return (arr || []).map(function(x){return '<a class="fw-chip" href="#reference/mitre-ctrl">'+escHtml(x)+'</a>';}).join(' '); }
+  function domainLink(d) { return d ? '<a class="fw-chip" href="#framework/domain:'+escHtml(d)+'">'+escHtml(d)+'</a>' : ''; }
 
-  // Source Provisions
+  var fwHtml = '<section class="detail-section"><h2 class="detail-section-title">Framework Mappings</h2><div class="fw-mappings">' +
+    (ctrl.domain ? '<div class="fw-mapping-row"><span class="fw-label">Domain</span><span class="fw-codes">' + domainLink(ctrl.domain) + '</span></div>' : '') +
+    (ctrl.iec62443SRs ? '<div class="fw-mapping-row"><span class="fw-label">IEC 62443</span><span class="fw-codes">' + srLinks(ctrl.iec62443SRs) + '</span></div>' : '') +
+    (ctrl.nistCsf ? '<div class="fw-mapping-row"><span class="fw-label">NIST CSF 2.0</span><span class="fw-codes">' + csfLinks(ctrl.nistCsf) + '</span></div>' : '') +
+    (ctrl.nacsa ? '<div class="fw-mapping-row"><span class="fw-label">NACSA Act 854</span><span class="fw-codes">' + nacsaLinks(ctrl.nacsa) + '</span></div>' : '') +
+    (ctrl.mitreAttackIcs ? '<div class="fw-mapping-row"><span class="fw-label">MITRE ATT&CK ICS</span><span class="fw-codes">' + mitreLinks(ctrl.mitreAttackIcs) + '</span></div>' : '') +
+  '</div></section>';
+
+  // Source Provisions (SRs as readable cards)
   var provHtml = '';
   if (ctrl.iec62443SRs && ctrl.iec62443SRs.length) {
+    var srMap = {};
+    if (srs) {
+      var srArr = srs.systemRequirements || srs.requirements || [];
+      srArr.forEach(function(s){ srMap[s.id || s.srId || s.code] = s; });
+    }
     provHtml = '<section class="detail-section"><h2 class="detail-section-title">Source Provisions</h2><div class="provision-links">' +
-      ctrl.iec62443SRs.map(function(sr) { return '<a href="#framework/iec-sr" class="provision-link"><span class="provision-id">' + escHtml(sr) + '</span><span class="provision-title">IEC 62443 System Requirement</span></a>'; }).join('') +
+      ctrl.iec62443SRs.map(function(sr) {
+        var meta = srMap[sr];
+        var name = meta && (meta.name || meta.title) ? (meta.name || meta.title) : 'IEC 62443 System Requirement';
+        return '<a href="#framework/iec-sr" class="provision-link"><span class="provision-id">' + escHtml(sr) + '</span><span class="provision-title">' + escHtml(name) + '</span></a>';
+      }).join('') +
     '</div></section>';
+  }
+
+  // Audit Procedures (from audit-integration.json)
+  var auditProcHtml = '';
+  if (auditIntegration && auditIntegration.domainMappings) {
+    var dm = auditIntegration.domainMappings.find(function(d){return d.domainSlug === ctrl.domain;});
+    if (dm) {
+      var cm = (dm.controlMappings || []).find(function(c){return c.controlSlug === ctrl.slug;});
+      var meta = auditIntegration._meta || {};
+      var techPath = meta.techAuditPath || 'Tech-Audit/OT-Security/';
+      var procRefs = (cm && cm.procedureRefs) || [];
+      var procHtml = procRefs.map(function(p){return '<span class="badge badge-sl3">'+escHtml(p)+'</span>';}).join(' ');
+      auditProcHtml = '<section class="detail-section"><h2 class="detail-section-title">Audit Procedures<span style="font-size:0.7rem;color:var(--text-muted);margin-left:0.5rem;font-weight:400">via ' + escHtml(meta.techAuditDomain || 'Tech-Audit') + '</span></h2>' +
+        '<div class="control-card" style="margin-bottom:0.5rem">' +
+          (procHtml ? '<div style="margin-bottom:0.5rem"><strong style="font-size:0.8rem;color:var(--text-secondary)">Procedure refs:</strong> ' + procHtml + '</div>' : '') +
+          '<div style="font-size:0.8rem;color:var(--text-secondary)">Audit assets live in the Tech-Audit repo:</div>' +
+          '<ul style="font-size:0.75rem;padding-left:1.25rem;margin:0.5rem 0 0;color:var(--text-secondary);font-family:var(--font-mono,monospace)">' +
+            (dm.workProgramFile ? '<li>'+escHtml(dm.workProgramFile)+'</li>' : '') +
+            (dm.pbcFile ? '<li>'+escHtml(dm.pbcFile)+'</li>' : '') +
+            (dm.findingTemplateFile ? '<li>'+escHtml(dm.findingTemplateFile)+'</li>' : '') +
+            (dm.ratingFile ? '<li>'+escHtml(dm.ratingFile)+'</li>' : '') +
+          '</ul>' +
+        '</div></section>';
+    }
+  }
+
+  // Incidents this control would have helped prevent — joined via shared SRs
+  var incHtml = '';
+  if (incidents && incidents.incidents && ctrl.iec62443SRs && ctrl.iec62443SRs.length) {
+    var ctrlSrSet = new Set(ctrl.iec62443SRs);
+    var defended = incidents.incidents.filter(function(inc) {
+      return (inc.iec62443SRs || []).some(function(s){return ctrlSrSet.has(s);});
+    });
+    if (defended.length) {
+      incHtml = '<section class="detail-section"><h2 class="detail-section-title">Incidents This Control Helps Defend Against<span style="font-size:0.7rem;color:var(--text-muted);margin-left:0.5rem;font-weight:400">joined via shared IEC 62443 SRs</span></h2><div class="control-grid">' +
+        defended.map(function(inc){
+          var sharedSrs = (inc.iec62443SRs || []).filter(function(s){return ctrlSrSet.has(s);});
+          return '<a class="control-card control-card-link" href="#threats/incidents" style="text-decoration:none;color:inherit;border-left:3px solid var(--danger)">' +
+            '<div class="control-card-title" style="color:var(--danger)">'+escHtml(inc.name)+' ('+escHtml(String(inc.year||''))+')</div>' +
+            '<div class="control-card-desc">'+escHtml((inc.summary||'').substring(0,160))+'…</div>' +
+            '<div class="control-card-meta" style="margin-top:0.5rem">'+sharedSrs.map(function(s){return '<span class="fw-chip">'+escHtml(s)+'</span>';}).join('')+'</div>' +
+          '</a>';
+        }).join('') +
+      '</div></section>';
+    }
   }
 
   setHTML('\
@@ -706,6 +850,8 @@ function renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex
       activitiesHtml +
       maturityHtml +
       auditPkgHtml +
+      auditProcHtml +
+      incHtml +
       fwHtml +
       provHtml +
     '</article>'
@@ -739,11 +885,35 @@ async function renderThreats(sub) {
 async function renderThreatDetail(sub) { return renderThreats(sub); }
 
 async function renderIncidents() {
-  const data = await load('threats/known-incidents.json');
+  const [data, ctrlData] = await Promise.all([
+    load('threats/known-incidents.json'),
+    load('controls/library.json')
+  ]);
   const incidents = data.incidents || [];
+  const allControls = Array.isArray(ctrlData) ? ctrlData : (ctrlData && ctrlData.controls) || [];
 
-  // Fields: id, name, year, sector, country, attribution, summary, attackChain, physicalConsequence, detectability, preventiveControls, iec62443SRs
-  return incidents.map(function(inc) { return '\
+  // Build SR -> [controls] index for reverse lookup
+  var srToCtrls = {};
+  allControls.forEach(function(c) {
+    (c.iec62443SRs || []).forEach(function(sr) {
+      if (!srToCtrls[sr]) srToCtrls[sr] = [];
+      srToCtrls[sr].push(c);
+    });
+  });
+
+  return incidents.map(function(inc) {
+    // Defending controls = unique controls sharing an SR with this incident
+    var defendingMap = {};
+    (inc.iec62443SRs || []).forEach(function(sr){
+      (srToCtrls[sr] || []).forEach(function(c){ defendingMap[c.slug] = c; });
+    });
+    var defendingCtrls = Object.values(defendingMap);
+    var defendingHtml = defendingCtrls.length ? '<h3 style="margin-bottom:0.5rem;margin-top:0.75rem">Controls That Defend Against This (in this repo)</h3>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.75rem">' +
+      defendingCtrls.map(function(c){return '<a class="fw-chip" href="#control/'+escHtml(c.slug)+'" style="background:rgba(52,211,153,0.08);border-color:rgba(52,211,153,0.3);color:var(--success)">'+escHtml(c.name)+'</a>';}).join('') +
+      '</div>' : '';
+
+    return '\
     <div class="control-card" style="margin-bottom:1rem;border-left:4px solid var(--danger)">\
       <div style="display:flex;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem">\
         <div>\
@@ -754,10 +924,11 @@ async function renderIncidents() {
       <div class="detail-body" style="margin-bottom:0.75rem">' + escHtml(inc.summary || '') + '</div>' +
       (inc.physicalConsequence ? '<div class="control-card" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);margin-bottom:0.75rem"><div style="font-size:0.75rem;font-weight:700;color:var(--danger);text-transform:uppercase;margin-bottom:0.25rem">Physical Consequence</div><div style="font-size:0.85rem">' + escHtml(inc.physicalConsequence) + '</div></div>' : '') +
       (inc.detectability ? '<div style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)"><strong>Detectability:</strong> ' + escHtml(inc.detectability) + '</div>' : '') +
-      (inc.attackChain ? '<h3 style="margin-bottom:0.5rem">Attack Chain</h3><div class="attack-chain" style="margin-bottom:0.75rem">' + inc.attackChain.map(function(step){return '<div class="attack-step"><strong>' + escHtml(step.stage) + ':</strong> ' + (step.technique ? '<span class="tag" style="color:var(--danger);margin:0 0.35rem">' + escHtml(step.technique) + '</span>' : '') + escHtml(step.description || '') + '</div>';}).join('') + '</div>' : '') +
-      (inc.preventiveControls ? '<h3 style="margin-bottom:0.5rem">Preventive Controls</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.5rem;margin-bottom:0.75rem">' + inc.preventiveControls.map(function(pc){return '<div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.8rem"><strong style="color:var(--success)">' + escHtml(pc.control || pc) + '</strong>' + (pc.howItHelps ? '<div style="color:var(--text-secondary);margin-top:0.25rem">' + escHtml(pc.howItHelps) + '</div>' : '') + '</div>';}).join('') + '</div>' : '') +
+      (inc.attackChain ? '<h3 style="margin-bottom:0.5rem">Attack Chain</h3><div class="attack-chain" style="margin-bottom:0.75rem">' + inc.attackChain.map(function(step){return '<div class="attack-step"><strong>' + escHtml(step.stage) + ':</strong> ' + (step.technique ? '<a class="fw-chip" href="#reference/mitre-ctrl" style="margin:0 0.35rem;color:var(--danger);background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3)">' + escHtml(step.technique) + '</a>' : '') + escHtml(step.description || '') + '</div>';}).join('') + '</div>' : '') +
+      (inc.preventiveControls ? '<h3 style="margin-bottom:0.5rem">Preventive Requirements (cited by source)</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.5rem;margin-bottom:0.75rem">' + inc.preventiveControls.map(function(pc){return '<div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.8rem"><strong style="color:var(--success)">' + escHtml(pc.control || pc) + '</strong>' + (pc.howItHelps ? '<div style="color:var(--text-secondary);margin-top:0.25rem">' + escHtml(pc.howItHelps) + '</div>' : '') + '</div>';}).join('') + '</div>' : '') +
+      defendingHtml +
       (inc.keyLesson ? '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.85rem"><strong style="color:var(--warning)">Key Lesson:</strong> ' + escHtml(inc.keyLesson) + '</div>' : '') +
-      (inc.iec62443SRs ? '<div class="control-card-meta" style="margin-top:0.75rem">' + inc.iec62443SRs.map(function(s){return '<span class="badge badge-sl2">'+escHtml(s)+'</span>';}).join('') + '</div>' : '') +
+      (inc.iec62443SRs ? '<div class="control-card-meta" style="margin-top:0.75rem">' + inc.iec62443SRs.map(function(s){return '<a class="fw-chip" href="#framework/iec-sr">'+escHtml(s)+'</a>';}).join('') + '</div>' : '') +
     '</div>';}).join('');
 }
 
@@ -1347,6 +1518,288 @@ async function renderRefSectorCop() {
     '</div>';}).join('');
 }
 
+// --- Tiny markdown renderer (handles headings, paragraphs, lists, tables, code, blockquotes, hr, bold/italic/code-spans, links) ---
+function mdToHtml(src) {
+  if (!src) return '';
+  // Normalise line endings
+  src = src.replace(/\r\n?/g, '\n');
+
+  // Extract fenced code blocks first (placeholder)
+  var codeBlocks = [];
+  src = src.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, function(_, lang, body) {
+    codeBlocks.push('<pre class="md-code"><code>' + escHtml(body) + '</code></pre>');
+    return ' CODE' + (codeBlocks.length - 1) + ' ';
+  });
+
+  var lines = src.split('\n');
+  var out = [];
+  var i = 0;
+
+  function inlineFmt(s) {
+    s = escHtml(s);
+    // code spans
+    s = s.replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>');
+    // links [text](url)
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(_, txt, url) {
+      var safeUrl = url.replace(/"/g, '&quot;');
+      return '<a href="' + safeUrl + '" target="_blank" rel="noopener">' + txt + '</a>';
+    });
+    // bold then italic
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+    return s;
+  }
+
+  while (i < lines.length) {
+    var line = lines[i];
+
+    // Code block placeholders pass through
+    if (line.indexOf(' CODE') === 0) { out.push(line); i++; continue; }
+
+    // Blank line
+    if (/^\s*$/.test(line)) { i++; continue; }
+
+    // Heading
+    var hm = line.match(/^(#{1,6})\s+(.*)$/);
+    if (hm) {
+      var lvl = hm[1].length;
+      out.push('<h' + lvl + ' class="md-h">' + inlineFmt(hm[2].trim()) + '</h' + lvl + '>');
+      i++; continue;
+    }
+
+    // HR
+    if (/^---+\s*$/.test(line) || /^\*\*\*+\s*$/.test(line)) { out.push('<hr class="md-hr">'); i++; continue; }
+
+    // Blockquote (multi-line)
+    if (/^>\s?/.test(line)) {
+      var bq = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) { bq.push(lines[i].replace(/^>\s?/, '')); i++; }
+      out.push('<blockquote class="md-bq">' + inlineFmt(bq.join(' ')) + '</blockquote>');
+      continue;
+    }
+
+    // Table (header | --- | rows)
+    if (/^\|.*\|\s*$/.test(line) && i + 1 < lines.length && /^\|[\s:|-]+\|\s*$/.test(lines[i + 1])) {
+      var headerCells = line.replace(/^\||\|$/g, '').split('|').map(function(c){return c.trim();});
+      i += 2;
+      var rows = [];
+      while (i < lines.length && /^\|.*\|\s*$/.test(lines[i])) {
+        rows.push(lines[i].replace(/^\||\|$/g, '').split('|').map(function(c){return c.trim();}));
+        i++;
+      }
+      var thead = '<thead><tr>' + headerCells.map(function(c){return '<th>'+inlineFmt(c)+'</th>';}).join('') + '</tr></thead>';
+      var tbody = '<tbody>' + rows.map(function(r){return '<tr>' + r.map(function(c){return '<td>'+inlineFmt(c)+'</td>';}).join('') + '</tr>';}).join('') + '</tbody>';
+      out.push('<div class="md-table-wrap"><table class="md-table">' + thead + tbody + '</table></div>');
+      continue;
+    }
+
+    // Unordered list
+    if (/^[-*]\s+/.test(line)) {
+      var ul = [];
+      while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
+        ul.push('<li>' + inlineFmt(lines[i].replace(/^[-*]\s+/, '')) + '</li>');
+        i++;
+      }
+      out.push('<ul class="md-ul">' + ul.join('') + '</ul>');
+      continue;
+    }
+
+    // Ordered list
+    if (/^\d+\.\s+/.test(line)) {
+      var ol = [];
+      while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
+        ol.push('<li>' + inlineFmt(lines[i].replace(/^\d+\.\s+/, '')) + '</li>');
+        i++;
+      }
+      out.push('<ol class="md-ol">' + ol.join('') + '</ol>');
+      continue;
+    }
+
+    // Paragraph (collect consecutive non-blank, non-special lines)
+    var p = [line];
+    i++;
+    while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|>|---|\*\*\*|\|.*\|\s*$|[-*]\s+|\d+\.\s+| CODE)/.test(lines[i])) {
+      p.push(lines[i]);
+      i++;
+    }
+    out.push('<p class="md-p">' + inlineFmt(p.join(' ')) + '</p>');
+  }
+
+  var html = out.join('\n');
+  // Restore code blocks
+  html = html.replace(/ CODE(\d+) /g, function(_, n) { return codeBlocks[parseInt(n, 10)]; });
+  return html;
+}
+
+async function loadText(path) {
+  try {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.text();
+  } catch (e) { console.error('Failed to load text', path, e); return null; }
+}
+
+async function renderTemplatesView(sub) {
+  const html = await renderTemplatesContent(sub);
+  setHTML('<div class="page-title">Templates</div><div class="page-sub">Gold-standard policies · FAT/SAT checklists · Worked sample reports.</div>' + html);
+}
+
+async function renderTemplatesContent(sub) {
+  const idx = await load('templates/index.json');
+  if (!idx) return '<div class="empty-state"><p class="empty-state-text">Templates index not available.</p></div>';
+
+  // sub = "view:<id>" → render single template
+  if (sub && sub.indexOf('view:') === 0) {
+    var tplId = sub.substring(5);
+    return renderTemplateView(idx, tplId);
+  }
+
+  var groupsHtml = (idx.groups || []).map(function(g) {
+    var cards = (g.templates || []).map(function(t) {
+      var refs = (t.frameworkRefs || []).map(function(r){return '<span class="fw-chip">'+escHtml(r)+'</span>';}).join(' ');
+      return '<a class="control-card control-card-link" href="#templates/view:'+escHtml(t.id)+'" style="text-decoration:none;color:inherit">' +
+        '<div class="control-card-title">'+escHtml(t.name)+'</div>' +
+        (t.audience ? '<div class="control-card-desc">Audience: '+escHtml(t.audience)+'</div>' : '') +
+        '<div class="control-card-meta" style="margin-top:0.5rem">'+refs+'</div>' +
+      '</a>';
+    }).join('');
+    return '<section style="margin-bottom:1.5rem">' +
+      '<h2 style="margin-bottom:0.25rem">'+escHtml(g.name)+'</h2>' +
+      (g.description ? '<div class="page-sub" style="margin-bottom:0.75rem">'+escHtml(g.description)+'</div>' : '') +
+      '<div class="control-grid">'+cards+'</div>' +
+    '</section>';
+  }).join('');
+
+  return '<div class="disclaimer">' + escHtml(idx.verificationNote || '') + '</div>' + groupsHtml;
+}
+
+async function renderTemplateView(idx, tplId) {
+  var tpl = null;
+  (idx.groups || []).some(function(g) {
+    var found = (g.templates || []).find(function(t){return t.id === tplId;});
+    if (found) { tpl = found; return true; }
+    return false;
+  });
+  if (!tpl) return '<div class="error-state"><h2>Template not found</h2><button onclick="navigate(\'templates\')">Back to templates</button></div>';
+
+  var md = await loadText(tpl.path);
+  if (!md) return '<div class="error-state"><h2>Failed to load template</h2><p class="error-message">'+escHtml(tpl.path)+'</p></div>';
+
+  var refs = (tpl.frameworkRefs || []).map(function(r){return '<span class="fw-chip">'+escHtml(r)+'</span>';}).join(' ');
+  return '<nav class="breadcrumbs"><a href="#templates">Templates</a><span class="sep">/</span><span class="current">'+escHtml(tpl.name)+'</span></nav>' +
+    '<header style="margin-bottom:1rem">' +
+      '<h2 style="margin-bottom:0.25rem">'+escHtml(tpl.name)+'</h2>' +
+      (tpl.audience ? '<div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:0.35rem">Audience: '+escHtml(tpl.audience)+'</div>' : '') +
+      '<div>'+refs+' <a class="fw-chip" href="'+escHtml(tpl.path)+'" target="_blank" rel="noopener">Download .md</a></div>' +
+    '</header>' +
+    '<article class="md-body">' + mdToHtml(md) + '</article>';
+}
+
+// --- LEARN (graduated tutorial scaffold) ---
+async function renderLearnView(sub) {
+  const idx = await load('docs/learn/index.json');
+  if (!idx) {
+    setHTML('<div class="page-title">Learn</div><div class="empty-state"><p class="empty-state-text">Learn index not yet available.</p></div>');
+    return;
+  }
+
+  // sub = "tier:<id>" → tier detail; "lesson:<tierId>:<lessonId>" → lesson detail
+  if (sub && sub.indexOf('lesson:') === 0) {
+    var parts = sub.substring(7).split(':');
+    return renderLearnLesson(idx, parts[0], parts[1]);
+  }
+  if (sub && sub.indexOf('tier:') === 0) {
+    return renderLearnTier(idx, sub.substring(5));
+  }
+
+  // Index page
+  var tiersHtml = (idx.tiers || []).map(function(t) {
+    var prereqs = (t.prerequisites || []).map(function(p){return '<span class="fw-chip">'+escHtml(p)+'</span>';}).join(' ');
+    return '<a class="learn-tier" href="#learn/tier:'+escHtml(t.id)+'">' +
+      '<div class="learn-tier-head">' +
+        '<span class="learn-tier-num">'+escHtml(t.tier)+'</span>' +
+        '<span class="learn-tier-title">'+escHtml(t.name)+'</span>' +
+        '<span class="learn-tier-meta">'+escHtml(t.duration||'')+' · '+escHtml(t.audience||'')+'</span>' +
+      '</div>' +
+      '<div class="learn-tier-desc">'+escHtml(t.outcome||'')+'</div>' +
+      (prereqs ? '<div style="margin-top:0.5rem;font-size:0.7rem;color:var(--text-muted)"><strong>Prerequisites:</strong> '+prereqs+'</div>' : '') +
+    '</a>';
+  }).join('');
+
+  setHTML(
+    '<div class="page-title">Learn</div>' +
+    '<div class="page-sub">'+escHtml(idx.description||'')+'</div>' +
+    (idx.howToUse ? '<div class="control-card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)"><div class="control-card-title">How to use this</div><div class="control-card-desc">'+escHtml(idx.howToUse)+'</div></div>' : '') +
+    tiersHtml
+  );
+}
+
+async function renderLearnTier(idx, tierId) {
+  var tier = (idx.tiers || []).find(function(t){return t.id === tierId;});
+  if (!tier) { setHTML('<div class="error-state"><h2>Tier not found</h2><button onclick="navigate(\'learn\')">Back</button></div>'); return; }
+
+  var lessonsHtml = (tier.lessons || []).map(function(l, i) {
+    var checkpointBadge = l.checkpoint ? '<span class="badge badge-mandatory" style="font-size:0.65rem">Checkpoint</span>' : '';
+    return '<a class="control-card control-card-link" href="#learn/lesson:'+escHtml(tier.id)+':'+escHtml(l.id)+'" style="text-decoration:none;color:inherit">' +
+      '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem">' +
+        '<span class="learn-tier-num" style="width:1.6rem;height:1.6rem;font-size:0.7rem;background:var(--text-muted)">'+(i+1)+'</span>' +
+        '<span class="control-card-title" style="margin:0">'+escHtml(l.title)+'</span>' +
+        checkpointBadge +
+      '</div>' +
+      '<div class="control-card-desc">'+escHtml(l.summary||'')+'</div>' +
+      (l.estimatedTime ? '<div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem">'+escHtml(l.estimatedTime)+'</div>' : '') +
+    '</a>';
+  }).join('');
+
+  var prereqLinks = (tier.prerequisites || []).map(function(p){
+    var match = (idx.tiers || []).find(function(t){return t.id === p || t.tier === p;});
+    return match ? '<a class="fw-chip" href="#learn/tier:'+escHtml(match.id)+'">'+escHtml(match.name)+'</a>' : '<span class="fw-chip">'+escHtml(p)+'</span>';
+  }).join(' ');
+
+  setHTML(
+    '<nav class="breadcrumbs"><a href="#learn">Learn</a><span class="sep">/</span><span class="current">'+escHtml(tier.name)+'</span></nav>' +
+    '<div class="learn-tier-head">' +
+      '<span class="learn-tier-num">'+escHtml(tier.tier)+'</span>' +
+      '<h2 style="margin:0">'+escHtml(tier.name)+'</h2>' +
+      '<span class="learn-tier-meta">'+escHtml(tier.duration||'')+' · '+escHtml(tier.audience||'')+'</span>' +
+    '</div>' +
+    '<div class="learn-tier-desc" style="margin:0.5rem 0 1rem">'+escHtml(tier.outcome||'')+'</div>' +
+    (prereqLinks ? '<div style="margin-bottom:1rem"><strong style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted)">Prerequisites:</strong> '+prereqLinks+'</div>' : '') +
+    '<h3 style="margin-top:1rem">Lessons</h3>' +
+    '<div class="control-grid">'+lessonsHtml+'</div>'
+  );
+}
+
+async function renderLearnLesson(idx, tierId, lessonId) {
+  var tier = (idx.tiers || []).find(function(t){return t.id === tierId;});
+  if (!tier) { setHTML('<div class="error-state"><h2>Tier not found</h2><button onclick="navigate(\'learn\')">Back</button></div>'); return; }
+  var lesson = (tier.lessons || []).find(function(l){return l.id === lessonId;});
+  if (!lesson) { setHTML('<div class="error-state"><h2>Lesson not found</h2><button onclick="navigate(\'learn/tier:'+tierId+'\')">Back</button></div>'); return; }
+
+  var md = await loadText(lesson.path);
+  var bodyHtml = md ? mdToHtml(md) : '<div class="empty-state"><p class="empty-state-text">Lesson content not found at '+escHtml(lesson.path)+'</p></div>';
+
+  // Next/prev nav
+  var lessons = tier.lessons || [];
+  var idxL = lessons.findIndex(function(l){return l.id === lessonId;});
+  var prev = idxL > 0 ? lessons[idxL - 1] : null;
+  var next = idxL < lessons.length - 1 ? lessons[idxL + 1] : null;
+  var navHtml = '<div style="display:flex;justify-content:space-between;gap:0.75rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">' +
+    (prev ? '<a class="fw-chip" href="#learn/lesson:'+escHtml(tierId)+':'+escHtml(prev.id)+'">&larr; '+escHtml(prev.title)+'</a>' : '<span></span>') +
+    (next ? '<a class="fw-chip" href="#learn/lesson:'+escHtml(tierId)+':'+escHtml(next.id)+'">'+escHtml(next.title)+' &rarr;</a>' : '<a class="fw-chip" href="#learn/tier:'+escHtml(tierId)+'">Back to tier &uarr;</a>') +
+  '</div>';
+
+  setHTML(
+    '<nav class="breadcrumbs"><a href="#learn">Learn</a><span class="sep">/</span><a href="#learn/tier:'+escHtml(tierId)+'">'+escHtml(tier.name)+'</a><span class="sep">/</span><span class="current">'+escHtml(lesson.title)+'</span></nav>' +
+    '<header style="margin-bottom:1rem">' +
+      '<h2 style="margin-bottom:0.25rem">'+escHtml(lesson.title)+'</h2>' +
+      (lesson.estimatedTime ? '<div style="font-size:0.8rem;color:var(--text-muted)">'+escHtml(lesson.estimatedTime)+'</div>' : '') +
+    '</header>' +
+    '<article class="md-body">' + bodyHtml + '</article>' +
+    navHtml
+  );
+}
+
 
 // --- PURDUE MODEL INTERACTIVE ---
 async function renderPurdueInteractive() {
@@ -1760,7 +2213,7 @@ async function renderSearch(sub) {
   ]);
 
   var results = [];
-  var allControls = Array.isArray(controls) ? controls : [];
+  var allControls = Array.isArray(controls) ? controls : (controls && controls.controls) || [];
   allControls.forEach(function(c) {
     if ((c.name + ' ' + c.description + ' ' + c.slug + ' ' + (c.iec62443SRs || []).join(' ')).toLowerCase().indexOf(query) !== -1) {
       results.push({ type: 'Control', name: c.name, desc: c.description || '', hash: 'control/' + c.slug });
@@ -1825,7 +2278,7 @@ function exportToCSV() {
   if (view === 'controls') {
     var controls = cache.get('controls/library.json');
     if (controls) {
-      var list = Array.isArray(controls) ? controls : [];
+      var list = Array.isArray(controls) ? controls : (controls && controls.controls) || [];
       data = list.map(function(c) {
         return {
           ID: c.slug || '',
@@ -2010,9 +2463,9 @@ function renderBSPillarDetail(p) {
   var kpis = p.kpis || {};
   var leadHtml = (kpis.leading||[]).map(function(k) { return '<li style="margin-bottom:0.35rem">' + escHtml(k) + '</li>'; }).join('');
   var lagHtml  = (kpis.lagging||[]).map(function(k) { return '<li style="margin-bottom:0.35rem">' + escHtml(k) + '</li>'; }).join('');
-  var iecBadges   = (p.iec62443Ref||[]).map(function(r) { return '<span class="badge badge-sl2" style="margin:2px">' + escHtml(r) + '</span>'; }).join('');
-  var nacsaBadges = (p.nacsaRef||[]).map(function(r) { return '<span class="badge badge-malaysia" style="margin:2px">' + escHtml(r) + '</span>'; }).join('');
-  var nistBadges  = (p.nistCsfRef||[]).map(function(r) { return '<span class="badge" style="margin:2px;background:var(--bg-card);border:1px solid var(--border);font-size:0.65rem">' + escHtml(r) + '</span>'; }).join('');
+  var iecBadges   = (p.iec62443Ref||[]).map(function(r) { return '<a class="fw-chip" href="#framework/iec-sr" style="margin:2px">' + escHtml(r) + '</a>'; }).join('');
+  var nacsaBadges = (p.nacsaRef||[]).map(function(r) { return '<a class="fw-chip" href="#reference/nacsa" style="margin:2px">' + escHtml(r) + '</a>'; }).join('');
+  var nistBadges  = (p.nistCsfRef||[]).map(function(r) { return '<a class="fw-chip" href="#reference/nist-csf" style="margin:2px">' + escHtml(r) + '</a>'; }).join('');
 
   return '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">' +
     '<span style="font-size:3rem;font-weight:900;color:' + colour + ';line-height:1">' + escHtml(p.letter) + '</span>' +

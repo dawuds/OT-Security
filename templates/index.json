@@ -1,0 +1,38 @@
+{
+  "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Template manifest. Templates are AI-generated starting points and must be reviewed by qualified professionals before use. See LICENSE for attribution requirements.",
+  "groups": [
+    {
+      "id": "gold-standard",
+      "name": "Gold-Standard Policy Templates",
+      "description": "Eight policy templates aligned to IEC 62443, NIST CSF 2.0, ISO 27001:2022, and NACSA Act 854. Use as starting points; customise to your organisation before adoption.",
+      "templates": [
+        { "id": "01-master-isp", "name": "Master Information Security Policy (ISP)", "path": "templates/gold-standard/01-master-isp.md", "audience": "CISO, Board", "frameworkRefs": ["IEC 62443", "NIST CSF 2.0 GV.PO", "ISO 27001:2022 5.1"] },
+        { "id": "02-statement-of-applicability", "name": "Statement of Applicability (SoA)", "path": "templates/gold-standard/02-statement-of-applicability.md", "audience": "GRC Lead, Auditor", "frameworkRefs": ["ISO 27001:2022", "IEC 62443-3-3"] },
+        { "id": "03-risk-treatment-plan", "name": "Risk Treatment Plan (RTP)", "path": "templates/gold-standard/03-risk-treatment-plan.md", "audience": "Risk Owner, OT Manager", "frameworkRefs": ["IEC 62443-3-2", "NACSA Act 854 s21", "ISO 27005"] },
+        { "id": "04-cyber-incident-response-plan", "name": "Cyber Incident Response Plan (CIRP)", "path": "templates/gold-standard/04-cyber-incident-response-plan.md", "audience": "SOC Lead, OT Manager", "frameworkRefs": ["NACSA Act 854 s26", "IEC 62443 SR-6.1"] },
+        { "id": "05-business-continuity-plan", "name": "Business Continuity Plan (BCP)", "path": "templates/gold-standard/05-business-continuity-plan.md", "audience": "Plant Manager, BCM Lead", "frameworkRefs": ["ISO 22301", "IEC 62443 SR-7.3"] },
+        { "id": "06-third-party-risk-management-policy", "name": "Third-Party Risk Management Policy", "path": "templates/gold-standard/06-third-party-risk-management-policy.md", "audience": "Procurement, GRC", "frameworkRefs": ["NIST SP 800-161", "IEC 62443 SR-3.4"] },
+        { "id": "07-data-classification-handling-standard", "name": "Data Classification & Handling Standard", "path": "templates/gold-standard/07-data-classification-handling-standard.md", "audience": "Data Owner, IT", "frameworkRefs": ["IEC 62443 SR-4.1", "NIST CSF 2.0 PR.DS"] },
+        { "id": "08-identity-access-management-policy", "name": "Identity & Access Management Policy", "path": "templates/gold-standard/08-identity-access-management-policy.md", "audience": "IAM Lead, IT Sec", "frameworkRefs": ["IEC 62443 FR1, FR2", "NIST CSF 2.0 PR.AA"] }
+      ]
+    },
+    {
+      "id": "fat-sat",
+      "name": "FAT / SAT Checklists",
+      "description": "Factory and Site Acceptance Test security checklists for IACS commissioning. Use during vendor handover.",
+      "templates": [
+        { "id": "iec-62443-fat-sat-checklist", "name": "IEC 62443 FAT/SAT Security Checklist", "path": "templates/iec-62443-fat-sat-checklist.md", "audience": "OT Security Engineer, Project Manager", "frameworkRefs": ["IEC 62443-4-1", "SR-7.7"] }
+      ]
+    },
+    {
+      "id": "samples",
+      "name": "Worked Sample Reports",
+      "description": "Worked example outputs from the templates above — read these to understand the expected level of detail.",
+      "templates": [
+        { "id": "iec-62443-fat-sample", "name": "IEC 62443 FAT Sample Report (Worked Example)", "path": "samples/iec-62443-fat-sample.md", "audience": "OT Security Engineer", "frameworkRefs": ["IEC 62443-4-1"] }
+      ]
+    }
+  ]
+}

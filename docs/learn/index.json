@@ -1,0 +1,75 @@
+{
+  "$schema": "ot-security-v1",
+  "sourceType": "constructed-indicative",
+  "verificationNote": "Educational scaffold. Lessons cite IEC 62443, NIST SP 800-82, MITRE ATT&CK for ICS, and NACSA Act 854 — verify any operational decision against the authoritative source. No lesson here substitutes for sector-specific guidance from a qualified OT security professional.",
+  "description": "Four-tier learning path for OT security. Each tier ends with a checkpoint. Each lesson links to the data layer in this repo so theory and reference live one click apart.",
+  "howToUse": "Read top to bottom. Skip ahead only if you can pass the previous tier's checkpoint. Every claim that names a control, SR, or incident is clickable — use those links to dig into the underlying data.",
+  "tiers": [
+    {
+      "id": "t1-orientation",
+      "tier": "T1",
+      "name": "Orientation",
+      "duration": "≈ 1 hour",
+      "audience": "Anyone new to OT — IT engineers, GRC professionals, executives.",
+      "outcome": "Can name Purdue levels, explain why patching ≠ IT, list five canonical OT incidents, and articulate what an IDMZ is and why it matters.",
+      "prerequisites": [],
+      "lessons": [
+        { "id": "01-why-ot-is-different", "title": "Why OT is different from IT", "summary": "Confidentiality vs availability vs safety. The triage order changes everything.", "estimatedTime": "10 min", "path": "docs/learn/t1-orientation/01-why-ot-is-different.md" },
+        { "id": "02-purdue-tour", "title": "The Purdue Model in 10 minutes", "summary": "Levels 0–5 plus the IDMZ. What lives where and what talks to what.", "estimatedTime": "10 min", "path": "docs/learn/t1-orientation/02-purdue-tour.md" },
+        { "id": "03-five-incidents", "title": "Five incidents you must know", "summary": "Stuxnet, Ukraine, TRITON, Colonial Pipeline, Oldsmar — what each one taught the field.", "estimatedTime": "15 min", "path": "docs/learn/t1-orientation/03-five-incidents.md" },
+        { "id": "04-iec-62443-and-nacsa", "title": "IEC 62443 and NACSA Act 854 in 15 minutes", "summary": "The standard, the law, and how they fit together for Malaysian NCII operators.", "estimatedTime": "15 min", "path": "docs/learn/t1-orientation/04-iec-62443-and-nacsa.md" },
+        { "id": "05-checkpoint", "title": "Checkpoint — orientation self-test", "summary": "Eight questions. If you can't answer them, re-read the relevant lesson before moving on.", "estimatedTime": "10 min", "checkpoint": true, "path": "docs/learn/t1-orientation/05-checkpoint.md" }
+      ]
+    },
+    {
+      "id": "t2-practitioner",
+      "tier": "T2",
+      "name": "Practitioner",
+      "duration": "≈ 1 week",
+      "audience": "IT security professional newly responsible for an OT environment.",
+      "outcome": "Can run a passive asset inventory, map devices to Purdue levels, identify the IDMZ gap in an existing environment, and draft a remote-access policy from the gold-standard template.",
+      "prerequisites": ["t1-orientation"],
+      "lessons": [
+        { "id": "01-passive-discovery-lab", "title": "Lab — passive asset discovery from PCAP", "summary": "Use the included pcap-analyzer.py to extract OT assets from a capture. Why active scanning kills PLCs.", "estimatedTime": "60 min", "path": "docs/learn/t2-practitioner/01-passive-discovery-lab.md" },
+        { "id": "02-modbus-honeypot-lab", "title": "Lab — stand up a Modbus honeypot", "summary": "Watch what an attacker sees on port 502. Use to baseline what normal Modbus traffic looks like.", "estimatedTime": "60 min", "path": "docs/learn/t2-practitioner/02-modbus-honeypot-lab.md" },
+        { "id": "03-map-to-purdue", "title": "Map your assets to the Purdue model", "summary": "Take the asset list from Lesson 1 and produce a defensible Purdue diagram.", "estimatedTime": "45 min", "path": "docs/learn/t2-practitioner/03-map-to-purdue.md" },
+        { "id": "04-find-the-idmz-gap", "title": "Find the IDMZ gap", "summary": "Walk a network diagram. Identify every IT-to-OT path that doesn't traverse the IDMZ.", "estimatedTime": "45 min", "path": "docs/learn/t2-practitioner/04-find-the-idmz-gap.md" },
+        { "id": "05-remote-access-policy", "title": "Lab — draft a remote-access policy from the template", "summary": "Customise the IAM gold-standard template for a vendor-heavy plant.", "estimatedTime": "90 min", "path": "docs/learn/t2-practitioner/05-remote-access-policy.md" },
+        { "id": "06-checkpoint", "title": "Checkpoint — practitioner deliverables review", "summary": "Five artefacts you should now own. If any are missing, you skipped something.", "estimatedTime": "30 min", "checkpoint": true, "path": "docs/learn/t2-practitioner/06-checkpoint.md" }
+      ]
+    },
+    {
+      "id": "t3-programme",
+      "tier": "T3",
+      "name": "Programme Builder",
+      "duration": "≈ 1–3 months (at programme cadence)",
+      "audience": "New OT security manager, NACSA NCII operator standing up a programme from scratch.",
+      "outcome": "Can stand up the 10 B.A.S.I.C. S.T.A.R.T. pillars, produce the NACSA-required artefacts, and run a tabletop exercise that an auditor will accept.",
+      "prerequisites": ["t2-practitioner"],
+      "lessons": [
+        { "id": "01-basic-pillars-overview", "title": "The 10 pillars — sequencing and dependencies", "summary": "Why B (Backup) precedes everything. Why T (Teamwork) is last but not least.", "estimatedTime": "30 min", "path": "docs/learn/t3-programme/01-basic-pillars-overview.md" },
+        { "id": "02-pillar-workbook-pattern", "title": "How to use a pillar workbook (read this once)", "summary": "The Discover → Plan → Produce → KPI pattern — applied per pillar.", "estimatedTime": "20 min", "path": "docs/learn/t3-programme/02-pillar-workbook-pattern.md" },
+        { "id": "03-pillar-b-backup-recovery", "title": "Pillar B — Backup & Recovery (3-2-1-1-0 for OT)", "summary": "Build a backup programme that survives ransomware AND respects PLC restoration sequencing.", "estimatedTime": "90 min", "path": "docs/learn/t3-programme/03-pillar-b-backup-recovery.md" },
+        { "id": "04-pillar-i-incident-response", "title": "Pillar I — Incident Response (with NACSA s26 timing)", "summary": "Build the IR plan and the s26 6-hour notification flow. Run a TTX from the included scenarios.", "estimatedTime": "90 min", "path": "docs/learn/t3-programme/04-pillar-i-incident-response.md" },
+        { "id": "05-running-a-ttx", "title": "Running an OT tabletop exercise (TTX)", "summary": "Scenario design, engineering injects, the IT/OT severance question, AAR.", "estimatedTime": "60 min", "path": "docs/learn/t3-programme/05-running-a-ttx.md" },
+        { "id": "06-checkpoint", "title": "Checkpoint — programme readiness review", "summary": "10 artefacts, one per pillar. The Board-pack you would defend in a regulatory inspection.", "estimatedTime": "60 min", "checkpoint": true, "path": "docs/learn/t3-programme/06-checkpoint.md" }
+      ]
+    },
+    {
+      "id": "t4-auditor",
+      "tier": "T4",
+      "name": "Auditor / Assessor",
+      "duration": "Continuous — per engagement",
+      "audience": "NACSA-licensed auditor, internal auditor, IESP assessor.",
+      "outcome": "Can perform an SL-2 / SL-3 zone assessment, complete the FAT/SAT checklist as evidence, and produce an audit package that maps each finding to its IEC 62443 SR and NACSA section.",
+      "prerequisites": ["t3-programme"],
+      "lessons": [
+        { "id": "01-audit-package-anatomy", "title": "Anatomy of an OT audit package", "summary": "Work programme + PBC list + finding template + rating methodology — and what each one is for.", "estimatedTime": "30 min", "path": "docs/learn/t4-auditor/01-audit-package-anatomy.md" },
+        { "id": "02-evidence-by-domain", "title": "Evidence-gathering by domain", "summary": "Use evidence/index.json. What good looks like, what common gaps look like, how to verify in 30 minutes per domain.", "estimatedTime": "60 min", "path": "docs/learn/t4-auditor/02-evidence-by-domain.md" },
+        { "id": "03-fat-sat-walkthrough", "title": "Walking the FAT/SAT checklist on a real handover", "summary": "Use the included FAT/SAT checklist on the worked sample report. What to accept, what to reject.", "estimatedTime": "60 min", "path": "docs/learn/t4-auditor/03-fat-sat-walkthrough.md" },
+        { "id": "04-finding-to-mapping", "title": "Writing a finding that maps to SR + NACSA", "summary": "Every finding cites its IEC 62443 SR and its NACSA section. The finding template enforces this.", "estimatedTime": "45 min", "path": "docs/learn/t4-auditor/04-finding-to-mapping.md" },
+        { "id": "05-checkpoint", "title": "Checkpoint — produce an audit package", "summary": "Apply the workflow end-to-end on a sector of your choice. Self-grade against the rubric.", "estimatedTime": "120 min", "checkpoint": true, "path": "docs/learn/t4-auditor/05-checkpoint.md" }
+      ]
+    }
+  ]
+}
