@@ -35,7 +35,7 @@ A structured, open-access knowledge base for Operational Technology (OT) cyberse
 | **Requirements** | 13 security domains, each with detailed legal/technical/governance requirements, SL mapping, MITRE ATT&CK ICS | [`requirements/by-domain/`](requirements/by-domain/) |
 | **Controls** | 25 controls with maturity levels, audit procedures, defended incidents, and cross-linked NACSA/NIST CSF/MITRE mappings | [`controls/library.json`](controls/library.json) |
 | **Evidence** | 36 audit evidence items across 13 domains — what good looks like, common gaps, how to verify | [`evidence/index.json`](evidence/index.json) |
-| **Threats** | 7 threat actor profiles, 5 known incidents (Stuxnet, TRITON, Ukraine, Colonial Pipeline, Oldsmar) joined to defending controls via shared SRs | [`threats/`](threats/) |
+| **Threats** | 7 threat actor profiles, 6 known incidents (Stuxnet, TRITON, Ukraine, Colonial Pipeline, Oldsmar, Monterrey 2026 AI-augmented) joined to defending controls via shared SRs | [`threats/`](threats/) |
 | **Risk Management** | OT/ICS risk methodology, 5x5 safety-weighted matrix, 20-risk register, assessment checklist, treatment options | [`risk-management/`](risk-management/) |
 | **Sectors** | 6 OT-focused sectors (energy, water, oil & gas, transport, manufacturing, building automation) with NACSA NCII obligations | [`sectors/`](sectors/) |
 | **Cross-References** | IEC 62443 ↔ NACSA, NIST CSF 2.0, NIST 800-82, MITRE ICS ↔ controls, sector ↔ NACSA CoPs | [`cross-references/`](cross-references/) |
@@ -150,7 +150,7 @@ OT-Security/
 │   └── nist-800-82/
 │       └── index.json                  # NIST SP 800-82 Rev 3 overview
 ├── threats/
-│   ├── known-incidents.json            # Stuxnet, TRITON, Ukraine, Colonial, Oldsmar
+│   ├── known-incidents.json            # Stuxnet, TRITON, Ukraine, Colonial, Oldsmar, Monterrey 2026
 │   └── threat-actors.json              # OT threat actor profiles
 ├── templates/
 │   ├── index.json                      # Template manifest (loaded by SPA)
