@@ -21,10 +21,13 @@ function renderFetchError(el, url, error) {
 }
 
 // --- Data loader ---
+// In-session cache is kept (cheap repeat-renders), but HTTP fetches use
+// 'no-cache' so the browser revalidates with the server on every page load —
+// otherwise GitHub Pages users see stale data after content updates.
 async function load(path) {
   if (cache.has(path)) return cache.get(path);
   try {
-    const res = await fetch(path);
+    const res = await fetch(path, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     cache.set(path, data);
@@ -1633,7 +1636,7 @@ function mdToHtml(src) {
 
 async function loadText(path) {
   try {
-    const res = await fetch(path);
+    const res = await fetch(path, { cache: 'no-cache' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     return await res.text();
   } catch (e) { console.error('Failed to load text', path, e); return null; }

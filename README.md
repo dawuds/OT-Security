@@ -233,6 +233,7 @@ See full mapping: [`cross-references/iec62443-to-nacsa.json`](cross-references/i
 | Ukraine Power Grid | 2015/2016 | 230,000+ customers without power | IT/OT separation; OT monitoring |
 | Colonial Pipeline | 2021 | 6-day fuel crisis | MFA on remote access is not optional |
 | Oldsmar Water | 2021 | Near-chemical contamination | Input validation; setpoint limits |
+| Monterrey Water (AI-augmented) | 2026 | OT compromise attempted, **failed**; AI autonomously identified SCADA interface | IDMZ + MFA + auth-failure alerting still answer the question; AI-augmented recon is the threat-model update |
 
 ---
 

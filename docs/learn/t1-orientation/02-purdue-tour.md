@@ -51,4 +51,4 @@ WiFi, WirelessHART, ISA100, private 5G — these don't get a free pass. They are
 
 ## What's next
 
-Move on to [Lesson 3 — Five incidents you must know](#learn/lesson:t1-orientation:03-five-incidents). Now that you know the geography, those incidents become a tour of where things have gone wrong.
+Move on to [Lesson 3 — Six incidents you must know](#learn/lesson:t1-orientation:03-five-incidents). Now that you know the geography, those incidents become a tour of where things have gone wrong.

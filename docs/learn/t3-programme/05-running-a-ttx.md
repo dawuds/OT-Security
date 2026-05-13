@@ -24,6 +24,7 @@ Pick one of the canonical incidents from [Threats](#threats/incidents) and adapt
 | TRITON | Petrochemical | Engineer reports "PLC fault" — was it a routine fault, or a SIS controller probe? |
 | Oldsmar | Water | HMI logs show setpoint change at 02:14 from a vendor remote session — investigate while continuing operations |
 | Colonial Pipeline | Oil & gas | IT ransomware with no confirmed OT compromise — do you preventively shut down OT? Who decides? |
+| **Monterrey 2026** | Water | IT SOC detects two rounds of failed password-spray against the vNode SCADA management interface from an internal IT host. Authentication held. (a) How did the SCADA interface become reachable from IT? (b) What would have happened if the password had been weaker? (c) AI-augmented recon means the attacker did not need OT expertise — does your IT-side telemetry catch unprompted SCADA enumeration? |
 
 A scenario that isn't sector-relevant is worse than no scenario — it teaches the wrong lessons.
 
