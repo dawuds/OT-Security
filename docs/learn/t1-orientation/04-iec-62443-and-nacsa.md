@@ -73,4 +73,4 @@ For NCII operators in Malaysia, the practical path is: **adopt IEC 62443 as the 
 
 ## What's next
 
-Move on to the [checkpoint](#learn/lesson:t1-orientation:05-checkpoint). Eight questions. If you can answer them without looking, T1 is complete.
+Move on to [Lesson 4b — OT protocols on the wire](#learn/lesson:t1-orientation:04b-ot-protocols). The last 15 minutes of T1 before the checkpoint — and the bridge to the hands-on labs in T2.

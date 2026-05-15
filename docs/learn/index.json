@@ -18,7 +18,8 @@
         { "id": "02-purdue-tour", "title": "The Purdue Model in 10 minutes", "summary": "Levels 0–5 plus the IDMZ. What lives where and what talks to what.", "estimatedTime": "10 min", "path": "docs/learn/t1-orientation/02-purdue-tour.md" },
         { "id": "03-five-incidents", "title": "Six incidents you must know (incl. Monterrey 2026)", "summary": "Stuxnet, Ukraine, TRITON, Colonial Pipeline, Oldsmar, Monterrey — what each one taught the field, and what AI-augmented recon changed.", "estimatedTime": "20 min", "path": "docs/learn/t1-orientation/03-five-incidents.md" },
         { "id": "04-iec-62443-and-nacsa", "title": "IEC 62443 and NACSA Act 854 in 15 minutes", "summary": "The standard, the law, and how they fit together for Malaysian NCII operators.", "estimatedTime": "15 min", "path": "docs/learn/t1-orientation/04-iec-62443-and-nacsa.md" },
-        { "id": "05-checkpoint", "title": "Checkpoint — orientation self-test", "summary": "Eight questions. If you can't answer them, re-read the relevant lesson before moving on.", "estimatedTime": "10 min", "checkpoint": true, "path": "docs/learn/t1-orientation/05-checkpoint.md" }
+        { "id": "04b-ot-protocols", "title": "OT protocols on the wire (Modbus / DNP3 / EtherNet-IP / S7)", "summary": "Bridge between Purdue theory and the T2 PCAP lab — what these protocols look like, why authentication is absent, and why read ≠ write.", "estimatedTime": "15 min", "path": "docs/learn/t1-orientation/04b-ot-protocols.md" },
+        { "id": "05-checkpoint", "title": "Checkpoint — orientation self-test", "summary": "Application-style scenarios, not recall. If you can't reason through them, re-read the relevant lesson before moving on.", "estimatedTime": "15 min", "checkpoint": true, "path": "docs/learn/t1-orientation/05-checkpoint.md" }
       ]
     },
     {
@@ -50,9 +51,8 @@
         { "id": "01-basic-pillars-overview", "title": "The 10 pillars — sequencing and dependencies", "summary": "Why B (Backup) precedes everything. Why T (Teamwork) is last but not least.", "estimatedTime": "30 min", "path": "docs/learn/t3-programme/01-basic-pillars-overview.md" },
         { "id": "02-pillar-workbook-pattern", "title": "How to use a pillar workbook (read this once)", "summary": "The Discover → Plan → Produce → KPI pattern — applied per pillar.", "estimatedTime": "20 min", "path": "docs/learn/t3-programme/02-pillar-workbook-pattern.md" },
         { "id": "03-pillar-b-backup-recovery", "title": "Pillar B — Backup & Recovery (3-2-1-1-0 for OT)", "summary": "Build a backup programme that survives ransomware AND respects PLC restoration sequencing.", "estimatedTime": "90 min", "path": "docs/learn/t3-programme/03-pillar-b-backup-recovery.md" },
-        { "id": "04-pillar-i-incident-response", "title": "Pillar I — Incident Response (with NACSA s26 timing)", "summary": "Build the IR plan and the s26 6-hour notification flow. Run a TTX from the included scenarios.", "estimatedTime": "90 min", "path": "docs/learn/t3-programme/04-pillar-i-incident-response.md" },
-        { "id": "05-running-a-ttx", "title": "Running an OT tabletop exercise (TTX)", "summary": "Scenario design, engineering injects, the IT/OT severance question, AAR.", "estimatedTime": "60 min", "path": "docs/learn/t3-programme/05-running-a-ttx.md" },
-        { "id": "06-checkpoint", "title": "Checkpoint — programme readiness review", "summary": "10 artefacts, one per pillar. The Board-pack you would defend in a regulatory inspection.", "estimatedTime": "60 min", "checkpoint": true, "path": "docs/learn/t3-programme/06-checkpoint.md" }
+        { "id": "04-pillar-i-incident-response", "title": "Pillar I — Incident Response (with TTX + NACSA s26 timing)", "summary": "Build the IR plan, the s26 notification flow, and the TTX rehearsal that proves the plan exists. The pillar with a regulatory clock.", "estimatedTime": "2 hr", "path": "docs/learn/t3-programme/04-pillar-i-incident-response.md" },
+        { "id": "06-checkpoint", "title": "Checkpoint — programme readiness review", "summary": "Pillar artefacts, one per pillar covered. The Board-pack you would defend in a regulatory inspection.", "estimatedTime": "60 min", "checkpoint": true, "path": "docs/learn/t3-programme/06-checkpoint.md" }
       ]
     },
     {
@@ -62,7 +62,7 @@
       "duration": "Continuous — per engagement",
       "audience": "NACSA-licensed auditor, internal auditor, IESP assessor.",
       "outcome": "Can perform an SL-2 / SL-3 zone assessment, complete the FAT/SAT checklist as evidence, and produce an audit package that maps each finding to its IEC 62443 SR and NACSA section.",
-      "prerequisites": ["t3-programme"],
+      "prerequisites": ["t2-practitioner"],
       "lessons": [
         { "id": "01-audit-package-anatomy", "title": "Anatomy of an OT audit package", "summary": "Work programme + PBC list + finding template + rating methodology — and what each one is for.", "estimatedTime": "30 min", "path": "docs/learn/t4-auditor/01-audit-package-anatomy.md" },
         { "id": "02-evidence-by-domain", "title": "Evidence-gathering by domain", "summary": "Use evidence/index.json. What good looks like, what common gaps look like, how to verify in 30 minutes per domain.", "estimatedTime": "60 min", "path": "docs/learn/t4-auditor/02-evidence-by-domain.md" },
