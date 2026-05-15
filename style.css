@@ -154,8 +154,10 @@
 .control-card-meta { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
 
 /* ===== Section Headings ===== */
-.page-title { font-size: var(--font-size-xl); font-weight: 700; margin-bottom: 0.25rem; }
-.page-sub { font-size: var(--font-size-base); color: var(--text-secondary); margin-bottom: 1.5rem; }
+/* h1.page-title and p.page-sub form the page header for every view.
+   Margins are reset to prevent browser h1 defaults from stacking. */
+.page-title { font-size: var(--font-size-xl); font-weight: 700; margin: 0 0 0.25rem; line-height: 1.25; }
+.page-sub { font-size: var(--font-size-base); color: var(--text-secondary); margin: 0 0 1.5rem; }
 
 /* ===== Tables ===== */
 .table-wrap { overflow-x: auto; margin-bottom: 1rem; }
@@ -530,3 +532,105 @@ tr:hover td { background: var(--surface-hover); }
 .learn-tier-title { font-weight: 700; font-size: 1.05rem; }
 .learn-tier-meta { font-size: 0.75rem; color: var(--text-muted); }
 .learn-tier-desc { font-size: 0.88rem; color: var(--text-secondary); margin: 0.25rem 0 0; line-height: 1.5; }
+
+/* ===== Card primitives ===== */
+/* Used by B.A.S.I.C. S.T.A.R.T., Learn, and any view rendering plain .card markup.
+   Mirrors .control-card but kept as a separate primitive because not every card
+   is a control. */
+:root {
+  --bg-card: var(--surface);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.card-link {
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.card-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.card-title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  margin: 0 0 0.25rem;
+  color: var(--text-primary);
+}
+.card-desc {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ===== Two-column responsive grid ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 720px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+
+/* ===== Semantic page header (replaces .page-title div pattern) ===== */
+.page-header {
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+.page-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ===== Controls accordion clause list ===== */
+.clause-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.clause-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.clause-link:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+.clause-title {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+.accordion-trigger-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

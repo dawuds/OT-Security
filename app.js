@@ -16,7 +16,7 @@ function renderFetchError(el, url, error) {
     '<h2>Failed to load data</h2>' +
     '<p>Could not fetch <strong>' + escHtml(url) + '</strong></p>' +
     (error ? '<p class="error-detail">' + escHtml(String(error)) + '</p>' : '') +
-    '<button onclick="location.reload()">Retry</button>' +
+    '<button data-action="reload">Retry</button>' +
     '</div>';
 }
 
@@ -60,7 +60,7 @@ async function route() {
   try {
     await render(view, sub);
   } catch (e) {
-    app.innerHTML = '<div class="error-state"><h2>Failed to load data</h2><p class="error-message">' + escHtml(e.message) + '</p><button onclick="location.reload()">Retry</button></div>';
+    app.innerHTML = '<div class="error-state"><h2>Failed to load data</h2><p class="error-message">' + escHtml(e.message) + '</p><button data-action="reload">Retry</button></div>';
     console.error(e);
   }
 }
@@ -182,8 +182,8 @@ async function renderOverview() {
       <strong>Educational use only.</strong> IEC 62443 content is paraphrased — obtain normative text from iec.ch.
       NACSA Act 854 references are indicative — verify against official Gazette.
     </div>
-    <div class="page-title">OT Security Framework</div>
-    <div class="page-sub">IEC 62443 · NIST SP 800-82 · MITRE ATT&amp;CK for ICS · NACSA Act 854 (Malaysia)</div>
+    <h1 class="page-title">OT Security Framework</h1>
+    <p class="page-sub">IEC 62443 · NIST SP 800-82 · MITRE ATT&amp;CK for ICS · NACSA Act 854 (Malaysia)</p>
     <div class="stats-banner">
       <div class="stat-card"><div class="stat-value">${srCount}</div><div class="stat-label">IEC 62443 SRs</div></div>
       <div class="stat-card"><div class="stat-value">${domainCount}</div><div class="stat-label">Security Domains</div></div>
@@ -254,7 +254,7 @@ async function renderFramework(sub) {
   const active = showSectors ? 'sectors' : (domainDetailId ? 'domains' : (sub || 'iec-overview'));
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
-    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'framework/' + t.id + '\')">' + t.label + '</button>';
+    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" data-nav="framework/' + t.id + '">' + t.label + '</button>';
   }).join('') + '</div>';
 
   var content = '';
@@ -269,8 +269,8 @@ async function renderFramework(sub) {
   else if (active === 'sectors')  content = await renderSectorsContent();
 
   setHTML('\
-    <div class="page-title">Framework</div>\
-    <div class="page-sub">IEC 62443 · NIST SP 800-82 Rev 3 · MITRE ATT&amp;CK for ICS · Sectors</div>' +
+    <h1 class="page-title">Framework</h1>\
+    <p class="page-sub">IEC 62443 · NIST SP 800-82 Rev 3 · MITRE ATT&amp;CK for ICS · Sectors</p>' +
     tabsHtml + content
   );
 }
@@ -292,7 +292,7 @@ async function renderSectorsContent() {
     </a>';}).join('');
 
   return '\
-    <div class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</div>\
+    <p class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</p>\
     <div class="control-grid">' + html + '</div>';
 }
 
@@ -309,7 +309,7 @@ async function renderDomainsIndex() {
       '<div class="control-card-meta" style="margin-top:0.5rem">'+frs+' '+srs+'</div>' +
     '</a>';
   }).join('');
-  return '<div class="page-sub">13 security domains, each with detailed legal/technical/governance requirements, SL mapping, and MITRE ATT&CK ICS coverage.</div>' +
+  return '<p class="page-sub">13 security domains, each with detailed legal/technical/governance requirements, SL mapping, and MITRE ATT&CK ICS coverage.</p>' +
     '<div class="control-grid">' + cards + '</div>';
 }
 
@@ -318,7 +318,7 @@ async function renderDomainDetail(domainId) {
     load('requirements/index.json'),
     load('requirements/by-domain/' + domainId + '.json').catch(function(){return null;})
   ]);
-  if (!domain) return '<div class="error-state"><h2>Domain not found</h2><p class="error-message">'+escHtml(domainId)+'</p><button onclick="navigate(\'framework/domains\')">Back to domains</button></div>';
+  if (!domain) return '<div class="error-state"><h2>Domain not found</h2><p class="error-message">'+escHtml(domainId)+'</p><button data-nav="framework/domains">Back to domains</button></div>';
 
   // Find sibling controls in this domain
   var ctrlData = await load('controls/library.json');
@@ -459,7 +459,7 @@ async function renderIecFR() {
 
   return '\
     <h2>7 Foundational Requirements (FRs)</h2>\
-    <div class="page-sub">The 7 FRs define the security property categories. Each FR contains multiple System Requirements (SRs).</div>\
+    <p class="page-sub">The 7 FRs define the security property categories. Each FR contains multiple System Requirements (SRs).</p>\
     <div class="control-grid">' + frsHtml + '</div>';
 }
 
@@ -481,7 +481,7 @@ async function renderIecSR() {
     <div class="table-wrap"><table>\
       <thead><tr><th>SR</th><th>Name</th><th>SL1</th><th>SL2</th><th>SL3</th><th>SL4</th><th>NACSA</th></tr></thead>\
       <tbody>' + srs.map(function(sr) { return '\
-        <tr class="control-card-link" onclick="showSRDetail(' + JSON.stringify(JSON.stringify(sr)).slice(1,-1).replace(/'/g,'&#39;') + ')" style="cursor:pointer">\
+        <tr class="control-card-link" data-action="show-sr-detail" data-sr="' + escHtml(JSON.stringify(sr)) + '" style="cursor:pointer">\
           <td><strong>' + escHtml(sr.id) + '</strong></td>\
           <td>' + escHtml(sr.name) + '</td>\
           <td style="text-align:center">' + (sr.sl1 ? '●' : '○') + '</td>\
@@ -494,7 +494,7 @@ async function renderIecSR() {
     </table></div>';
   }).join('');
 
-  return '<div class="page-sub">Click any SR for full SL 1-4 descriptions and mappings. ' + allSRs.length + ' SRs across 7 FRs.</div>\
+  return '<p class="page-sub">Click any SR for full SL 1-4 descriptions and mappings. ' + allSRs.length + ' SRs across 7 FRs.</p>\
     <div id="sr-detail-panel"></div>' + srHtml;
 }
 
@@ -508,7 +508,7 @@ window.showSRDetail = function(srJson) {
         <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem">\
           <span class="badge badge-sl2">' + escHtml(sr.id) + '</span>\
           <span class="control-card-title" style="margin:0">' + escHtml(sr.name) + '</span>\
-          <button onclick="document.getElementById(\'sr-detail-panel\').innerHTML=\'\'" style="margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem">X</button>\
+          <button data-action="close-sr-detail" style="margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem">X</button>\
         </div>\
         <div class="control-card-desc">' + escHtml(sr.description || '') + '</div>\
         <div class="control-grid" style="margin-top:1rem">' +
@@ -647,8 +647,8 @@ async function renderControls(sub) {
   }).join('');
 
   setHTML(`
-    <div class="page-title">Controls</div>
-    <div class="page-sub">${allControls.length} controls · IEC 62443 · NACSA Act 854 · NIST CSF 2.0 mapped</div>
+    <h1 class="page-title">Controls</h1>
+    <p class="page-sub">${allControls.length} controls · IEC 62443 · NACSA Act 854 · NIST CSF 2.0 mapped</p>
     <div class="accordion">
       ${html}
     </div>`
@@ -669,7 +669,7 @@ async function renderControlBySlug(slug) {
   const allControls = Array.isArray(controls) ? controls : (controls && controls.controls) || [];
   const ctrl = allControls.find(function(c) { return c.slug === slug; });
   if (!ctrl) {
-    setHTML('<div class="error-state"><h2>Control not found</h2><p class="error-message">No control with slug: ' + escHtml(slug) + '</p><button onclick="navigate(\'controls\')">Back to Controls</button></div>');
+    setHTML('<div class="error-state"><h2>Control not found</h2><p class="error-message">No control with slug: ' + escHtml(slug) + '</p><button data-nav="controls">Back to Controls</button></div>');
     return;
   }
   renderControlDetail(ctrl, allControls, artifactInventory, evidenceIndex, auditIntegration, incidents, mitre, srs);
@@ -871,7 +871,7 @@ async function renderThreats(sub) {
   const active = sub || 'incidents';
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
-    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'threats/' + t.id + '\')">' + t.label + '</button>';
+    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" data-nav="threats/' + t.id + '">' + t.label + '</button>';
   }).join('') + '</div>';
 
   var content = '';
@@ -879,8 +879,8 @@ async function renderThreats(sub) {
   else content = await renderActors();
 
   setHTML('\
-    <div class="page-title">Threats</div>\
-    <div class="page-sub">Real-world incidents · Threat actor profiles · MITRE ATT&amp;CK for ICS mapped</div>' +
+    <h1 class="page-title">Threats</h1>\
+    <p class="page-sub">Real-world incidents · Threat actor profiles · MITRE ATT&amp;CK for ICS mapped</p>' +
     tabsHtml + content
   );
 }
@@ -985,8 +985,8 @@ async function renderSectors(sub) {
     </a>`;}).join('');
 
   setHTML(`
-    <div class="page-title">Sectors</div>
-    <div class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</div>
+    <h1 class="page-title">Sectors</h1>
+    <p class="page-sub">Sector-specific OT risks, NACSA obligations, and SL targeting by zone.</p>
     <div class="control-grid">${html}</div>`
   );
 }
@@ -998,7 +998,7 @@ async function renderSectorById(id) {
   ]);
   const sectors = data.sectors || [];
   const sector = sectors.find(function(s) { return s.id === id; });
-  if (!sector) { setHTML('<div class="error-state"><h2>Sector not found</h2><button onclick="navigate(\'sectors\')">Back</button></div>'); return; }
+  if (!sector) { setHTML('<div class="error-state"><h2>Sector not found</h2><button data-nav="sectors">Back</button></div>'); return; }
 
   var slZoneHtml = sector.targetSLByZone ? Object.entries(sector.targetSLByZone).map(function(e) {
     return '<tr><td>' + escHtml(e[0]) + '</td><td>' + slBadge(e[1]) + '</td></tr>';
@@ -1080,8 +1080,8 @@ async function renderSectorById(id) {
 
   setHTML('\
     <nav class="breadcrumbs"><a href="#sectors">Sectors</a><span class="sep">/</span><span class="current">' + escHtml(sector.name) + '</span></nav>\
-    <div class="page-title">' + escHtml(sector.name) + '</div>\
-    <div class="page-sub">NACSA Sector: ' + escHtml(String(sector.nacsaSectorNumber || '')) + ' · Lead Agency: ' + escHtml(sector.nacsaSectorLead || '') + '</div>\
+    <h1 class="page-title">' + escHtml(sector.name) + '</h1>\
+    <p class="page-sub">NACSA Sector: ' + escHtml(String(sector.nacsaSectorNumber || '')) + ' · Lead Agency: ' + escHtml(sector.nacsaSectorLead || '') + '</p>\
     <div class="control-card" style="margin-bottom:1rem"><div class="control-card-desc">' + escHtml(sector.description || '') + '</div></div>\
     <div class="control-grid">\
       <div class="control-card"><h3>OT Environments</h3>' + tagList(sector.otEnvironments || []) + '</div>\
@@ -1109,7 +1109,7 @@ async function renderArchitecture(sub) {
   const active = sub || 'purdue';
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
-    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'architecture/' + t.id + '\')">' + t.label + '</button>';
+    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" data-nav="architecture/' + t.id + '">' + t.label + '</button>';
   }).join('') + '</div>';
 
   var content = '';
@@ -1118,8 +1118,8 @@ async function renderArchitecture(sub) {
   else if (active === 'assets') content = await renderAssets();
 
   setHTML('\
-    <div class="page-title">Architecture</div>\
-    <div class="page-sub">Purdue Model · Zones &amp; Conduits · Asset Type Profiles</div>' +
+    <h1 class="page-title">Architecture</h1>\
+    <p class="page-sub">Purdue Model · Zones &amp; Conduits · Asset Type Profiles</p>' +
     tabsHtml + content
   );
 }
@@ -1201,7 +1201,7 @@ async function renderAssets() {
 
   return '\
     <h2>OT Asset Type Profiles</h2>\
-    <div class="page-sub">Security profiles for each OT asset category.</div>\
+    <p class="page-sub">Security profiles for each OT asset category.</p>\
     <div class="control-grid">' + assetHtml + '</div>';
 }
 
@@ -1219,7 +1219,7 @@ async function renderRiskManagement(sub) {
   const active = sub || 'methodology';
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
-    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'risk/' + t.id + '\')">' + t.label + '</button>';
+    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" data-nav="risk/' + t.id + '">' + t.label + '</button>';
   }).join('') + '</div>';
 
   var content = '';
@@ -1231,8 +1231,8 @@ async function renderRiskManagement(sub) {
   else if (active === 'sl-gap') content = await renderSLGapAssessment();
 
   setHTML('\
-    <div class="page-title">Risk Management</div>\
-    <div class="page-sub">OT/ICS risk assessment methodology · IEC 62443-3-2 · NACSA Act 854 s21</div>' +
+    <h1 class="page-title">Risk Management</h1>\
+    <p class="page-sub">OT/ICS risk assessment methodology · IEC 62443-3-2 · NACSA Act 854 s21</p>' +
     tabsHtml + content
   );
 }
@@ -1398,7 +1398,7 @@ async function renderReference(sub) {
   const active = showArch ? 'architecture' : (sub || 'nacsa');
 
   const tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
-    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'reference/' + t.id + '\')">' + t.label + '</button>';
+    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" data-nav="reference/' + t.id + '">' + t.label + '</button>';
   }).join('') + '</div>';
 
   var content = '';
@@ -1410,8 +1410,8 @@ async function renderReference(sub) {
   else if (active === 'architecture') content = await renderArchitectureContent();
 
   setHTML('\
-    <div class="page-title">Reference</div>\
-    <div class="page-sub">Cross-reference mappings between IEC 62443, NACSA, NIST, MITRE, and architecture</div>' +
+    <h1 class="page-title">Reference</h1>\
+    <p class="page-sub">Cross-reference mappings between IEC 62443, NACSA, NIST, MITRE, and architecture</p>' +
     tabsHtml + content
   );
 }
@@ -1424,7 +1424,7 @@ async function renderArchitectureContent() {
   ];
 
   var archTabsHtml = '<div class="sub-tabs">' + archTabs.map(function(t) {
-    return '<button class="sub-tab' + (t.id === 'purdue' ? ' active' : '') + '" onclick="navigate(\'reference/' + t.id + '\')">' + t.label + '</button>';
+    return '<button class="sub-tab' + (t.id === 'purdue' ? ' active' : '') + '" data-nav="reference/' + t.id + '">' + t.label + '</button>';
   }).join('') + '</div>';
 
   var archContent = await renderPurdue();
@@ -1644,7 +1644,7 @@ async function loadText(path) {
 
 async function renderTemplatesView(sub) {
   const html = await renderTemplatesContent(sub);
-  setHTML('<div class="page-title">Templates</div><div class="page-sub">Gold-standard policies · FAT/SAT checklists · Worked sample reports.</div>' + html);
+  setHTML('<h1 class="page-title">Templates</h1><p class="page-sub">Gold-standard policies · FAT/SAT checklists · Worked sample reports.</p>' + html);
 }
 
 async function renderTemplatesContent(sub) {
@@ -1683,7 +1683,7 @@ async function renderTemplateView(idx, tplId) {
     if (found) { tpl = found; return true; }
     return false;
   });
-  if (!tpl) return '<div class="error-state"><h2>Template not found</h2><button onclick="navigate(\'templates\')">Back to templates</button></div>';
+  if (!tpl) return '<div class="error-state"><h2>Template not found</h2><button data-nav="templates">Back to templates</button></div>';
 
   var md = await loadText(tpl.path);
   if (!md) return '<div class="error-state"><h2>Failed to load template</h2><p class="error-message">'+escHtml(tpl.path)+'</p></div>';
@@ -1702,7 +1702,7 @@ async function renderTemplateView(idx, tplId) {
 async function renderLearnView(sub) {
   const idx = await load('docs/learn/index.json');
   if (!idx) {
-    setHTML('<div class="page-title">Learn</div><div class="empty-state"><p class="empty-state-text">Learn index not yet available.</p></div>');
+    setHTML('<h1 class="page-title">Learn</h1><div class="empty-state"><p class="empty-state-text">Learn index not yet available.</p></div>');
     return;
   }
 
@@ -1730,8 +1730,8 @@ async function renderLearnView(sub) {
   }).join('');
 
   setHTML(
-    '<div class="page-title">Learn</div>' +
-    '<div class="page-sub">'+escHtml(idx.description||'')+'</div>' +
+    '<h1 class="page-title">Learn</h1>' +
+    '<p class="page-sub">'+escHtml(idx.description||'')+'</p>' +
     (idx.howToUse ? '<div class="control-card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)"><div class="control-card-title">How to use this</div><div class="control-card-desc">'+escHtml(idx.howToUse)+'</div></div>' : '') +
     tiersHtml
   );
@@ -1739,7 +1739,7 @@ async function renderLearnView(sub) {
 
 async function renderLearnTier(idx, tierId) {
   var tier = (idx.tiers || []).find(function(t){return t.id === tierId;});
-  if (!tier) { setHTML('<div class="error-state"><h2>Tier not found</h2><button onclick="navigate(\'learn\')">Back</button></div>'); return; }
+  if (!tier) { setHTML('<div class="error-state"><h2>Tier not found</h2><button data-nav="learn">Back</button></div>'); return; }
 
   var lessonsHtml = (tier.lessons || []).map(function(l, i) {
     var checkpointBadge = l.checkpoint ? '<span class="badge badge-mandatory" style="font-size:0.65rem">Checkpoint</span>' : '';
@@ -1775,9 +1775,9 @@ async function renderLearnTier(idx, tierId) {
 
 async function renderLearnLesson(idx, tierId, lessonId) {
   var tier = (idx.tiers || []).find(function(t){return t.id === tierId;});
-  if (!tier) { setHTML('<div class="error-state"><h2>Tier not found</h2><button onclick="navigate(\'learn\')">Back</button></div>'); return; }
+  if (!tier) { setHTML('<div class="error-state"><h2>Tier not found</h2><button data-nav="learn">Back</button></div>'); return; }
   var lesson = (tier.lessons || []).find(function(l){return l.id === lessonId;});
-  if (!lesson) { setHTML('<div class="error-state"><h2>Lesson not found</h2><button onclick="navigate(\'learn/tier:'+tierId+'\')">Back</button></div>'); return; }
+  if (!lesson) { setHTML('<div class="error-state"><h2>Lesson not found</h2><button data-nav="learn/tier:'+tierId+'">Back</button></div>'); return; }
 
   var md = await loadText(lesson.path);
   var bodyHtml = md ? mdToHtml(md) : '<div class="empty-state"><p class="empty-state-text">Lesson content not found at '+escHtml(lesson.path)+'</p></div>';
@@ -1845,7 +1845,7 @@ async function renderPurdueInteractive() {
     }).join('');
 
     return '\
-    <div class="purdue-level" data-purdue-level="' + levelLabel + '" style="border-left:4px solid ' + (l.color || 'var(--accent)') + ';margin-bottom:0;cursor:pointer;position:relative;background:var(--bg-card);border:1px solid var(--border);border-left:4px solid ' + (l.color || 'var(--accent)') + ';border-radius:8px;padding:1rem;transition:all 0.2s" onclick="togglePurdueDetail(this)">\
+    <div class="purdue-level" data-purdue-level="' + levelLabel + '" style="border-left:4px solid ' + (l.color || 'var(--accent)') + ';margin-bottom:0;cursor:pointer;position:relative;background:var(--bg-card);border:1px solid var(--border);border-left:4px solid ' + (l.color || 'var(--accent)') + ';border-radius:8px;padding:1rem;transition:all 0.2s" data-action="toggle-purdue">\
       <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">\
         <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;background:' + (l.color || 'var(--accent)') + '15;color:' + (l.color || 'var(--accent)') + '">' + icon + '</div>\
         <div style="flex:1;min-width:200px">\
@@ -1897,11 +1897,11 @@ async function renderPurdueInteractive() {
 
   return '\
     <h2>Interactive Purdue Model</h2>\
-    <div class="page-sub">Click any level to expand details. Stacked from Internet (Level 5) down to Process (Level 0).</div>\
+    <p class="page-sub">Click any level to expand details. Stacked from Internet (Level 5) down to Process (Level 0).</p>\
     <div class="disclaimer">The Purdue Model / ISA-95 reference architecture defines hierarchical security zones for OT environments. The IDMZ (Level 3.5) is the critical IT/OT boundary.</div>\
     <div style="display:flex;flex-direction:column;gap:2px;margin:1rem 0">' + diagramHtml + '</div>\
     <h2 style="margin-top:1.5rem">Data Flow Rules</h2>\
-    <div class="page-sub">Permitted and prohibited data flows between Purdue levels.</div>\
+    <p class="page-sub">Permitted and prohibited data flows between Purdue levels.</p>\
     <div class="table-wrap"><table>\
       <thead><tr><th></th><th>From</th><th>To</th><th>Condition</th></tr></thead>\
       <tbody>' + flowRulesHtml + '</tbody>\
@@ -1979,7 +1979,7 @@ async function renderSLGapAssessment() {
           <td>' + escHtml(c.criterion) + '</td>\
           <td style="text-align:center">' + slBadge(c.slTarget) + '</td>\
           <td style="text-align:center">\
-            <select class="sl-achieved-select" data-criterion-id="' + criterionId + '" onchange="updateSLGapStatus(this)" style="padding:0.25rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:var(--bg-card);color:var(--text-primary);font-size:0.75rem">\
+            <select class="sl-achieved-select" data-criterion-id="' + criterionId + '" data-action="sl-gap-update" style="padding:0.25rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:var(--bg-card);color:var(--text-primary);font-size:0.75rem">\
               <option value="">--</option>\
               <option value="yes">Yes</option>\
               <option value="partial">Partial</option>\
@@ -2026,8 +2026,8 @@ async function renderSLGapAssessment() {
     <div style="margin-top:1.5rem;padding:1rem;border:2px solid var(--accent);border-radius:8px;background:rgba(56,189,248,0.03)">\
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">\
         <span style="font-weight:700;font-size:1rem">Gap Assessment Summary</span>\
-        <button onclick="calculateSLGapSummary()" style="padding:0.35rem 0.75rem;border:1px solid var(--accent);border-radius:6px;background:rgba(56,189,248,0.1);color:var(--accent);font-size:0.8rem;cursor:pointer;font-weight:600">Calculate Summary</button>\
-        <button onclick="exportSLGapCSV()" style="padding:0.35rem 0.75rem;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);color:var(--text-secondary);font-size:0.8rem;cursor:pointer">Export CSV</button>\
+        <button data-action="sl-gap-recalc" style="padding:0.35rem 0.75rem;border:1px solid var(--accent);border-radius:6px;background:rgba(56,189,248,0.1);color:var(--accent);font-size:0.8rem;cursor:pointer;font-weight:600">Calculate Summary</button>\
+        <button data-action="sl-gap-export" style="padding:0.35rem 0.75rem;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);color:var(--text-secondary);font-size:0.8rem;cursor:pointer">Export CSV</button>\
       </div>\
       <div id="sl-gap-summary" style="font-size:0.85rem;color:var(--text-secondary)">Click "Calculate Summary" after completing the assessment above.</div>\
     </div>';
@@ -2048,14 +2048,14 @@ async function renderSLGapAssessment() {
 
   return '\
     <h2>SL Gap Assessment Tool</h2>\
-    <div class="page-sub">Assess current Security Level (SL-A) against target (SL-T) per IEC 62443-3-3 Foundational Requirements.</div>\
+    <p class="page-sub">Assess current Security Level (SL-A) against target (SL-T) per IEC 62443-3-3 Foundational Requirements.</p>\
     <div class="disclaimer">' + escHtml(data.verificationNote || '') + '</div>\
     <h2>7 Foundational Requirements</h2>\
     <div class="control-grid">' + frOverviewHtml + '</div>\
     <h2 style="margin-top:1.5rem">SL Requirements Detail (SL 1-4)</h2>\
     <div class="accordion">' + slDetailHtml + '</div>\
     <h2 style="margin-top:1.5rem">Interactive Gap Assessment</h2>\
-    <div class="page-sub">Select a target SL and assess each criterion. The tool calculates gaps between your target and achieved levels.</div>' +
+    <p class="page-sub">Select a target SL and assess each criterion. The tool calculates gaps between your target and achieved levels.</p>' +
     assessmentFormHtml +
     priorityHtml;
 }
@@ -2203,7 +2203,7 @@ window.exportSLGapCSV = function() {
 async function renderSearch(sub) {
   var query = decodeURIComponent(sub || searchQuery || '').toLowerCase().trim();
   if (!query) {
-    setHTML('<div class="page-title">Search</div><div class="empty-state"><p class="empty-state-text">Enter a search term above.</p></div>');
+    setHTML('<h1 class="page-title">Search</h1><div class="empty-state"><p class="empty-state-text">Enter a search term above.</p></div>');
     return;
   }
 
@@ -2258,8 +2258,8 @@ async function renderSearch(sub) {
     </a>`;}).join('');
 
   setHTML('\
-    <div class="page-title">Search Results</div>\
-    <div class="page-sub">' + results.length + ' results for "' + escHtml(query) + '"</div>' +
+    <h1 class="page-title">Search Results</h1>\
+    <p class="page-sub">' + results.length + ' results for "' + escHtml(query) + '"</p>' +
     (results.length ? html : '<div class="empty-state"><p class="empty-state-text">No results found.</p></div>')
   );
 }
@@ -2345,7 +2345,7 @@ async function renderBasicStart(sub) {
   var active = sub || 'overview';
 
   var tabsHtml = '<div class="sub-tabs">' + tabs.map(function(t) {
-    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" onclick="navigate(\'basic-start/' + t.id + '\')">' + t.label + '</button>';
+    return '<button class="sub-tab' + (t.id === active ? ' active' : '') + '" data-nav="basic-start/' + t.id + '">' + t.label + '</button>';
   }).join('') + '</div>';
 
   var content = '';
@@ -2382,7 +2382,7 @@ async function renderBSOverview(data, pillars) {
       '<div class="card-title" style="letter-spacing:0.05em">' + escHtml(label) + '</div>' +
       '<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem">' +
       items.map(function(p) {
-        return '<div onclick="navigate(\'basic-start/pillar-' + p.slug + '\')" style="cursor:pointer;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.75rem;display:flex;align-items:center;gap:0.5rem">' +
+        return '<div data-nav="basic-start/pillar-' + p.slug + '" style="cursor:pointer;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.75rem;display:flex;align-items:center;gap:0.5rem">' +
           '<span style="font-size:1.1rem;font-weight:800;color:' + colour + '">' + escHtml(p.letter) + '</span>' +
           '<span style="font-size:0.8rem;font-weight:600">' + p.id + '. ' + escHtml(p.name) + '</span>' +
           '</div>';
@@ -2403,7 +2403,7 @@ async function renderBSOverview(data, pillars) {
     var colour = p.phase === 'BASIC' ? '#3B82F6' : '#8B5CF6';
     var badges = (p.iec62443Ref||[]).map(function(r) { return '<span class="badge badge-sl2" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('') +
       (p.nacsaRef||[]).map(function(r) { return '<span class="badge badge-malaysia" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('');
-    return '<div class="card card-link" onclick="navigate(\'basic-start/pillar-' + p.slug + '\')">' +
+    return '<div class="card card-link" data-nav="basic-start/pillar-' + p.slug + '">' +
       '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">' +
         '<span style="font-size:1.6rem;font-weight:900;color:' + colour + ';min-width:2rem">' + escHtml(p.letter) + '</span>' +
         '<div><div class="card-title" style="margin:0">' + p.id + '. ' + escHtml(p.name) + '</div>' +
@@ -2433,7 +2433,7 @@ function renderBSPillars(pillars) {
     var badges = (p.iec62443Ref||[]).map(function(r) { return '<span class="badge badge-sl2" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('') +
       (p.nacsaRef||[]).map(function(r) { return '<span class="badge badge-malaysia" style="font-size:0.6rem">' + escHtml(r) + '</span>'; }).join('') +
       (p.nistCsfRef||[]).slice(0,2).map(function(r) { return '<span class="badge" style="font-size:0.6rem;background:var(--bg-card);border:1px solid var(--border)">' + escHtml(r) + '</span>'; }).join('');
-    return '<div class="card card-link" onclick="navigate(\'basic-start/pillar-' + p.slug + '\')">' +
+    return '<div class="card card-link" data-nav="basic-start/pillar-' + p.slug + '">' +
       '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">' +
         '<span style="font-size:2rem;font-weight:900;color:' + colour + ';min-width:2.5rem">' + escHtml(p.letter) + '</span>' +
         '<div><div class="card-title" style="margin:0">' + p.id + '. ' + escHtml(p.name) + '</div>' +
@@ -2499,8 +2499,8 @@ function renderBSPillarDetail(p) {
     '</div>' +
 
     '<div style="margin-top:1.5rem;display:flex;gap:0.5rem">' +
-      '<button class="btn-secondary" onclick="navigate(\'basic-start/pillars\')">&#8592; All Pillars</button>' +
-      '<button class="btn-secondary" onclick="navigate(\'basic-start/worked-example\')">Worked Example &#8594;</button>' +
+      '<button class="btn-secondary" data-nav="basic-start/pillars">&#8592; All Pillars</button>' +
+      '<button class="btn-secondary" data-nav="basic-start/worked-example">Worked Example &#8594;</button>' +
     '</div>';
 }
 
@@ -2568,7 +2568,7 @@ async function renderBSWorkedExample(pillars) {
         (kpis.leading&&kpis.leading.length ? '<div><strong style="font-size:0.7rem;text-transform:uppercase">Leading KPIs</strong><ul style="padding-left:1.25rem;margin:0.25rem 0 0">' + leadHtml + '</ul></div>' : '') +
         (kpis.lagging&&kpis.lagging.length ? '<div><strong style="font-size:0.7rem;text-transform:uppercase">Lagging KPIs</strong><ul style="padding-left:1.25rem;margin:0.25rem 0 0">' + lagHtml + '</ul></div>' : '') +
       '</div>' : '') +
-      '<div style="margin-top:0.5rem"><span onclick="navigate(\'basic-start/pillar-' + o.slug + '\')" style="font-size:0.75rem;color:var(--accent);cursor:pointer">View pillar framework &#8594;</span></div>' +
+      '<div style="margin-top:0.5rem"><span data-nav="basic-start/pillar-' + o.slug + '" style="font-size:0.75rem;color:var(--accent);cursor:pointer">View pillar framework &#8594;</span></div>' +
       '</div>';
   }).join('');
 
@@ -2673,6 +2673,48 @@ document.addEventListener('click', function(e) {
     if (content) content.hidden = expanded;
     return;
   }
+  // data-nav="hash" — declarative navigation (replaces inline onclick="navigate(...)")
+  var navEl = e.target.closest('[data-nav]');
+  if (navEl) {
+    e.preventDefault();
+    navigate(navEl.getAttribute('data-nav'));
+    return;
+  }
+  // data-action="name" — named action dispatch (replaces inline onclick="fn()")
+  var actionEl = e.target.closest('[data-action]');
+  if (actionEl) {
+    var action = actionEl.getAttribute('data-action');
+    switch (action) {
+      case 'toggle-purdue':
+        if (typeof togglePurdueDetail === 'function') togglePurdueDetail(actionEl);
+        break;
+      case 'show-sr-detail':
+        // showSRDetail does its own JSON.parse on the raw string
+        var raw = actionEl.getAttribute('data-sr');
+        if (raw) showSRDetail(raw);
+        break;
+      case 'close-sr-detail':
+        var p = document.getElementById('sr-detail-panel');
+        if (p) p.innerHTML = '';
+        break;
+      case 'sl-gap-recalc':
+        if (typeof calculateSLGapSummary === 'function') calculateSLGapSummary();
+        break;
+      case 'sl-gap-export':
+        if (typeof exportSLGapCSV === 'function') exportSLGapCSV();
+        break;
+      case 'reload':
+        location.reload();
+        break;
+    }
+    return;
+  }
+});
+
+// Delegated change handler for SL-gap select dropdowns
+document.addEventListener('change', function(e) {
+  var sel = e.target.closest('[data-action="sl-gap-update"]');
+  if (sel && typeof updateSLGapStatus === 'function') updateSLGapStatus(sel);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
