@@ -4,7 +4,7 @@
     "lastUpdated": "2026-03-26",
     "source": "IEC 62443-3-3 + NACSA Act 854 s26",
     "techAuditDomain": "OT-Security",
-    "techAuditPath": "Tech-Audit/OT-Security/",
+    "techAuditPath": "Tech-Audit/Regulatory/OT-Security/",
     "description": "Maps 25 OT-Security controls to Tech-Audit/OT-Security audit procedures"
   },
   "domainMappings": [
@@ -12,10 +12,10 @@
       "domainSlug": "network-segmentation",
       "domainName": "Network Segmentation and Zone Architecture",
       "frMapping": "FR5",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "idmz-implementation",
@@ -33,10 +33,10 @@
       "domainSlug": "remote-access",
       "domainName": "Remote Access Management",
       "frMapping": "FR1,FR2",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-remote-access-gateway",
@@ -54,10 +54,10 @@
       "domainSlug": "identity-access-management",
       "domainName": "Identity and Access Management",
       "frMapping": "FR1,FR2",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "default-credential-elimination",
@@ -145,10 +145,10 @@
       "domainSlug": "safety-system-security",
       "domainName": "Safety System Security",
       "frMapping": "FR3,FR5,FR6",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "sis-network-isolation",
@@ -166,10 +166,10 @@
       "domainSlug": "patch-vulnerability-management",
       "domainName": "Patch and Vulnerability Management",
       "frMapping": "FR3,FR7",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-patch-management",
@@ -187,10 +187,10 @@
       "domainSlug": "monitoring-logging",
       "domainName": "Monitoring and Logging",
       "frMapping": "FR2,FR6",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-passive-monitoring",
@@ -208,10 +208,10 @@
       "domainSlug": "incident-detection-response",
       "domainName": "Incident Detection and Response",
       "frMapping": "FR6",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "nacsa-incident-notification",
@@ -229,10 +229,10 @@
       "domainSlug": "asset-inventory",
       "domainName": "Asset Inventory and Management",
       "frMapping": "FR7",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-asset-inventory",
@@ -250,10 +250,10 @@
       "domainSlug": "configuration-management",
       "domainName": "Configuration Management",
       "frMapping": "FR7",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-change-management",
@@ -281,10 +281,10 @@
       "domainSlug": "backup-recovery",
       "domainName": "Backup and Recovery",
       "frMapping": "FR7",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-backup-recovery",
@@ -312,10 +312,10 @@
       "domainSlug": "supply-chain",
       "domainName": "Supply Chain Security",
       "frMapping": "FR3",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-vendor-security-assessment",
@@ -333,10 +333,10 @@
       "domainSlug": "physical-security",
       "domainName": "Physical Security",
       "frMapping": "FR1",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-physical-access-control",
@@ -364,10 +364,10 @@
       "domainSlug": "data-protection",
       "domainName": "Data Confidentiality and Integrity",
       "frMapping": "FR3,FR4",
-      "workProgramFile": "Tech-Audit/OT-Security/Work-Program/OT-Security-Audit-Program.md",
-      "pbcFile": "Tech-Audit/OT-Security/Document-Requests/PBC-Request-List.md",
-      "ratingFile": "Tech-Audit/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
-      "findingTemplateFile": "Tech-Audit/OT-Security/Templates/Finding-Template.md",
+      "workProgramFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/OT-Security-Audit-Program.md",
+      "pbcFile": "Tech-Audit/Regulatory/OT-Security/Document-Requests/PBC-Request-List.md",
+      "ratingFile": "Tech-Audit/Regulatory/OT-Security/Work-Program/Rating-and-Conclusion-Methodology.md",
+      "findingTemplateFile": "Tech-Audit/Regulatory/OT-Security/Templates/Finding-Template.md",
       "controlMappings": [
         {
           "controlSlug": "ot-data-encryption",
