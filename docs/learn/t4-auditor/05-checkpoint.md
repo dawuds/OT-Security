@@ -2,9 +2,17 @@
 
 > **Tier 4 / Lesson 5 — 2 hours.** The capstone exercise.
 
-## The exercise
+## The exercise — pick one of two paths
+
+### Path A — your own sector
 
 Pick a sector you have not yet worked in. Open that sector's profile in [Sectors](#framework/sectors). Your job: produce a *complete*, end-to-end audit package — as if you were preparing to audit a fictional NCII operator in that sector tomorrow.
+
+### Path B — the broken plant (recommended for first attempt)
+
+Use the [SABESB TP4 broken-plant bundle](../samples/00-README.md). The bundle gives you the asset list, network diagram, remote-access policy, and a fake auditor's draft report. Your job: produce **your own audit package** for SABESB TP4 — and grade the fake report's findings (correct / miscited / wrong / missing).
+
+The advantage of Path B: there's an answer key. You can calibrate your finding-writing against a known-good baseline before you do this on a real engagement.
 
 ## Required deliverables
 

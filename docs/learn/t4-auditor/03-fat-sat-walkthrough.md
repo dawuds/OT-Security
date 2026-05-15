@@ -57,6 +57,10 @@ If the ledger doesn't exist, that's a higher-order finding than the individual g
 - IEC 62443: SR-7.7 (audit log); IEC 62443-4-1 (vendor secure dev lifecycle)
 - NACSA: s18 (security measures), s23 (audit)
 
+## Calibration — practice on the broken plant
+
+Apply the FAT/SAT checklist to the **broken-plant bundle**: [`docs/learn/samples/`](../samples/00-README.md). Treat it as the IACS handover from a vendor. List what you would accept, what you would reject, and what compensating controls you would require. Your output should match the audit-grade analysis in the [answer key](../samples/05-answer-key.md).
+
 ## What's next
 
 [Lesson 4 — Writing a finding that maps to SR + NACSA](#learn/lesson:t4-auditor:04-finding-to-mapping).

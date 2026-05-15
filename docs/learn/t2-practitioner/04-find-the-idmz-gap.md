@@ -41,6 +41,10 @@ For each gap, cite:
 
 A finding without a citation is an opinion. A finding with a citation is a deliverable.
 
+## Calibration
+
+Use the broken-plant network diagram as practice: [`docs/learn/samples/02-network-diagram.md`](../samples/02-network-diagram.md). Find every IDMZ violation. Compare to the [answer key](../samples/05-answer-key.md). Three core violations plus a WiFi bonus — your eye should land on them in under five minutes for the lesson to stick.
+
 ## What's next
 
 [Lesson 5 — Draft a remote-access policy from the template](#learn/lesson:t2-practitioner:05-remote-access-policy). You've found the gap; now produce the policy that closes it.

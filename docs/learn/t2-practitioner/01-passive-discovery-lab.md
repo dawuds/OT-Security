@@ -2,6 +2,10 @@
 
 > **Tier 2 / Lesson 1 — 60 minutes.** Hands-on. You will produce an asset list without ever touching the OT network.
 
+## Why this tier exists — what a week buys you
+
+> One week of T2 buys you the right to be the *first responder* in an OT environment. After T1 you can talk about OT; after T2 you can *do* OT, safely. You will leave with five physical artefacts a plant manager will accept: a passive asset inventory, a Purdue diagram, an IDMZ gap analysis, a customised remote-access policy draft, and a captured PCAP that proves you can hold the tooling. These are exactly the deliverables a junior OT security engineer is asked to produce in their first 90 days. By the end of T2, you can produce them in a week.
+
 ## Why this is the first lab
 
 You cannot protect what you cannot see. In OT, "see" means "infer from passive observation". This lab is a small, self-contained version of what Dragos / Claroty / Nozomi do continuously in production environments.

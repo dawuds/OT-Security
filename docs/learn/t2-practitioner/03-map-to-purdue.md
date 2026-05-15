@@ -52,6 +52,10 @@ Produce a Purdue diagram (any tool — even pen and paper). Annotate every devic
 
 Each circle is a finding for [Lesson 4](#learn/lesson:t2-practitioner:04-find-the-idmz-gap).
 
+## Calibration
+
+If you don't have a real environment to map, use the **broken-plant bundle**: [`docs/learn/samples/01-asset-list.csv`](../samples/01-asset-list.csv) is a 12-row asset list with three deliberate Purdue / segmentation issues. Produce your diagram from that, then check your work against [`docs/learn/samples/05-answer-key.md`](../samples/05-answer-key.md). If your circles match the answer key's three issues plus the SIS-on-BPCS finding, you have the diagnostic eye.
+
 ## What's next
 
 [Lesson 4 — Find the IDMZ gap](#learn/lesson:t2-practitioner:04-find-the-idmz-gap).

@@ -1,0 +1,13 @@
+ip,mac_oui,protocol_seen,communicating_peers,notes
+10.10.10.5,Cisco,SSH,corporate,Border firewall (IT-side)
+10.10.10.6,Fortinet,HTTPS,corporate + DMZ,IT-side NGFW management
+10.20.30.10,Schneider,Modbus tcp/502,10.20.30.20 + 10.20.30.30,Quoted as Reactor PLC
+10.20.30.11,Schneider,Modbus tcp/502,10.20.30.20,Quoted as Pump PLC
+10.20.30.20,Wonderware,RDP from 10.40.50.x + OPC-UA to 10.20.30.10,10.20.30.10 + 10.20.30.11 + 10.40.50.5 + 10.40.50.12,Engineering workstation; dual NIC (10.40.50.0/24 + 10.20.30.0/24)
+10.20.30.30,Siemens,S7Comm tcp/102,10.20.30.20 only,SIS controller (per vendor docs) — same VLAN as BPCS
+10.20.30.40,Schweitzer SEL,DNP3 tcp/20000,10.20.30.20,Power monitoring relay
+10.30.40.5,Dell,HTTPS to internet + RDP to 10.20.30.20,internet + 10.20.30.20,Vendor laptop ("approved for remote support")
+10.40.50.5,Dell,RDP to 10.20.30.20 + corporate AD,corporate + 10.20.30.20,Plant engineer corporate laptop
+10.40.50.12,HP,RDP to 10.20.30.20 + corporate AD,corporate + 10.20.30.20,Plant manager corporate laptop
+10.40.50.99,Microsoft,SMB + LDAP,all of 10.40.50.0/24,Corporate file server
+10.99.99.5,unknown,Modbus tcp/502 from outside the plant subnet,internet (one inbound packet observed),Anomalous; flagged for review

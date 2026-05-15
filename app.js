@@ -363,7 +363,7 @@ async function renderDomainDetail(domainId) {
       '<h2 style="margin-bottom:0.25rem">'+escHtml(domain.name||domainId)+'</h2>' +
       '<div style="font-size:0.85rem;color:var(--text-secondary)">'+primaryFrLinks+' '+primarySrLinks+'</div>' +
     '</header>' +
-    (controlChips ? '<div class="control-card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">Linked Controls</div>'+controlChips+'</div>' : '') +
+    (controlChips ? '<div class="control-card" style="margin-bottom:1rem;background:rgba(217,119,87,0.05);border-color:var(--accent)"><div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem">Linked Controls</div>'+controlChips+'</div>' : '') +
     reqsHtml;
 }
 
@@ -913,7 +913,7 @@ async function renderIncidents() {
     var defendingCtrls = Object.values(defendingMap);
     var defendingHtml = defendingCtrls.length ? '<h3 style="margin-bottom:0.5rem;margin-top:0.75rem">Controls That Defend Against This (in this repo)</h3>' +
       '<div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.75rem">' +
-      defendingCtrls.map(function(c){return '<a class="fw-chip" href="#control/'+escHtml(c.slug)+'" style="background:rgba(52,211,153,0.08);border-color:rgba(52,211,153,0.3);color:var(--success)">'+escHtml(c.name)+'</a>';}).join('') +
+      defendingCtrls.map(function(c){return '<a class="fw-chip" href="#control/'+escHtml(c.slug)+'" style="background:rgba(120,140,93,0.08);border-color:rgba(120,140,93,0.3);color:var(--success)">'+escHtml(c.name)+'</a>';}).join('') +
       '</div>' : '';
 
     return '\
@@ -925,12 +925,12 @@ async function renderIncidents() {
         </div>\
       </div>\
       <div class="detail-body" style="margin-bottom:0.75rem">' + escHtml(inc.summary || '') + '</div>' +
-      (inc.physicalConsequence ? '<div class="control-card" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);margin-bottom:0.75rem"><div style="font-size:0.75rem;font-weight:700;color:var(--danger);text-transform:uppercase;margin-bottom:0.25rem">Physical Consequence</div><div style="font-size:0.85rem">' + escHtml(inc.physicalConsequence) + '</div></div>' : '') +
+      (inc.physicalConsequence ? '<div class="control-card" style="background:rgba(176,74,63,0.08);border-color:rgba(176,74,63,0.3);margin-bottom:0.75rem"><div style="font-size:0.75rem;font-weight:700;color:var(--danger);text-transform:uppercase;margin-bottom:0.25rem">Physical Consequence</div><div style="font-size:0.85rem">' + escHtml(inc.physicalConsequence) + '</div></div>' : '') +
       (inc.detectability ? '<div style="font-size:0.85rem;margin-bottom:0.75rem;color:var(--text-secondary)"><strong>Detectability:</strong> ' + escHtml(inc.detectability) + '</div>' : '') +
-      (inc.attackChain ? '<h3 style="margin-bottom:0.5rem">Attack Chain</h3><div class="attack-chain" style="margin-bottom:0.75rem">' + inc.attackChain.map(function(step){return '<div class="attack-step"><strong>' + escHtml(step.stage) + ':</strong> ' + (step.technique ? '<a class="fw-chip" href="#reference/mitre-ctrl" style="margin:0 0.35rem;color:var(--danger);background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3)">' + escHtml(step.technique) + '</a>' : '') + escHtml(step.description || '') + '</div>';}).join('') + '</div>' : '') +
-      (inc.preventiveControls ? '<h3 style="margin-bottom:0.5rem">Preventive Requirements (cited by source)</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.5rem;margin-bottom:0.75rem">' + inc.preventiveControls.map(function(pc){return '<div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.8rem"><strong style="color:var(--success)">' + escHtml(pc.control || pc) + '</strong>' + (pc.howItHelps ? '<div style="color:var(--text-secondary);margin-top:0.25rem">' + escHtml(pc.howItHelps) + '</div>' : '') + '</div>';}).join('') + '</div>' : '') +
+      (inc.attackChain ? '<h3 style="margin-bottom:0.5rem">Attack Chain</h3><div class="attack-chain" style="margin-bottom:0.75rem">' + inc.attackChain.map(function(step){return '<div class="attack-step"><strong>' + escHtml(step.stage) + ':</strong> ' + (step.technique ? '<a class="fw-chip" href="#reference/mitre-ctrl" style="margin:0 0.35rem;color:var(--danger);background:rgba(176,74,63,0.08);border-color:rgba(176,74,63,0.3)">' + escHtml(step.technique) + '</a>' : '') + escHtml(step.description || '') + '</div>';}).join('') + '</div>' : '') +
+      (inc.preventiveControls ? '<h3 style="margin-bottom:0.5rem">Preventive Requirements (cited by source)</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.5rem;margin-bottom:0.75rem">' + inc.preventiveControls.map(function(pc){return '<div style="background:rgba(120,140,93,0.05);border:1px solid rgba(120,140,93,0.2);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.8rem"><strong style="color:var(--success)">' + escHtml(pc.control || pc) + '</strong>' + (pc.howItHelps ? '<div style="color:var(--text-secondary);margin-top:0.25rem">' + escHtml(pc.howItHelps) + '</div>' : '') + '</div>';}).join('') + '</div>' : '') +
       defendingHtml +
-      (inc.keyLesson ? '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.85rem"><strong style="color:var(--warning)">Key Lesson:</strong> ' + escHtml(inc.keyLesson) + '</div>' : '') +
+      (inc.keyLesson ? '<div style="background:rgba(217,119,87,0.08);border:1px solid rgba(217,119,87,0.3);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.85rem"><strong style="color:var(--warning)">Key Lesson:</strong> ' + escHtml(inc.keyLesson) + '</div>' : '') +
       (inc.iec62443SRs ? '<div class="control-card-meta" style="margin-top:0.75rem">' + inc.iec62443SRs.map(function(s){return '<a class="fw-chip" href="#framework/iec-sr">'+escHtml(s)+'</a>';}).join('') + '</div>' : '') +
     '</div>';}).join('');
 }
@@ -961,7 +961,7 @@ async function renderActors() {
         (a.sectors ? '<div><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem">Targeted Sectors</div>' + tagList(a.sectors) + '</div>' : '') +
         (a.primaryTechniques ? '<div><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem">Primary Techniques</div>' + tagList(a.primaryTechniques) + '</div>' : '') +
       '</div>' +
-      (a.relevanceToMalaysia ? '<div style="margin-top:0.5rem;font-size:0.8rem;padding:0.5rem;background:rgba(56,189,248,0.05);border-radius:4px"><strong>Malaysia Relevance:</strong> ' + escHtml(a.relevanceToMalaysia) + '</div>' : '') +
+      (a.relevanceToMalaysia ? '<div style="margin-top:0.5rem;font-size:0.8rem;padding:0.5rem;background:rgba(217,119,87,0.05);border-radius:4px"><strong>Malaysia Relevance:</strong> ' + escHtml(a.relevanceToMalaysia) + '</div>' : '') +
     '</div>';
   }).join('');
 }
@@ -1142,7 +1142,7 @@ async function renderPurdue() {
 
   return '\
     <h2>Purdue Model — Levels 0-5</h2>\
-    <div class="control-card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)">\
+    <div class="control-card" style="margin-bottom:1rem;background:rgba(217,119,87,0.05);border-color:var(--accent)">\
       <div class="control-card-title">IDMZ — Industrial Demilitarized Zone (Level 3.5)</div>\
       <div class="control-card-desc">The IDMZ is the critical architectural element separating OT (Levels 0-3) from IT (Level 4+).</div>\
     </div>\
@@ -1335,7 +1335,7 @@ async function renderRiskTreatment() {
   const data = await load('risk-management/treatment-options.json');
   var strategies = data.strategies || [];
 
-  var safetyHtml = data.safetyConstraint ? '<div class="control-card" style="border-color:var(--danger);margin-bottom:1rem;background:rgba(239,68,68,0.05)"><div class="control-card-title" style="color:var(--danger)">Safety Constraint</div><div class="control-card-desc">' + escHtml(data.safetyConstraint.rule || '') + '</div><div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem">' + escHtml(data.safetyConstraint.rationale || '') + '</div></div>' : '';
+  var safetyHtml = data.safetyConstraint ? '<div class="control-card" style="border-color:var(--danger);margin-bottom:1rem;background:rgba(176,74,63,0.05)"><div class="control-card-title" style="color:var(--danger)">Safety Constraint</div><div class="control-card-desc">' + escHtml(data.safetyConstraint.rule || '') + '</div><div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem">' + escHtml(data.safetyConstraint.rationale || '') + '</div></div>' : '';
 
   var stratHtml = strategies.map(function(s) { return '\
     <div class="control-card" style="margin-bottom:0.75rem">\
@@ -1732,7 +1732,7 @@ async function renderLearnView(sub) {
   setHTML(
     '<h1 class="page-title">Learn</h1>' +
     '<p class="page-sub">'+escHtml(idx.description||'')+'</p>' +
-    (idx.howToUse ? '<div class="control-card" style="margin-bottom:1rem;background:rgba(56,189,248,0.05);border-color:var(--accent)"><div class="control-card-title">How to use this</div><div class="control-card-desc">'+escHtml(idx.howToUse)+'</div></div>' : '') +
+    (idx.howToUse ? '<div class="control-card" style="margin-bottom:1rem;background:rgba(217,119,87,0.05);border-color:var(--accent)"><div class="control-card-title">How to use this</div><div class="control-card-desc">'+escHtml(idx.howToUse)+'</div></div>' : '') +
     tiersHtml
   );
 }
@@ -1837,7 +1837,7 @@ async function renderPurdueInteractive() {
     }).join('');
 
     var protocolsHtml = (l.allowedProtocols || []).map(function(p) {
-      return '<span class="tag" style="font-size:0.6rem;margin:1px;background:rgba(56,189,248,0.1);color:var(--accent)">' + escHtml(p) + '</span>';
+      return '<span class="tag" style="font-size:0.6rem;margin:1px;background:rgba(217,119,87,0.1);color:var(--accent)">' + escHtml(p) + '</span>';
     }).join('');
 
     var secReqsHtml = (l.securityRequirements || []).map(function(r) {
@@ -2023,10 +2023,10 @@ async function renderSLGapAssessment() {
 
   // Gap summary section
   assessmentFormHtml += '\
-    <div style="margin-top:1.5rem;padding:1rem;border:2px solid var(--accent);border-radius:8px;background:rgba(56,189,248,0.03)">\
+    <div style="margin-top:1.5rem;padding:1rem;border:2px solid var(--accent);border-radius:8px;background:rgba(217,119,87,0.03)">\
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">\
         <span style="font-weight:700;font-size:1rem">Gap Assessment Summary</span>\
-        <button data-action="sl-gap-recalc" style="padding:0.35rem 0.75rem;border:1px solid var(--accent);border-radius:6px;background:rgba(56,189,248,0.1);color:var(--accent);font-size:0.8rem;cursor:pointer;font-weight:600">Calculate Summary</button>\
+        <button data-action="sl-gap-recalc" style="padding:0.35rem 0.75rem;border:1px solid var(--accent);border-radius:6px;background:rgba(217,119,87,0.1);color:var(--accent);font-size:0.8rem;cursor:pointer;font-weight:600">Calculate Summary</button>\
         <button data-action="sl-gap-export" style="padding:0.35rem 0.75rem;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);color:var(--text-secondary);font-size:0.8rem;cursor:pointer">Export CSV</button>\
       </div>\
       <div id="sl-gap-summary" style="font-size:0.85rem;color:var(--text-secondary)">Click "Calculate Summary" after completing the assessment above.</div>\
@@ -2073,16 +2073,16 @@ window.updateSLGapStatus = function(selectEl) {
   if (val === '') { gapCell.innerHTML = '--'; gapCell.style.color = 'var(--text-muted)'; return; }
   if (val === 'na') { gapCell.innerHTML = '<span class="badge" style="background:var(--bg-main);color:var(--text-muted)">N/A</span>'; return; }
   if (requiredSL > targetSL) {
-    gapCell.innerHTML = '<span class="badge" style="background:rgba(34,197,94,0.1);color:var(--success)">Not Required</span>';
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(120,140,93,0.1);color:var(--success)">Not Required</span>';
     return;
   }
 
   if (val === 'yes') {
-    gapCell.innerHTML = '<span class="badge" style="background:rgba(34,197,94,0.1);color:var(--success)">Met</span>';
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(120,140,93,0.1);color:var(--success)">Met</span>';
   } else if (val === 'partial') {
-    gapCell.innerHTML = '<span class="badge" style="background:rgba(245,158,11,0.1);color:var(--warning)">Partial Gap</span>';
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(217,119,87,0.1);color:var(--warning)">Partial Gap</span>';
   } else {
-    gapCell.innerHTML = '<span class="badge" style="background:rgba(239,68,68,0.1);color:var(--danger)">Gap</span>';
+    gapCell.innerHTML = '<span class="badge" style="background:rgba(176,74,63,0.1);color:var(--danger)">Gap</span>';
   }
 };
 

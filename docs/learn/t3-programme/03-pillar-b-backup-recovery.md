@@ -69,4 +69,4 @@ For the SOP, start from a template — the IT-side template won't cover the OT s
 
 ## What's next
 
-[Lesson 4 — Pillar I (Incident Response)](#learn/lesson:t3-programme:04-pillar-i-incident-response). The next pillar that has a regulatory clock attached.
+[Lesson 3a — Pillar A (Asset Management)](#learn/lesson:t3-programme:03a-pillar-a-asset-management). With Backup in place, build the inventory that unblocks Network Architecture, Vulnerability Management, and everything that follows.

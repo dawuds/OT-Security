@@ -14,10 +14,11 @@
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ---------- Typography ---------- */
+/* ---------- Typography (warm-paper editorial: serif headings, sans body, mono labels) ---------- */
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.8125rem;
   --font-size-base: 0.875rem;
@@ -26,102 +27,136 @@
   --font-size-xl: 1.5rem;
 }
 
-/* ---------- Light Mode Tokens ---------- */
+/* ---------- Warm-paper palette (light mode) ----------
+   Migrated from clinical-blue per docs/learn-from-design-templates.
+   Source: ~/claude/design-templates/tokens.md
+   Rule: ONE strong accent (clay), used max 2x per viewport. Three muted greys with one job each.
+   No shadows. Borders are 1.5px on panels.
+*/
 :root {
-  --bg: #F8FAFC;
-  --surface: #FFFFFF;
-  --surface-hover: #F1F5F9;
-  --border: #E2E8F0;
-  --border-strong: #CBD5E1;
+  /* Surfaces */
+  --ivory: #FAF9F5;
+  --white: #FFFFFF;
+  --oat:   #E3DACC;
 
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
+  /* Ink */
+  --slate:    #141413;
+  --gray-700: #3D3D3A;
+  --gray-500: #87867F;
+  --gray-300: #D1CFC5;
+  --gray-100: #F0EEE6;
 
-  --accent: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-light: #DBEAFE;
+  /* Accents */
+  --clay:  #D97757;
+  --olive: #788C5D;
+  --rust:  #B04A3F;
 
-  --success: #16A34A;
-  --success-light: #DCFCE7;
-  --warning: #D97706;
-  --warning-light: #FEF3C7;
-  --danger: #DC2626;
-  --danger-light: #FEE2E2;
-  --info: #0284C7;
-  --info-light: #E0F2FE;
+  /* Token aliases — keep existing names working */
+  --bg: var(--ivory);
+  --surface: var(--white);
+  --surface-hover: var(--gray-100);
+  --border: var(--gray-300);
+  --border-strong: var(--gray-500);
 
-  --type-preventive: #7C3AED;
-  --type-detective: #0284C7;
-  --type-corrective: #D97706;
+  --text-primary: var(--slate);
+  --text-secondary: var(--gray-700);
+  --text-muted: var(--gray-500);
 
-  --maturity-basic-bg: #FEF3C7;
-  --maturity-basic-border: #F59E0B;
-  --maturity-mature-bg: #DBEAFE;
-  --maturity-mature-border: #3B82F6;
-  --maturity-advanced-bg: #DCFCE7;
-  --maturity-advanced-border: #16A34A;
+  --accent: var(--clay);
+  --accent-hover: #C26244;
+  --accent-light: #FBE7DD;
 
-  --evidence-good: #16A34A;
-  --evidence-good-bg: #F0FDF4;
-  --evidence-gap: #DC2626;
-  --evidence-gap-bg: #FEF2F2;
+  --success: var(--olive);
+  --success-light: #E5ECDD;
+  --warning: var(--clay);
+  --warning-light: #FBE7DD;
+  --danger: var(--rust);
+  --danger-light: #F1D9D5;
+  --info: var(--gray-700);
+  --info-light: var(--gray-100);
 
-  --similarity-high: #16A34A;
-  --similarity-medium: #D97706;
-  --similarity-low: #DC2626;
+  /* Maturity (de-emphasised — single warm accent + muted greys) */
+  --maturity-basic-bg: var(--oat);
+  --maturity-basic-border: var(--clay);
+  --maturity-mature-bg: var(--gray-100);
+  --maturity-mature-border: var(--gray-700);
+  --maturity-advanced-bg: #E5ECDD;
+  --maturity-advanced-border: var(--olive);
 
-  --source-official: #16A34A;
-  --source-paraphrased: #D97706;
-  --source-indicative: #94A3B8;
+  /* Type badges (for control type — preventive / detective / corrective) */
+  --type-preventive: var(--gray-700);
+  --type-detective: var(--clay);
+  --type-corrective: var(--rust);
 
-  --max-w: 1280px;
+  /* Evidence (good vs gap) */
+  --evidence-good: var(--olive);
+  --evidence-good-bg: #E5ECDD;
+  --evidence-gap: var(--rust);
+  --evidence-gap-bg: #F1D9D5;
+
+  /* Similarity (high / medium / low) */
+  --similarity-high: var(--olive);
+  --similarity-medium: var(--clay);
+  --similarity-low: var(--rust);
+
+  /* Source-type labels */
+  --source-official: var(--olive);
+  --source-paraphrased: var(--clay);
+  --source-indicative: var(--gray-500);
+
+  /* Geometry — warm-paper rules: 12px panels, 8px rows, 1.5px borders, NO shadows */
+  --max-w: 1180px;
   --radius: 8px;
   --radius-sm: 4px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-lg: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+  --radius-panel: 12px;
+  --shadow: none;
+  --shadow-lg: none;
 }
 
-/* ---------- Dark Mode Tokens ---------- */
+/* ---------- Warm-paper dark mode ----------
+   Editorial design is light-first; this is a high-contrast inverted variant
+   that preserves the warm temperature (no cool blues). Backgrounds shift to
+   warm dark; clay accent stays clay (legibility tested).
+*/
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0F172A;
-    --surface: #1E293B;
-    --surface-hover: #334155;
-    --border: #334155;
-    --border-strong: #475569;
+    --bg: #1A1A18;
+    --surface: #262624;
+    --surface-hover: #33322F;
+    --border: #45433F;
+    --border-strong: var(--gray-500);
 
-    --text-primary: #F1F5F9;
-    --text-secondary: #CBD5E1;
-    --text-muted: #64748B;
+    --text-primary: var(--ivory);
+    --text-secondary: var(--gray-300);
+    --text-muted: var(--gray-500);
 
-    --accent: #60A5FA;
-    --accent-hover: #93C5FD;
-    --accent-light: #1E3A5F;
+    --accent: #E89678;
+    --accent-hover: #F2A88A;
+    --accent-light: #4A2E22;
 
-    --success: #4ADE80;
-    --success-light: #14532D;
-    --warning: #FBBF24;
-    --warning-light: #422006;
-    --danger: #F87171;
-    --danger-light: #450A0A;
-    --info: #38BDF8;
-    --info-light: #0C4A6E;
+    --success: #9CB082;
+    --success-light: #2A3322;
+    --warning: #E89678;
+    --warning-light: #4A2E22;
+    --danger: #D26B5E;
+    --danger-light: #4A1F1A;
+    --info: var(--gray-300);
+    --info-light: #33322F;
 
-    --maturity-basic-bg: #422006;
-    --maturity-basic-border: #FBBF24;
-    --maturity-mature-bg: #1E3A5F;
-    --maturity-mature-border: #60A5FA;
-    --maturity-advanced-bg: #14532D;
-    --maturity-advanced-border: #4ADE80;
+    --maturity-basic-bg: #4A2E22;
+    --maturity-basic-border: #E89678;
+    --maturity-mature-bg: #33322F;
+    --maturity-mature-border: var(--gray-300);
+    --maturity-advanced-bg: #2A3322;
+    --maturity-advanced-border: #9CB082;
 
-    --evidence-good: #4ADE80;
-    --evidence-good-bg: #14532D;
-    --evidence-gap: #F87171;
-    --evidence-gap-bg: #450A0A;
+    --evidence-good: #9CB082;
+    --evidence-good-bg: #2A3322;
+    --evidence-gap: #D26B5E;
+    --evidence-gap-bg: #4A1F1A;
 
-    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-    --shadow-lg: 0 4px 6px rgba(0,0,0,0.35), 0 2px 4px rgba(0,0,0,0.2);
+    --shadow: none;
+    --shadow-lg: none;
   }
 }
 

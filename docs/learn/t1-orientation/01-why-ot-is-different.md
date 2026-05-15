@@ -2,6 +2,10 @@
 
 > **Tier 1 / Lesson 1 — 10 minutes.** Read this before anything else.
 
+## Why this tier exists — what an hour buys you
+
+> One hour of T1 buys you the right to be in the room when an OT decision is being made. You will know enough to ask the question that catches the wrong answer. You will not be the IT person who says "let's just put MFA on the PLC" or the GRC person who asks "what's the CVSS score?". You will not break a process by accident. The audience for this tier is *not* "future OT engineer" — it is *anyone whose decisions touch OT*: IT security, GRC, audit, executive. T1 stops you from being the one who looks foolish.
+
 ## The triage order is reversed
 
 In IT security, the priority is **C-I-A**: Confidentiality first, Integrity second, Availability third. Lose data → bad. Lose service → annoying.

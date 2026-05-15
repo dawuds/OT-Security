@@ -2,6 +2,10 @@
 
 > **Tier 4 / Lesson 1 — 30 minutes.**
 
+## Why this tier exists — the report you sign
+
+> An auditor's name on a report goes to the regulator. After T4 you can produce findings that survive an auditee's challenge meeting and that the next auditor can pick up cold. You will write findings that cite their IEC 62443 SR and their NACSA section in the same sentence. You will catch the SIS-on-BPCS finding the junior auditor missed. You will distinguish a finding from a complaint. T4 is the difference between *doing an audit* and *delivering an audit package* — the latter is what you sign your name to.
+
 > **Caveat (regulatory):** The audit pattern here is illustrative — based on common practice and the published NACSA Act 854 s23 obligation. Verify against your sector's Code of Practice and NACSA-issued audit guidance before relying on any specific procedural detail.
 
 ## What an audit package contains

@@ -48,6 +48,8 @@ Length test: if your policy is shorter than 4 pages, you've under-specified. If 
 - "MFA via SMS" — phone bans on the plant floor make this unworkable; SMS is also weak.
 - No operator override.
 
+For a worked example of *exactly what bad looks like*, read [`docs/learn/samples/03-bad-remote-access-policy.md`](../samples/03-bad-remote-access-policy.md). It is structured to *appear* compliant. Identify the six failures (the [answer key](../samples/05-answer-key.md) lists them). If your draft has any of those six failures, rewrite the affected section.
+
 ## What's next
 
 [Checkpoint](#learn/lesson:t2-practitioner:06-checkpoint) — review the five deliverables you should now own.
